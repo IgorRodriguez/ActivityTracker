@@ -23,19 +23,19 @@ public class Dao implements Closeable{
     private static final String STR_RESTORE_DATABASE = "?;restoreFrom=?";
     private static final String STR_NEW_DATABASE_FROM_BACKUP = "?;createFrom=?";
 	private static final String SQL_CREATE_ACTIVITIES_TABLE =
-            "CREATE TABLE ACTIVITIES (" +
+            "CREATE TABLE APP.ACTIVITIES (" +
             "   ID_ACTIVITY INT NOT NULL GENERATED ALWAYS AS IDENTITY CONSTRAINT ID_ACTIVITY_PK PRIMARY KEY," +
             "   NAME VARCHAR(35) NOT NULL," +
             "   DESCRIPTION VARCHAR(200)" +
             ")";
 	private static final String SQL_CREATE_TIMES_TABLE =
-            "CREATE TABLE TIMES (" +
-            "   ID_TIME INT NOT NULL GENERATED ALWAYS AS IDENTITY CONSTRAINT ID_TIEMPO_PK PRIMARY KEY," +
+            "CREATE TABLE APP.TIMES (" +
+            "   ID_TIME INT NOT NULL GENERATED ALWAYS AS IDENTITY CONSTRAINT ID_TIME_PK PRIMARY KEY," +
             "   ID_ACTIVITY INT NOT NULL," +
-            "   START TIMESTAMP NOT NULL," +
-            "   END TIMESTAMP NOT NULL," +
+            "   START_TIME TIMESTAMP NOT NULL," +
+            "   END_TIME TIMESTAMP NOT NULL," +
             "   DURATION TIMESTAMP NOT NULL," +
-            "   FOREIGN KEY (ID_ACTIVITY) REFERENCES ACTIVITIES(ID_ACTIVITY)" +
+            "   FOREIGN KEY (ID_ACTIVITY) REFERENCES APP.ACTIVITIES(ID_ACTIVITY)" +
             ")";
     private Properties dbProperties;
     private Connection dbConnection;
@@ -92,7 +92,7 @@ public class Dao implements Closeable{
     /**
      * Shut-downs the database.
      */
-    void exitDatabase() throws SQLException {
+    public void exitDatabase() throws SQLException {
 //        if(dbConnection != null && !dbConnection.isClosed()) {
             dbProperties.put("shutdown", "true");
             DriverManager.getConnection(dbProperties.getProperty("derby.url"), 
