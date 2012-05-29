@@ -35,6 +35,7 @@ public class Dao implements Closeable{
             "   START_TIME TIMESTAMP NOT NULL," +
             "   END_TIME TIMESTAMP NOT NULL," +
             "   DURATION TIMESTAMP NOT NULL," +
+            "   DESCRIPTION VARCHAR(200)," +
             "   FOREIGN KEY (ID_ACTIVITY) REFERENCES APP.ACTIVITIES(ID_ACTIVITY)" +
             ")";
     private Properties dbProperties;

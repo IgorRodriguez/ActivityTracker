@@ -30,7 +30,6 @@ public class ActivityTrackerMain {
             try {
                 lockFile.createNewFile();
                 Controller controller = new Controller();
-                //controller.start();
             } catch (IOException ex) {
                 log.info("No se pudo crear el fichero de bloqueo.");
             } finally {

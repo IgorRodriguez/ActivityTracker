@@ -34,10 +34,6 @@ public class Controller {
 	private void init() {
 		controllerBO.modifyLookAndFeel();
 	}
-
-	public void start() {
-		throw new UnsupportedOperationException("Not yet implemented");
-	}
 	
 	private void classNotFoundAlert(String methodName, Exception e) {
 		String message = "No se ha podido cargar la clase en el método '" + methodName + "': \n" + e.getLocalizedMessage();
@@ -45,10 +41,10 @@ public class Controller {
 		JOptionPane.showMessageDialog(null, message, "Error", JOptionPane.ERROR_MESSAGE);
 	}
 	
-	private void sqlExceptionAlert(String methodName, Exception e) {
+	private void sqlExceptionAlert(String methodName, SQLException e) {
 		if (!"Derby system shutdown.".equals(e.getLocalizedMessage())) {
 			String message = "Ha ocurrido un error al ejecutar la instrucción SQL en el método '" + methodName + "': \n" + 
-					e.getLocalizedMessage();
+					e.getLocalizedMessage() + " - " + e.getErrorCode();
 			log.error(message);
 			JOptionPane.showMessageDialog(null, message, "Error", JOptionPane.ERROR_MESSAGE);
 		}
