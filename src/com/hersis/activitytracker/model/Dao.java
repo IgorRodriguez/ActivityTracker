@@ -178,6 +178,10 @@ public class Dao implements Closeable{
     		derbyHomeDir.mkdir();
     	}
     }
+	
+	public Connection getConnection() {
+		return dbConnection;
+	}
 
 	@Override
 	public void close() throws IOException {

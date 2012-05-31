@@ -78,7 +78,7 @@ public class Activity implements Comparable{
 
 	@Override
 	public String toString() {
-		return "Activity{" + "name=" + name + ", description=" + description + '}';
+		return name;
 	}
 
 	@Override
