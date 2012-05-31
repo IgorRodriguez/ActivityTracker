@@ -15,10 +15,8 @@ import org.slf4j.LoggerFactory;
  */
 public class ActivityDao {
 	private final Logger log = (Logger) LoggerFactory.getLogger("model.ActivityDao");
-	private Dao dao;
 	
-	public ActivityDao() throws ClassNotFoundException, SQLException {
-		dao = new Dao();
+	public ActivityDao() {
 	}
 	
 	public ArrayList<Activity> getActivities(Connection conn) throws SQLException, ClassNotFoundException {

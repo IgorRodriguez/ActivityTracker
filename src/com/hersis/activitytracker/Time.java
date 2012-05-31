@@ -1,6 +1,6 @@
 package com.hersis.activitytracker;
 
-import java.util.Calendar;
+import java.sql.Timestamp;
 import java.util.Objects;
 
 /**
@@ -10,12 +10,12 @@ import java.util.Objects;
 public class Time implements Comparable{
 	private int idTime;
 	private int idActivity;
-	private Calendar startTime;
-	private Calendar endTime;
-	private Calendar duration;
+	private Timestamp startTime;
+	private Timestamp endTime;
+	private Timestamp duration;
 	private String description;
 
-	public Time(int idActivity, Calendar startTime, Calendar endTime, Calendar duration, String description) {
+	public Time(int idActivity, Timestamp startTime, Timestamp endTime, Timestamp duration, String description) {
 		this.idActivity = idActivity;
 		this.startTime = startTime;
 		this.endTime = endTime;
@@ -23,7 +23,7 @@ public class Time implements Comparable{
 		this.description = description;
 	}
 
-	public Time(int idTime, int idActivity, Calendar startTime, Calendar endTime, Calendar duration, String description) {
+	public Time(int idTime, int idActivity, Timestamp startTime, Timestamp endTime, Timestamp duration, String description) {
 		this.idTime = idTime;
 		this.idActivity = idActivity;
 		this.startTime = startTime;
@@ -40,19 +40,19 @@ public class Time implements Comparable{
 		this.description = description;
 	}
 
-	public Calendar getDuration() {
+	public Timestamp getDuration() {
 		return duration;
 	}
 
-	public void setDuration(Calendar duration) {
+	public void setDuration(Timestamp duration) {
 		this.duration = duration;
 	}
 
-	public Calendar getEndTime() {
+	public Timestamp getEndTime() {
 		return endTime;
 	}
 
-	public void setEndTime(Calendar endTime) {
+	public void setEndTime(Timestamp endTime) {
 		this.endTime = endTime;
 	}
 
@@ -72,11 +72,11 @@ public class Time implements Comparable{
 		this.idTime = idTime;
 	}
 
-	public Calendar getStartTime() {
+	public Timestamp getStartTime() {
 		return startTime;
 	}
 
-	public void setStartTime(Calendar startTime) {
+	public void setStartTime(Timestamp startTime) {
 		this.startTime = startTime;
 	}
 
