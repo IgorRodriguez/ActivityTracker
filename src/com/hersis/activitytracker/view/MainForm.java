@@ -87,6 +87,11 @@ public class MainForm extends javax.swing.JFrame {
         mnuEdit.add(jSeparator2);
 
         mniViewActivities.setText("Ver actividades");
+        mniViewActivities.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                mniViewActivitiesActionPerformed(evt);
+            }
+        });
         mnuEdit.add(mniViewActivities);
 
         mniViewTimes.setText("Ver tiempos");
@@ -113,6 +118,10 @@ public class MainForm extends javax.swing.JFrame {
 	private void mniNewActivityActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_mniNewActivityActionPerformed
 		controller.newActivity();
 	}//GEN-LAST:event_mniNewActivityActionPerformed
+
+	private void mniViewActivitiesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_mniViewActivitiesActionPerformed
+		controller.viewActivities();
+	}//GEN-LAST:event_mniViewActivitiesActionPerformed
 
 	
     // Variables declaration - do not modify//GEN-BEGIN:variables

@@ -4,10 +4,7 @@ import ch.qos.logback.classic.Logger;
 import com.hersis.activitytracker.model.ActivityDao;
 import com.hersis.activitytracker.model.Dao;
 import com.hersis.activitytracker.model.TimeDao;
-import com.hersis.activitytracker.view.ActivityDialog;
-import com.hersis.activitytracker.view.MainForm;
-import com.hersis.activitytracker.view.MainToolbar;
-import com.hersis.activitytracker.view.TimerPanel;
+import com.hersis.activitytracker.view.*;
 import java.awt.BorderLayout;
 import java.sql.SQLException;
 import javax.swing.JOptionPane;
@@ -28,6 +25,7 @@ public class Controller {
 	private MainToolbar mainToolbar = new MainToolbar(this);
 	private TimerPanel timerPanel = new TimerPanel(this);
 	private ActivityDialog activityDialog;
+	private ActivityListDialog activityListDialog;
 	
 	private ControllerBO controllerBo = new ControllerBO();
 	private final ErrorMessages errorMessages = new ErrorMessages();
@@ -41,7 +39,7 @@ public class Controller {
 			dao = new Dao();
 			
 			timerBo = new TimerBO(dao, timerPanel);
-			activityBo = new ActivityBO(this, dao, activityDialog);
+			activityBo = new ActivityBO(this, dao, activityDialog, activityListDialog);
 			//dao.connect();
 			loadCmbActivities();
 			
@@ -65,6 +63,9 @@ public class Controller {
 		
 		activityDialog = new ActivityDialog(mainForm, true, this);
 		activityDialog.setLocationRelativeTo(mainForm);
+		activityListDialog = new ActivityListDialog(mainForm, true, this);
+		activityListDialog.setLocationRelativeTo(mainForm);
+		
 	}
 	
 	final void loadCmbActivities() {
@@ -153,5 +154,21 @@ public class Controller {
 	 */
 	public void saveActivity() {
 		activityBo.saveActivity();
+	}
+
+	public void cancelActivityEdition() {
+		activityBo.cancelActivityEdition();
+	}
+
+	public void deleteActivity() {
+		activityBo.deleteActivity();
+	}
+
+	public void closeActivityList() {
+		activityBo.closeActivityList();
+	}
+
+	public void viewActivities() {
+		activityBo.viewActivities();
 	}
 }

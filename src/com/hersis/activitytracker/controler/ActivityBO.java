@@ -4,10 +4,9 @@ import com.hersis.activitytracker.Activity;
 import com.hersis.activitytracker.model.ActivityDao;
 import com.hersis.activitytracker.model.Dao;
 import com.hersis.activitytracker.view.ActivityDialog;
+import com.hersis.activitytracker.view.ActivityListDialog;
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  *
@@ -16,15 +15,17 @@ import java.util.logging.Logger;
 public class ActivityBO {
 	private final Dao dao;
 	private final ActivityDialog activityDialog;
+	private final ActivityListDialog activityListDialog;
 	private final ActivityDao activityDao = new ActivityDao();
 	private final AlertMessages alertMessages = new AlertMessages();
 	private final ErrorMessages errorMessages = new ErrorMessages();
 	private final Controller controller;
 
-	public ActivityBO(Controller controller, Dao dao, ActivityDialog activityDialog) {
+	public ActivityBO(Controller controller, Dao dao, ActivityDialog activityDialog, ActivityListDialog activityListDialog) {
 		this.controller = controller;
 		this.dao = dao;
 		this.activityDialog = activityDialog;	
+		this.activityListDialog = activityListDialog;
 	}
 
 	void newActivity() {
@@ -35,7 +36,7 @@ public class ActivityBO {
 	}
 
 	void saveActivity() {
-		boolean saved = false;
+		boolean saved;
 		
 		if (activityDialog.getActivity() == null) {
 			saved = insertActivity();
@@ -85,6 +86,36 @@ public class ActivityBO {
 
 	private boolean updateActivity() {
 		throw new UnsupportedOperationException("Not yet implemented");
+	}
+
+	void cancelActivityEdition() {
+		activityDialog.setVisible(false);
+	}
+
+	void deleteActivity() {
+		Activity activity = activityDialog.getActivity();
+		
+		if (activity != null) {
+			try {
+				dao.connect();
+				activityDao.deleteActivity(dao.getConnection(), activity);
+				activityDialog.setVisible(false);
+			} catch (SQLException ex) {
+				errorMessages.sqlExceptionError("deleteActivity()", ex);
+			} catch (ClassNotFoundException ex) {
+				errorMessages.classNotFoundError("deleteActivity()", ex);
+			} finally {
+				dao.disconnect();
+			}
+		}
+	}
+
+	void closeActivityList() {
+		activityListDialog.setVisible(false);
+	}
+
+	void viewActivities() {
+		activityListDialog.setVisible(true);
 	}
 	
 }

@@ -197,7 +197,8 @@ public class TimerBO {
 	
 	/**
 	 * Orders the given list of <code>Activity</code> in the order in which his ACTIVITY_ID appears 
-	 * in the LinkedHashSet.
+	 * in the LinkedHashSet. The activities that doesn't appear in the set will be added after this 
+	 * ones.
 	 * @param activities A list of <code>Activity</code> to be ordered.
 	 * @param activityIds a LinkedHashSet containing ACTIVITY_ID Integers in the desired order.
 	 * @return The ordered list.
@@ -210,8 +211,10 @@ public class TimerBO {
 					reorderedActivities.add(a);
 					break;
 				}
-			}dfhgh
-					//TODO Make appear as well the activities that haven't an entry in the times table.
+			}
+		}
+		for (Activity a : activities) {
+			if (!reorderedActivities.contains(a)) reorderedActivities.add(a);
 		}
 		return reorderedActivities;
 	}

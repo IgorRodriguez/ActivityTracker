@@ -59,6 +59,11 @@ public class MainToolbar extends javax.swing.JPanel {
         btnViewActivities.setFocusable(false);
         btnViewActivities.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         btnViewActivities.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        btnViewActivities.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnViewActivitiesActionPerformed(evt);
+            }
+        });
         mainToolbar.add(btnViewActivities);
 
         btnViewTimes.setText("Ver tiempo");
@@ -85,6 +90,10 @@ public class MainToolbar extends javax.swing.JPanel {
 	private void btnNewActivityActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnNewActivityActionPerformed
 		controller.newActivity();
 	}//GEN-LAST:event_btnNewActivityActionPerformed
+
+	private void btnViewActivitiesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnViewActivitiesActionPerformed
+		controller.viewActivities();
+	}//GEN-LAST:event_btnViewActivitiesActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnBackup;
