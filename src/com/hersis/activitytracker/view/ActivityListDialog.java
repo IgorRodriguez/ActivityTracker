@@ -16,6 +16,7 @@ public class ActivityListDialog extends javax.swing.JDialog {
 		super(parent, modal);
 		this.controller = controller;
 		initComponents();
+		this.getRootPane().setDefaultButton(btnClose);
 	}
 
 	/**
@@ -41,6 +42,8 @@ public class ActivityListDialog extends javax.swing.JDialog {
         separatorRightPanel2 = new javax.swing.JPanel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+        setTitle("Activity list");
+        setName("ActivityListDialog");
 
         activityListPanel.setLayout(new java.awt.GridBagLayout());
 

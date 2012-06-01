@@ -18,6 +18,7 @@ public class ActivityDialog extends javax.swing.JDialog {
 		super(parent, modal);
 		this.controller = controller;
 		initComponents();
+		this.getRootPane().setDefaultButton(btnAccept);
 	}
 	
 	public Activity getActivity() {
@@ -79,6 +80,7 @@ public class ActivityDialog extends javax.swing.JDialog {
         btnAccept = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+        setTitle("Activity editor");
 
         activityPanel.setLayout(new java.awt.GridBagLayout());
         gridBagConstraints = new java.awt.GridBagConstraints();

@@ -52,6 +52,7 @@ public class MainForm extends javax.swing.JFrame {
         mniAbout = new javax.swing.JMenuItem();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setTitle("Activity tracker v2");
 
         mnuFile.setText("Archivo");
 
