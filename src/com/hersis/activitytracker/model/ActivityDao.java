@@ -19,7 +19,24 @@ public class ActivityDao {
 	public ActivityDao() {
 	}
 	
-	public ArrayList<Activity> getActivities(Connection conn) throws SQLException, ClassNotFoundException {
+	public boolean nameExists(Connection conn, String name) throws SQLException {
+		final String sql = "SELECT * FROM APP.ACTIVITIES " +
+							"WHERE NAME = '" + name + "'";
+		boolean nameExists = false;
+		
+		try (PreparedStatement stmt = conn.prepareStatement(sql); ResultSet rs = stmt.executeQuery()) {
+			if (rs.next()) {
+				nameExists = true;
+			}
+		} catch (SQLException ex) {
+            log.error("Unable to read the activities from the database.\nMessage: {}\nError code: {}", 
+					ex.getMessage(), ex.getErrorCode());
+            throw ex;
+        } 
+		return nameExists;		
+	}
+	
+	public ArrayList<Activity> getActivities(Connection conn) throws SQLException {
 		final String sql = "SELECT * FROM APP.ACTIVITIES ORDER BY NAME";
 		ArrayList<Activity> activities = new ArrayList<>();
 		

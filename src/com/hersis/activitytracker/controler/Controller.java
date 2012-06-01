@@ -41,20 +41,17 @@ public class Controller {
 			dao = new Dao();
 			
 			timerBo = new TimerBO(dao, timerPanel);
-			activityBo = new ActivityBO(dao, activityDialog);
-			dao.connect();
-			// Set the JComboBox values from the database in descendant order by date.
-			timerPanel.setCmbActivities(controllerBo.orderActivitiesByTime(
-					activityDao.getActivities(dao.getConnection()), 
-					timeDao.getDistinctActivityIdsByTime(dao.getConnection())));
+			activityBo = new ActivityBO(this, dao, activityDialog);
+			//dao.connect();
+			loadCmbActivities();
 			
 			mainForm.setVisible(true);
 		} catch (NullPointerException ex) {
-			errorMessages.nullPointerAlert("Controller()", ex);
+			errorMessages.nullPointerError("Controller()", ex);
 		} catch (ClassNotFoundException ex) {
-			errorMessages.classNotFoundAlert("Controller()", ex);
+			errorMessages.classNotFoundError("Controller()", ex);
 		} catch (SQLException ex) {
-			errorMessages.sqlExceptionAlert("Controller()", ex);
+			errorMessages.sqlExceptionError("Controller()", ex);
 		}
 	}
 	
@@ -68,6 +65,10 @@ public class Controller {
 		
 		activityDialog = new ActivityDialog(mainForm, true, this);
 		activityDialog.setLocationRelativeTo(mainForm);
+	}
+	
+	final void loadCmbActivities() {
+		timerBo.loadCmbActivities();
 	}
 	
 	/**
@@ -121,9 +122,9 @@ public class Controller {
 		try {
 			timerBo.stop();
 		} catch (SQLException ex) {
-			errorMessages.sqlExceptionAlert("stop()", ex);
+			errorMessages.sqlExceptionError("stop()", ex);
 		} catch (ClassNotFoundException ex) {
-			errorMessages.classNotFoundAlert("stop()", ex);
+			errorMessages.classNotFoundError("stop()", ex);
 		}
 	}
 

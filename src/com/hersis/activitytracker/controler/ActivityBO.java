@@ -4,6 +4,7 @@ import com.hersis.activitytracker.Activity;
 import com.hersis.activitytracker.model.ActivityDao;
 import com.hersis.activitytracker.model.Dao;
 import com.hersis.activitytracker.view.ActivityDialog;
+import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -17,8 +18,11 @@ public class ActivityBO {
 	private final ActivityDialog activityDialog;
 	private final ActivityDao activityDao = new ActivityDao();
 	private final AlertMessages alertMessages = new AlertMessages();
+	private final ErrorMessages errorMessages = new ErrorMessages();
+	private final Controller controller;
 
-	public ActivityBO(Dao dao, ActivityDialog activityDialog) {
+	public ActivityBO(Controller controller, Dao dao, ActivityDialog activityDialog) {
+		this.controller = controller;
 		this.dao = dao;
 		this.activityDialog = activityDialog;	
 	}
@@ -31,11 +35,18 @@ public class ActivityBO {
 	}
 
 	void saveActivity() {
+		boolean saved = false;
+		
 		if (activityDialog.getActivity() == null) {
-			insertActivity();
+			saved = insertActivity();
 		} else {
-			updateActivity();
-		} 		
+			saved = updateActivity();
+		} 
+		
+		if (saved) {
+			activityDialog.setVisible(false);
+			controller.loadCmbActivities();
+		}
 	}
 	
 	private Activity getActivityFromFields() {
@@ -45,20 +56,34 @@ public class ActivityBO {
 		return new Activity(name, description);
 	}
 
-	private void insertActivity() {
+	private boolean insertActivity() {
+		Activity activity = getActivityFromFields();
+		String activityName = activity.getName();
+		boolean saved = false;
+		
 		try {
-			dao.connect();
-			activityDao.insertActivity(dao.getConnection(), getActivityFromFields());
-			lkjk
-					//TODO Check the SQL error and call the appropriate alert message.
+			Connection conn = dao.connect();
+			if (!"".equals(activityName)) {
+				if (!activityDao.nameExists(conn, activityName)) {
+					int insertActivity = activityDao.insertActivity(conn, activity);
+					if (insertActivity > 0) saved = true;
+				} else {
+					alertMessages.activityNameExists(activityDialog, activityName);
+				}
+			} else {
+				alertMessages.emptyActivityFields(activityDialog);
+			}
 		} catch (SQLException ex) {
-			Logger.getLogger(ActivityBO.class.getName()).log(Level.SEVERE, null, ex);
+			errorMessages.sqlExceptionError("insertActivity()", ex);
 		} catch (ClassNotFoundException ex) {
-			Logger.getLogger(ActivityBO.class.getName()).log(Level.SEVERE, null, ex);
+			errorMessages.classNotFoundError("insertActivity()", ex);
+		} finally {
+			dao.disconnect();
 		}
+		return saved;
 	}
 
-	private void updateActivity() {
+	private boolean updateActivity() {
 		throw new UnsupportedOperationException("Not yet implemented");
 	}
 	

@@ -17,7 +17,7 @@ public class ErrorMessages {
 	 * @param methodName The name of the method that calls this one.
 	 * @param e 
 	 */
-	void classNotFoundAlert(String methodName, ClassNotFoundException e) {
+	void classNotFoundError(String methodName, ClassNotFoundException e) {
 		String message = "Unable to load the class in method '" + methodName + "': \n" + e.getLocalizedMessage();
 		log.error(message);
 		JOptionPane.showMessageDialog(null, message, "Error", JOptionPane.ERROR_MESSAGE);
@@ -28,7 +28,7 @@ public class ErrorMessages {
 	 * @param methodName The name of the method that calls this one.
 	 * @param e The SQL exception.
 	 */
-	void sqlExceptionAlert(String methodName, SQLException e) {
+	void sqlExceptionError(String methodName, SQLException e) {
 		if (!"Derby system shutdown.".equals(e.getLocalizedMessage())) {
 			String message = "Error while executing SQL instruction in method '" + methodName + "': \n" + 
 					e.getLocalizedMessage() + " - " + e.getErrorCode();
@@ -37,7 +37,7 @@ public class ErrorMessages {
 		}
 	}
 
-	void nullPointerAlert(String methodName, NullPointerException ex) {
+	void nullPointerError(String methodName, NullPointerException ex) {
 		log.error(ex.getLocalizedMessage());
 	}
 }

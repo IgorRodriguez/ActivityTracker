@@ -3,6 +3,7 @@ package com.hersis.activitytracker.controler;
 import ch.qos.logback.classic.Logger;
 import com.hersis.activitytracker.Activity;
 import com.hersis.activitytracker.Time;
+import com.hersis.activitytracker.model.ActivityDao;
 import com.hersis.activitytracker.model.Dao;
 import com.hersis.activitytracker.model.TimeDao;
 import com.hersis.activitytracker.view.TimerPanel;
@@ -12,7 +13,10 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import java.util.TimeZone;
+import java.util.logging.Level;
 import javax.swing.Timer;
 import org.slf4j.LoggerFactory;
 
@@ -25,6 +29,8 @@ public class TimerBO {
 	private TimerPanel timerPanel;
 	private Dao dao;
 	private TimeDao timeDao = new TimeDao();
+	private ActivityDao activityDao = new ActivityDao();
+	private final ErrorMessages errorMessages = new ErrorMessages();
 	
 	private long totalTime = 0;     // Total of time in "play" status
     private long diffTime = 0;      // Time since the last time "play" was pressed.
@@ -172,5 +178,41 @@ public class TimerBO {
 		} else {
 			throw new IndexOutOfBoundsException("There isn't any activity selected in the list!");
 		}
+	}
+	
+	void loadCmbActivities() {
+		try {
+			// Set the JComboBox values from the database in descendant order by date.
+			Connection conn = dao.connect();
+			timerPanel.setCmbActivities(orderActivitiesByTime(activityDao.getActivities(conn), 
+					timeDao.getDistinctActivityIdsByTime(conn)));
+		} catch (SQLException ex) {
+			errorMessages.sqlExceptionError("loadCmbActivities()", ex);
+		} catch (ClassNotFoundException ex) {
+			errorMessages.classNotFoundError("loadCmbActivities()", ex);
+		} finally {
+			dao.disconnect();
+		}
+	}
+	
+	/**
+	 * Orders the given list of <code>Activity</code> in the order in which his ACTIVITY_ID appears 
+	 * in the LinkedHashSet.
+	 * @param activities A list of <code>Activity</code> to be ordered.
+	 * @param activityIds a LinkedHashSet containing ACTIVITY_ID Integers in the desired order.
+	 * @return The ordered list.
+	 */
+	ArrayList<Activity> orderActivitiesByTime(ArrayList<Activity> activities, LinkedHashSet<Integer> activityIds) {
+		ArrayList<Activity> reorderedActivities = new ArrayList<>();
+		for (int i : new LinkedHashSet<>(activityIds)) {
+			for (Activity a : activities) {
+				if (i == a.getIdActivity()) {
+					reorderedActivities.add(a);
+					break;
+				}
+			}dfhgh
+					//TODO Make appear as well the activities that haven't an entry in the times table.
+		}
+		return reorderedActivities;
 	}
 }

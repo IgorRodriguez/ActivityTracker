@@ -15,5 +15,11 @@ public class AlertMessages {
 		String title = "Alert";
 		JOptionPane.showMessageDialog(dialogParent, message, title, JOptionPane.WARNING_MESSAGE);
 	}
+
+	void activityNameExists(Component dialogParent, String name) {
+		String message = "The name '" + name + "' already exists, choose another one";
+		String title = "Alert";
+		JOptionPane.showMessageDialog(dialogParent, message, title, JOptionPane.WARNING_MESSAGE);
+	}
 	
 }
