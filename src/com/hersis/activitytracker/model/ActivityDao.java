@@ -20,7 +20,7 @@ public class ActivityDao {
 	}
 	
 	public ArrayList<Activity> getActivities(Connection conn) throws SQLException, ClassNotFoundException {
-		final String sql = "SELECT * FROM APP.ACTIVITIES";
+		final String sql = "SELECT * FROM APP.ACTIVITIES ORDER BY NAME";
 		ArrayList<Activity> activities = new ArrayList<>();
 		
 		try (PreparedStatement stmt = conn.prepareStatement(sql); ResultSet rs = stmt.executeQuery()) {

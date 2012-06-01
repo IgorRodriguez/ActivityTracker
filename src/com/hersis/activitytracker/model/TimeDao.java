@@ -4,6 +4,7 @@ import ch.qos.logback.classic.Logger;
 import com.hersis.activitytracker.Time;
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import org.slf4j.LoggerFactory;
 
 /**
@@ -17,7 +18,8 @@ public class TimeDao {
 	}
 	
 	public ArrayList<Time> getTimes(Connection conn) throws SQLException {
-		final String sql = "SELECT * FROM APP.TIMES";
+		final String sql = "SELECT * FROM APP.TIMES ORDER BY END_TIME DESC";
+		
 		ArrayList<Time> times = new ArrayList<>();
 		
 		try (PreparedStatement stmt = conn.prepareStatement(sql); ResultSet rs = stmt.executeQuery()) {
@@ -35,7 +37,23 @@ public class TimeDao {
 					ex.getMessage(), ex.getErrorCode());
             throw ex;
         } 
-		return times;		
+		return times;			
+	}
+	
+	public LinkedHashSet<Integer> getDistinctActivityIdsByTime(Connection conn) throws SQLException {
+		final String sql = "SELECT DISTINCT ID_ACTIVITY, END_TIME FROM APP.TIMES ORDER BY END_TIME DESC";
+		LinkedHashSet<Integer> activityIds = new LinkedHashSet<>();
+		
+		try (PreparedStatement stmt = conn.prepareStatement(sql); ResultSet rs = stmt.executeQuery()) {
+			while (rs.next()) {
+				activityIds.add(rs.getInt("ID_ACTIVITY"));
+			}
+		} catch (SQLException ex) {
+            log.error("Unable to read the times from the database.\nMessage: {}\nError code: {}", 
+					ex.getMessage(), ex.getErrorCode());
+            throw ex;
+        } 
+		return activityIds;		
 	}
 	
 	public int insertTime(Connection conn, Time time) throws SQLException {

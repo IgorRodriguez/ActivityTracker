@@ -111,6 +111,11 @@ public class MainForm extends javax.swing.JFrame {
         mnuFile.add(jSeparator1);
 
         mniExit.setText("Salir");
+        mniExit.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                mniExitActionPerformed(evt);
+            }
+        });
         mnuFile.add(mniExit);
 
         jMenuBar1.add(mnuFile);
@@ -143,6 +148,10 @@ public class MainForm extends javax.swing.JFrame {
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+
+	private void mniExitActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_mniExitActionPerformed
+		controller.exit();
+	}//GEN-LAST:event_mniExitActionPerformed
 
 	
     // Variables declaration - do not modify//GEN-BEGIN:variables

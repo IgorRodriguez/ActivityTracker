@@ -25,7 +25,7 @@ public class Dao implements Closeable{
 	private static final String SQL_CREATE_ACTIVITIES_TABLE =
             "CREATE TABLE APP.ACTIVITIES (" +
             "   ID_ACTIVITY INT NOT NULL GENERATED ALWAYS AS IDENTITY CONSTRAINT ID_ACTIVITY_PK PRIMARY KEY," +
-            "   NAME VARCHAR(35) NOT NULL," +
+            "   NAME VARCHAR(35) UNIQUE NOT NULL," +
             "   DESCRIPTION VARCHAR(200)" +
             ")";
 	private static final String SQL_CREATE_TIMES_TABLE =

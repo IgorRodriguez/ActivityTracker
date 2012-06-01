@@ -1,13 +1,15 @@
 package com.hersis.activitytracker.controler;
 
 import ch.qos.logback.classic.Logger;
-import com.hersis.activitytracker.images.Icons;
+import com.hersis.activitytracker.Activity;
+import com.hersis.activitytracker.Time;
 import com.hersis.activitytracker.model.ActivityDao;
 import com.hersis.activitytracker.model.Dao;
 import com.hersis.activitytracker.model.TimeDao;
 import com.hersis.activitytracker.view.MainForm;
 import com.hersis.activitytracker.view.TimerPanel;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import javax.swing.JOptionPane;
 import javax.swing.WindowConstants;
 import org.slf4j.LoggerFactory;
@@ -22,11 +24,10 @@ public class Controller {
 	private ActivityDao activityDao = new ActivityDao();
 	private TimeDao timeDao = new TimeDao();
 	
-	private static final Icons icons = new Icons();
-	private ControllerBO controllerBo = new ControllerBO();
 	private MainForm mainForm = new MainForm(this);
 	private TimerPanel timerPanel = new TimerPanel(this);
 	
+	private ControllerBO controllerBo = new ControllerBO();
 	private TimerBO timerBo;	
 	
 	public Controller() {
@@ -37,8 +38,11 @@ public class Controller {
 			
 			timerBo = new TimerBO(dao, timerPanel);
 			dao.connect();
-		
-			timerPanel.setCmbActivities(activityDao.getActivities(dao.getConnection()));
+			// Set the JComboBox values from the database in descendant order by date.
+			timerPanel.setCmbActivities(controllerBo.orderActivitiesByTime(
+					activityDao.getActivities(dao.getConnection()), 
+					timeDao.getDistinctActivityIdsByTime(dao.getConnection())));
+			
 			mainForm.setVisible(true);
 		} catch (NullPointerException ex) {
 			controllerBo.nullPointerAlert("Controller()", ex);

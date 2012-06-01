@@ -3,7 +3,6 @@ package com.hersis.activitytracker.view;
 import com.hersis.activitytracker.Activity;
 import com.hersis.activitytracker.controler.Controller;
 import java.util.ArrayList;
-import javax.swing.JTextField;
 
 /**
  *
