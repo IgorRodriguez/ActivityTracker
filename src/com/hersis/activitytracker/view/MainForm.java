@@ -36,14 +36,7 @@ public class MainForm extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jToolBar1 = new javax.swing.JToolBar();
-        btnNewActivity = new javax.swing.JButton();
-        btnNewTime = new javax.swing.JButton();
-        btnViewActivities = new javax.swing.JButton();
-        btnViewTimes = new javax.swing.JButton();
-        btnBackup = new javax.swing.JButton();
-        btnOptions = new javax.swing.JButton();
-        jMenuBar1 = new javax.swing.JMenuBar();
+        mainMenuBar = new javax.swing.JMenuBar();
         mnuFile = new javax.swing.JMenu();
         mniBackup = new javax.swing.JMenuItem();
         mniOptions = new javax.swing.JMenuItem();
@@ -59,47 +52,6 @@ public class MainForm extends javax.swing.JFrame {
         mniAbout = new javax.swing.JMenuItem();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-
-        jToolBar1.setFloatable(false);
-        jToolBar1.setRollover(true);
-
-        btnNewActivity.setText("Nueva act");
-        btnNewActivity.setFocusable(false);
-        btnNewActivity.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        btnNewActivity.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
-        jToolBar1.add(btnNewActivity);
-
-        btnNewTime.setText("Nuevo tiempo");
-        btnNewTime.setFocusable(false);
-        btnNewTime.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        btnNewTime.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
-        jToolBar1.add(btnNewTime);
-
-        btnViewActivities.setText("Ver act");
-        btnViewActivities.setFocusable(false);
-        btnViewActivities.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        btnViewActivities.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
-        jToolBar1.add(btnViewActivities);
-
-        btnViewTimes.setText("Ver tiempo");
-        btnViewTimes.setFocusable(false);
-        btnViewTimes.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        btnViewTimes.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
-        jToolBar1.add(btnViewTimes);
-
-        btnBackup.setText("Backup");
-        btnBackup.setFocusable(false);
-        btnBackup.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        btnBackup.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
-        jToolBar1.add(btnBackup);
-
-        btnOptions.setText("Opciones");
-        btnOptions.setFocusable(false);
-        btnOptions.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        btnOptions.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
-        jToolBar1.add(btnOptions);
-
-        getContentPane().add(jToolBar1, java.awt.BorderLayout.NORTH);
 
         mnuFile.setText("Archivo");
 
@@ -118,11 +70,16 @@ public class MainForm extends javax.swing.JFrame {
         });
         mnuFile.add(mniExit);
 
-        jMenuBar1.add(mnuFile);
+        mainMenuBar.add(mnuFile);
 
         mnuEdit.setText("Edicion");
 
         mniNewActivity.setText("Nueva actividad");
+        mniNewActivity.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                mniNewActivityActionPerformed(evt);
+            }
+        });
         mnuEdit.add(mniNewActivity);
 
         mniNewTime.setText("Nuevo tiempo");
@@ -135,16 +92,16 @@ public class MainForm extends javax.swing.JFrame {
         mniViewTimes.setText("Ver tiempos");
         mnuEdit.add(mniViewTimes);
 
-        jMenuBar1.add(mnuEdit);
+        mainMenuBar.add(mnuEdit);
 
         mnuHelp.setText("Ayuda");
 
         mniAbout.setText("Acerca de...");
         mnuHelp.add(mniAbout);
 
-        jMenuBar1.add(mnuHelp);
+        mainMenuBar.add(mnuHelp);
 
-        setJMenuBar(jMenuBar1);
+        setJMenuBar(mainMenuBar);
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
@@ -153,18 +110,15 @@ public class MainForm extends javax.swing.JFrame {
 		controller.exit();
 	}//GEN-LAST:event_mniExitActionPerformed
 
+	private void mniNewActivityActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_mniNewActivityActionPerformed
+		controller.newActivity();
+	}//GEN-LAST:event_mniNewActivityActionPerformed
+
 	
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton btnBackup;
-    private javax.swing.JButton btnNewActivity;
-    private javax.swing.JButton btnNewTime;
-    private javax.swing.JButton btnOptions;
-    private javax.swing.JButton btnViewActivities;
-    private javax.swing.JButton btnViewTimes;
-    private javax.swing.JMenuBar jMenuBar1;
     private javax.swing.JPopupMenu.Separator jSeparator1;
     private javax.swing.JPopupMenu.Separator jSeparator2;
-    private javax.swing.JToolBar jToolBar1;
+    private javax.swing.JMenuBar mainMenuBar;
     private javax.swing.JMenuItem mniAbout;
     private javax.swing.JMenuItem mniBackup;
     private javax.swing.JMenuItem mniExit;

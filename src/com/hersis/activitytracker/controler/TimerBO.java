@@ -25,7 +25,6 @@ public class TimerBO {
 	private TimerPanel timerPanel;
 	private Dao dao;
 	private TimeDao timeDao = new TimeDao();
-	private ControllerBO controllerBo = new ControllerBO();
 	
 	private long totalTime = 0;     // Total of time in "play" status
     private long diffTime = 0;      // Time since the last time "play" was pressed.
@@ -157,6 +156,10 @@ public class TimerBO {
 		}
 	}
 
+	/**
+	 * Alters the GUI to allow starting a new activity tracking with "play", "stop" buttons.
+	 * @throws IndexOutOfBoundsException If there isn't any activity selected in the JComboBox.
+	 */
 	void startTracking() throws IndexOutOfBoundsException {
 		if (timerPanel.getSelectedIndex() != -1) {
 			timerPanel.setEnabledBtnPlay(true);
