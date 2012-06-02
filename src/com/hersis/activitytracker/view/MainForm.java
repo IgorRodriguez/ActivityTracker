@@ -117,7 +117,7 @@ public class MainForm extends javax.swing.JFrame {
 	}//GEN-LAST:event_mniExitActionPerformed
 
 	private void mniNewActivityActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_mniNewActivityActionPerformed
-		controller.newActivity();
+		controller.showNewActivity();
 	}//GEN-LAST:event_mniNewActivityActionPerformed
 
 	private void mniViewActivitiesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_mniViewActivitiesActionPerformed

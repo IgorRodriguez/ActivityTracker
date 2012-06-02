@@ -4,6 +4,7 @@ import com.hersis.activitytracker.Activity;
 import com.hersis.activitytracker.controler.Controller;
 import com.hersis.activitytracker.view.aux.ActivityListTableModel;
 import com.hersis.activitytracker.view.aux.CustomDefaultTableCellRenderer;
+import java.awt.Point;
 import java.util.ArrayList;
 import javax.swing.table.TableColumnModel;
 
@@ -14,6 +15,7 @@ import javax.swing.table.TableColumnModel;
 public class ActivityListDialog extends javax.swing.JDialog {
 	private final Controller controller;
 	private ActivityListTableModel activityListModel = new ActivityListTableModel();
+	int previousRow = -1;
 
 	/**
 	 * Creates new form ActivityListDialog
@@ -26,6 +28,7 @@ public class ActivityListDialog extends javax.swing.JDialog {
 	}
 
 	public void updateActivityTable(ArrayList<Activity> activities) {
+		activityListModel.removeAllActivities();
 		for (Activity a : activities) {
 			activityListModel.addActivity(a);
 		}
@@ -36,6 +39,27 @@ public class ActivityListDialog extends javax.swing.JDialog {
         
         tblActivities.setDefaultRenderer(String.class, new CustomDefaultTableCellRenderer());
     }
+	
+	public void selectPreviousRow() {
+		int rowCount = activityListModel.getRowCount();
+		
+		if (previousRow >= 0 && rowCount > 0) {
+			if (rowCount > previousRow) {
+				tblActivities.getSelectionModel().setSelectionInterval(previousRow, previousRow);
+			} else if (rowCount == previousRow) {
+				tblActivities.getSelectionModel().setSelectionInterval(previousRow - 1, previousRow - 1);	
+			} else {
+				int row = rowCount - 1;
+				tblActivities.getSelectionModel().setSelectionInterval(row, row);
+			} 
+				
+		}
+	}
+	
+	public void selectLastInsertedRow(Activity activity) {
+		int index = activityListModel.getActivityIndex(activity);
+		tblActivities.getSelectionModel().setSelectionInterval(index, index);
+	}
 	
 	/**
 	 * This method is called from within the constructor to initialize the form. WARNING: Do NOT
@@ -68,6 +92,11 @@ public class ActivityListDialog extends javax.swing.JDialog {
         tblActivitiesScrollPane.setPreferredSize(new java.awt.Dimension(400, 300));
 
         tblActivities.setModel(activityListModel);
+        tblActivities.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                tblActivitiesMouseClicked(evt);
+            }
+        });
         tblActivitiesScrollPane.setViewportView(tblActivities);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
@@ -87,6 +116,11 @@ public class ActivityListDialog extends javax.swing.JDialog {
         btnDelete.setText("Delete");
         btnDelete.setMinimumSize(new java.awt.Dimension(100, 42));
         btnDelete.setPreferredSize(new java.awt.Dimension(100, 42));
+        btnDelete.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnDeleteActionPerformed(evt);
+            }
+        });
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 0;
@@ -151,6 +185,11 @@ public class ActivityListDialog extends javax.swing.JDialog {
         btnEdit.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/hersis/activitytracker/images/txt.png"))); // NOI18N
         btnEdit.setText("Edit");
         btnEdit.setPreferredSize(new java.awt.Dimension(100, 42));
+        btnEdit.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnEditActionPerformed(evt);
+            }
+        });
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 2;
@@ -235,8 +274,39 @@ public class ActivityListDialog extends javax.swing.JDialog {
 	}//GEN-LAST:event_btnCloseActionPerformed
 
 	private void btnNewActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnNewActionPerformed
-		controller.newActivity();
+		controller.showNewActivity();
 	}//GEN-LAST:event_btnNewActionPerformed
+
+	private void btnEditActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEditActionPerformed
+		Activity selectedActivity;
+		int selectedRow = tblActivities.getSelectedRow();
+		previousRow = selectedRow;
+		if (selectedRow != -1) {
+			selectedActivity = activityListModel.getActivityAt(selectedRow);
+		} else {
+			selectedActivity = null;
+		}
+		controller.showEditActivity(selectedActivity);
+	}//GEN-LAST:event_btnEditActionPerformed
+
+	private void tblActivitiesMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tblActivitiesMouseClicked
+		if (evt.getClickCount() > 1) {
+			int row = tblActivities.rowAtPoint(new Point(evt.getX(), evt.getY()));
+			controller.showEditActivity(activityListModel.getActivityAt(row));
+		}
+	}//GEN-LAST:event_tblActivitiesMouseClicked
+
+	private void btnDeleteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDeleteActionPerformed
+		Activity selectedActivity;
+		int selectedRow = tblActivities.getSelectedRow();
+		previousRow = selectedRow;
+		if (selectedRow != -1) {
+			selectedActivity = activityListModel.getActivityAt(selectedRow);
+		} else {
+			selectedActivity = null;
+		}
+		controller.deleteActivity(selectedActivity);
+	}//GEN-LAST:event_btnDeleteActionPerformed
 
 	
     // Variables declaration - do not modify//GEN-BEGIN:variables

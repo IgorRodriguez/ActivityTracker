@@ -1,5 +1,6 @@
 package com.hersis.activitytracker.controler;
 
+import com.hersis.activitytracker.view.ActivityDialog;
 import java.awt.Component;
 import javax.swing.JOptionPane;
 
@@ -18,6 +19,18 @@ public class AlertMessages {
 
 	void activityNameExists(Component dialogParent, String name) {
 		String message = "The name '" + name + "' already exists, choose another one";
+		String title = "Alert";
+		JOptionPane.showMessageDialog(dialogParent, message, title, JOptionPane.WARNING_MESSAGE);
+	}
+
+	void noActivitySelectedInTableForEditing(Component dialogParent) {
+		String message = "You need to select an activity in the table in order to edit it";
+		String title = "Alert";
+		JOptionPane.showMessageDialog(dialogParent, message, title, JOptionPane.WARNING_MESSAGE);
+	}
+
+	void noActivitySelectedInTableForDeleting(Component dialogParent) {
+		String message = "You need to select an activity in the table in order to delete it";
 		String title = "Alert";
 		JOptionPane.showMessageDialog(dialogParent, message, title, JOptionPane.WARNING_MESSAGE);
 	}

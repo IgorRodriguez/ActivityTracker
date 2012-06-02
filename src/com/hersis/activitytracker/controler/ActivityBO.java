@@ -8,8 +8,6 @@ import com.hersis.activitytracker.view.ActivityListDialog;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  *
@@ -31,13 +29,13 @@ public class ActivityBO {
 		this.activityListDialog = activityListDialog;
 	}
 
-	void saveActivity() {
+	void saveActivity(Activity oldActivity, Activity newActivity) {
 		boolean saved;
 		
-		if (activityDialog.getActivity() == null) {
-			saved = insertActivity();
+		if (oldActivity == null) {
+			saved = insertActivity(newActivity);
 		} else {
-			saved = updateActivity();
+			saved = updateActivity(oldActivity, newActivity);
 		} 
 		
 		if (saved) {
@@ -45,11 +43,11 @@ public class ActivityBO {
 			activityDialog.setVisible(false);
 			controller.loadCmbActivities();
 			updateActivityTable();
+			activityListDialog.selectLastInsertedRow(newActivity);
 		}
-	}
+	}//TODO Focus first field of activityDialog at set visible.
 
-	private boolean insertActivity() {
-		Activity activity = activityDialog.getActivityFromFields();
+	private boolean insertActivity(Activity activity) {
 		String activityName = activity.getName();
 		boolean saved = false;
 		
@@ -75,15 +73,14 @@ public class ActivityBO {
 		return saved;
 	}
 
-	private boolean updateActivity() {
-		Activity newActivity = activityDialog.getActivityFromFields();
-		Activity oldActivity = activityDialog.getActivity();
+	private boolean updateActivity(Activity oldActivity, Activity newActivity) {
 		boolean saved = false;
 		
 		try {
 			Connection conn = dao.connect();
 			if (!"".equals(newActivity.getName())) {
-				if (!activityDao.nameExists(conn, newActivity.getName())) {
+				if (oldActivity.getName().equals(newActivity.getName()) ||
+						!activityDao.nameExists(conn, newActivity.getName())) {
 					int updateActivity = activityDao.updateActivity(conn, oldActivity, newActivity);
 					if (updateActivity > 0) saved = true;
 				} else {
@@ -106,15 +103,14 @@ public class ActivityBO {
 		activityDialog.setVisible(false);
 	}
 
-	void deleteActivity() {
-		Activity activity = activityDialog.getActivity();
-		
+	void deleteActivity(Activity activity) {
 		if (activity != null) {
 			try {
 				dao.connect();
 				activityDao.deleteActivity(dao.getConnection(), activity);
 				updateActivityTable();
 				activityDialog.setActivity(null);
+				activityListDialog.selectPreviousRow();
 				activityDialog.setVisible(false);
 			} catch (SQLException ex) {
 				errorMessages.sqlExceptionError("deleteActivity()", ex);
@@ -123,6 +119,8 @@ public class ActivityBO {
 			} finally {
 				dao.disconnect();
 			}
+		} else {
+			alertMessages.noActivitySelectedInTableForDeleting(activityListDialog);
 		}
 	}
 
@@ -149,8 +147,18 @@ public class ActivityBO {
 		}
 	}
 
-	void newActivity() {
+	void showNewActivity() {
 		activityDialog.newActivity();
+		activityDialog.setVisible(true);
+	}
+
+	void showEditActivity(Activity activity) {
+		if (activity != null) {
+			activityDialog.editActivity(activity);
+			activityDialog.setVisible(true);
+		} else {
+			alertMessages.noActivitySelectedInTableForEditing(activityListDialog);
+		}
 	}
 	
 }

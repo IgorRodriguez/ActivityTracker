@@ -227,4 +227,25 @@ public class ActivityListTableModel implements TableModel{
             l.tableChanged(event);
         }
     }
+
+	public void removeAllActivities() {
+		activities.clear();
+	}
+
+	public int getActivityIndex(Activity activity) {
+		int index = -1;
+		
+		if (activity.getIdActivity() > -1) {
+			index = activities.indexOf(activity);
+		} else {
+			for (Activity a : activities) {
+				if (a.getName().equals(activity.getName())) {
+					index = activities.indexOf(a);
+					break;
+				}
+			}
+		}
+		
+		return index;
+	}
 }

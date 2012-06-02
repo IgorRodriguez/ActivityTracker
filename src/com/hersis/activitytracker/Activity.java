@@ -7,7 +7,7 @@ import java.util.Objects;
  * @author Igor Rodriguez <igorrodriguezelvira@gmail.com>
  */
 public class Activity implements Comparable{
-	private int idActivity;
+	private int idActivity = -1;
 	private String name;
 	private String description;
 

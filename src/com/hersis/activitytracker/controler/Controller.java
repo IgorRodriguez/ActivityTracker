@@ -1,6 +1,7 @@
 package com.hersis.activitytracker.controler;
 
 import ch.qos.logback.classic.Logger;
+import com.hersis.activitytracker.Activity;
 import com.hersis.activitytracker.model.ActivityDao;
 import com.hersis.activitytracker.model.Dao;
 import com.hersis.activitytracker.model.TimeDao;
@@ -143,23 +144,19 @@ public class Controller {
 	/**
 	 * Action when "new activity" is selected in the GUI.
 	 */
-	public void newActivity() {
-		activityBo.newActivity();
+	public void showNewActivity() {
+		activityBo.showNewActivity();
 	}
 
 	/**
 	 * Action when "accept" is pressed in the ActivityDialog.
 	 */
-	public void saveActivity() {
-		activityBo.saveActivity();
+	public void saveActivity(Activity oldActivity, Activity newActivity) {
+		activityBo.saveActivity(oldActivity, newActivity);
 	}
 
 	public void cancelActivityEdition() {
 		activityBo.cancelActivityEdition();
-	}
-
-	public void deleteActivity() {
-		activityBo.deleteActivity();
 	}
 
 	public void closeActivityList() {
@@ -168,5 +165,13 @@ public class Controller {
 
 	public void viewActivities() {
 		activityBo.viewActivities();
+	}
+
+	public void showEditActivity(Activity activity) {
+		activityBo.showEditActivity(activity);
+	}
+
+	public void deleteActivity(Activity activity) {
+		activityBo.deleteActivity(activity);
 	}
 }

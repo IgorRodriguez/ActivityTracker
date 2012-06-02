@@ -88,7 +88,7 @@ public class MainToolbar extends javax.swing.JPanel {
     }// </editor-fold>//GEN-END:initComponents
 
 	private void btnNewActivityActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnNewActivityActionPerformed
-		controller.newActivity();
+		controller.showNewActivity();
 	}//GEN-LAST:event_btnNewActivityActionPerformed
 
 	private void btnViewActivitiesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnViewActivitiesActionPerformed
