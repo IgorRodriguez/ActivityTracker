@@ -116,17 +116,20 @@ public class ActivityListTableModel implements TableModel{
     public Object getValueAt(int rowIndex, int columnIndex) {
         Activity activity;
         
-        // Get the Activity from the indicated row.
-        activity = activities.get(rowIndex);
-        
-        // Get the appropriate field from the columnIndex
-        if (columnIndex == columnNames.indexOf("Name")) {
-            return activity.getName();
-        } else if (columnIndex == columnNames.indexOf("Description")) {
-            return activity.getDescription();
-        } else {
-            return null;
-        }        
+		if (rowIndex < activities.size()) {
+			// Get the Activity from the indicated row.
+			activity = activities.get(rowIndex);
+
+			// Get the appropriate field from the columnIndex
+			if (columnIndex == columnNames.indexOf("Name")) {
+				return activity.getName();
+			} else if (columnIndex == columnNames.indexOf("Description")) {
+				return activity.getDescription();
+			} else {
+				return null;
+			}   
+		}
+		return null;
     }
     
     /**
@@ -135,7 +138,12 @@ public class ActivityListTableModel implements TableModel{
      * @return The Activity that is shown in the given row.
      */
     public Activity getActivityAt(int rowIndex) {
-        return activities.get(rowIndex);
+		Activity activity = null;
+		
+		if (rowIndex < activities.size()) {
+			activity = activities.get(rowIndex);
+		}
+		return activity;
     }
 
     /** Sets the value in the cell at <code>columnIndex</code> and

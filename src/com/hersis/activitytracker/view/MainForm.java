@@ -54,16 +54,16 @@ public class MainForm extends javax.swing.JFrame {
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Activity tracker v2");
 
-        mnuFile.setText("Archivo");
+        mnuFile.setText("File");
 
         mniBackup.setText("Backup");
         mnuFile.add(mniBackup);
 
-        mniOptions.setText("Opciones...");
+        mniOptions.setText("Options...");
         mnuFile.add(mniOptions);
         mnuFile.add(jSeparator1);
 
-        mniExit.setText("Salir");
+        mniExit.setText("Exit");
         mniExit.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 mniExitActionPerformed(evt);
@@ -73,9 +73,9 @@ public class MainForm extends javax.swing.JFrame {
 
         mainMenuBar.add(mnuFile);
 
-        mnuEdit.setText("Edicion");
+        mnuEdit.setText("Edition");
 
-        mniNewActivity.setText("Nueva actividad");
+        mniNewActivity.setText("New activity");
         mniNewActivity.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 mniNewActivityActionPerformed(evt);
@@ -83,11 +83,11 @@ public class MainForm extends javax.swing.JFrame {
         });
         mnuEdit.add(mniNewActivity);
 
-        mniNewTime.setText("Nuevo tiempo");
+        mniNewTime.setText("New time");
         mnuEdit.add(mniNewTime);
         mnuEdit.add(jSeparator2);
 
-        mniViewActivities.setText("Ver actividades");
+        mniViewActivities.setText("View activities");
         mniViewActivities.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 mniViewActivitiesActionPerformed(evt);
@@ -95,14 +95,14 @@ public class MainForm extends javax.swing.JFrame {
         });
         mnuEdit.add(mniViewActivities);
 
-        mniViewTimes.setText("Ver tiempos");
+        mniViewTimes.setText("View times");
         mnuEdit.add(mniViewTimes);
 
         mainMenuBar.add(mnuEdit);
 
-        mnuHelp.setText("Ayuda");
+        mnuHelp.setText("Help");
 
-        mniAbout.setText("Acerca de...");
+        mniAbout.setText("About...");
         mnuHelp.add(mniAbout);
 
         mainMenuBar.add(mnuHelp);

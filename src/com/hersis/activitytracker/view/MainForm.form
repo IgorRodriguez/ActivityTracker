@@ -6,7 +6,7 @@
       <SubComponents>
         <Menu class="javax.swing.JMenu" name="mnuFile">
           <Properties>
-            <Property name="text" type="java.lang.String" value="Archivo"/>
+            <Property name="text" type="java.lang.String" value="File"/>
           </Properties>
           <SubComponents>
             <MenuItem class="javax.swing.JMenuItem" name="mniBackup">
@@ -16,14 +16,14 @@
             </MenuItem>
             <MenuItem class="javax.swing.JMenuItem" name="mniOptions">
               <Properties>
-                <Property name="text" type="java.lang.String" value="Opciones..."/>
+                <Property name="text" type="java.lang.String" value="Options..."/>
               </Properties>
             </MenuItem>
             <MenuItem class="javax.swing.JPopupMenu$Separator" name="jSeparator1">
             </MenuItem>
             <MenuItem class="javax.swing.JMenuItem" name="mniExit">
               <Properties>
-                <Property name="text" type="java.lang.String" value="Salir"/>
+                <Property name="text" type="java.lang.String" value="Exit"/>
               </Properties>
               <Events>
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="mniExitActionPerformed"/>
@@ -33,12 +33,12 @@
         </Menu>
         <Menu class="javax.swing.JMenu" name="mnuEdit">
           <Properties>
-            <Property name="text" type="java.lang.String" value="Edicion"/>
+            <Property name="text" type="java.lang.String" value="Edition"/>
           </Properties>
           <SubComponents>
             <MenuItem class="javax.swing.JMenuItem" name="mniNewActivity">
               <Properties>
-                <Property name="text" type="java.lang.String" value="Nueva actividad"/>
+                <Property name="text" type="java.lang.String" value="New activity"/>
               </Properties>
               <Events>
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="mniNewActivityActionPerformed"/>
@@ -46,14 +46,14 @@
             </MenuItem>
             <MenuItem class="javax.swing.JMenuItem" name="mniNewTime">
               <Properties>
-                <Property name="text" type="java.lang.String" value="Nuevo tiempo"/>
+                <Property name="text" type="java.lang.String" value="New time"/>
               </Properties>
             </MenuItem>
             <MenuItem class="javax.swing.JPopupMenu$Separator" name="jSeparator2">
             </MenuItem>
             <MenuItem class="javax.swing.JMenuItem" name="mniViewActivities">
               <Properties>
-                <Property name="text" type="java.lang.String" value="Ver actividades"/>
+                <Property name="text" type="java.lang.String" value="View activities"/>
               </Properties>
               <Events>
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="mniViewActivitiesActionPerformed"/>
@@ -61,19 +61,19 @@
             </MenuItem>
             <MenuItem class="javax.swing.JMenuItem" name="mniViewTimes">
               <Properties>
-                <Property name="text" type="java.lang.String" value="Ver tiempos"/>
+                <Property name="text" type="java.lang.String" value="View times"/>
               </Properties>
             </MenuItem>
           </SubComponents>
         </Menu>
         <Menu class="javax.swing.JMenu" name="mnuHelp">
           <Properties>
-            <Property name="text" type="java.lang.String" value="Ayuda"/>
+            <Property name="text" type="java.lang.String" value="Help"/>
           </Properties>
           <SubComponents>
             <MenuItem class="javax.swing.JMenuItem" name="mniAbout">
               <Properties>
-                <Property name="text" type="java.lang.String" value="Acerca de..."/>
+                <Property name="text" type="java.lang.String" value="About..."/>
               </Properties>
             </MenuItem>
           </SubComponents>

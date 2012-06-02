@@ -7,6 +7,7 @@ import com.hersis.activitytracker.model.Dao;
 import com.hersis.activitytracker.model.TimeDao;
 import com.hersis.activitytracker.view.*;
 import java.awt.BorderLayout;
+import java.awt.Component;
 import java.sql.SQLException;
 import javax.swing.JOptionPane;
 import javax.swing.WindowConstants;
@@ -171,7 +172,7 @@ public class Controller {
 		activityBo.showEditActivity(activity);
 	}
 
-	public void deleteActivity(Activity activity) {
-		activityBo.deleteActivity(activity);
+	public void deleteActivity(Component dialogParent, Activity activity) {
+		activityBo.deleteActivity(dialogParent, activity);
 	}
 }

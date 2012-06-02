@@ -5,6 +5,7 @@ import com.hersis.activitytracker.model.ActivityDao;
 import com.hersis.activitytracker.model.Dao;
 import com.hersis.activitytracker.view.ActivityDialog;
 import com.hersis.activitytracker.view.ActivityListDialog;
+import java.awt.Component;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -45,7 +46,7 @@ public class ActivityBO {
 			updateActivityTable();
 			activityListDialog.selectLastInsertedRow(newActivity);
 		}
-	}//TODO Focus first field of activityDialog at set visible.
+	}
 
 	private boolean insertActivity(Activity activity) {
 		String activityName = activity.getName();
@@ -103,21 +104,23 @@ public class ActivityBO {
 		activityDialog.setVisible(false);
 	}
 
-	void deleteActivity(Activity activity) {
+	void deleteActivity(Component dialogParent, Activity activity) {
 		if (activity != null) {
-			try {
-				dao.connect();
-				activityDao.deleteActivity(dao.getConnection(), activity);
-				updateActivityTable();
-				activityDialog.setActivity(null);
-				activityListDialog.selectPreviousRow();
-				activityDialog.setVisible(false);
-			} catch (SQLException ex) {
-				errorMessages.sqlExceptionError("deleteActivity()", ex);
-			} catch (ClassNotFoundException ex) {
-				errorMessages.classNotFoundError("deleteActivity()", ex);
-			} finally {
-				dao.disconnect();
+			if (alertMessages.deleteActivityConfirmation(dialogParent, activity)) {
+				try {
+					dao.connect();
+					activityDao.deleteActivity(dao.getConnection(), activity);
+					updateActivityTable();
+					activityDialog.setActivity(null);
+					activityListDialog.selectPreviousRow();
+					activityDialog.setVisible(false);
+				} catch (SQLException ex) {
+					errorMessages.sqlExceptionError("deleteActivity()", ex);
+				} catch (ClassNotFoundException ex) {
+					errorMessages.classNotFoundError("deleteActivity()", ex);
+				} finally {
+					dao.disconnect();
+				}
 			}
 		} else {
 			alertMessages.noActivitySelectedInTableForDeleting(activityListDialog);
