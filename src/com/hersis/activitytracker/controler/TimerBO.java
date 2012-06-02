@@ -147,19 +147,18 @@ public class TimerBO {
 						new Timestamp(pauseTime), new Timestamp(totalTime), ""));
 				startTime = -1;
 				totalTime = 0;
-
-				// Refreshing the GUI
-				timerPanel.setEnabledBtnPlay(false);
-				timerPanel.setEnabledBtnPause(false);
-				timerPanel.setEnabledBtnStop(false);
-				timerPanel.setEnabledBtnNew(true);
-				timerPanel.setEnabledCmbActivities(true);
 			} catch (SQLException | ClassNotFoundException ex) {
 				throw ex;
 			} finally {			
 				dao.disconnect();
 			}
 		}
+		// Refreshing the GUI
+		timerPanel.setEnabledBtnPlay(false);
+		timerPanel.setEnabledBtnPause(false);
+		timerPanel.setEnabledBtnStop(false);
+		timerPanel.setEnabledBtnNew(true);
+		timerPanel.setEnabledCmbActivities(true);
 	}
 
 	/**

@@ -21,16 +21,18 @@ public class Controller {
 	private static final Logger log = (Logger) LoggerFactory.getLogger("controller.Controller");
 	private Dao dao;
 	
-	private MainForm mainForm = new MainForm(this);
-	private MainToolbar mainToolbar = new MainToolbar(this);
-	private TimerPanel timerPanel = new TimerPanel(this);
+	private MainForm mainForm;
+	private MainToolbar mainToolbar;
+	private TimerPanel timerPanel;
 	private ActivityDialog activityDialog;
 	private ActivityListDialog activityListDialog;
+	private TimeDialog timeDialog;
 	
 	private ControllerBO controllerBo = new ControllerBO();
 	private final ErrorMessages errorMessages = new ErrorMessages();
 	private TimerBO timerBo;	
 	private ActivityBO activityBo;
+	private TimeBO timeBo;
 	
 	public Controller() {
 		init();
@@ -40,6 +42,7 @@ public class Controller {
 			
 			timerBo = new TimerBO(dao, timerPanel);
 			activityBo = new ActivityBO(this, dao, activityDialog, activityListDialog);
+			timeBo = new TimeBO(dao, timeDialog);
 			//dao.connect();
 			loadCmbActivities();
 			
@@ -55,6 +58,11 @@ public class Controller {
 	
 	private void init() {
 		controllerBo.modifyLookAndFeel();
+		
+		mainForm = new MainForm(this);
+		mainToolbar = new MainToolbar(this);
+		timerPanel = new TimerPanel(this);
+		
 		mainForm.add(mainToolbar, BorderLayout.NORTH);
 		mainForm.add(timerPanel, BorderLayout.CENTER);
 		mainForm.pack();
@@ -65,7 +73,8 @@ public class Controller {
 		activityDialog.setLocationRelativeTo(mainForm);
 		activityListDialog = new ActivityListDialog(mainForm, true, this);
 		activityListDialog.setLocationRelativeTo(mainForm);
-		
+		timeDialog = new TimeDialog(mainForm, true, this);
+		timeDialog.setLocationRelativeTo(mainForm);
 	}
 	
 	final void loadCmbActivities() {
@@ -174,5 +183,9 @@ public class Controller {
 
 	public void deleteActivity(Component dialogParent, Activity activity) {
 		activityBo.deleteActivity(dialogParent, activity);
+	}
+
+	public void showNewTime() {
+		timeBo.showNewTime();
 	}
 }

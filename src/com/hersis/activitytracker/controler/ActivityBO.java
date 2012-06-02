@@ -47,7 +47,7 @@ public class ActivityBO {
 			activityListDialog.selectLastInsertedRow(newActivity);
 		}
 	}
-
+   
 	private boolean insertActivity(Activity activity) {
 		String activityName = activity.getName();
 		boolean saved = false;
@@ -105,6 +105,7 @@ public class ActivityBO {
 	}
 
 	void deleteActivity(Component dialogParent, Activity activity) {
+		//TODO delete all the dependant times in Times table.
 		if (activity != null) {
 			if (alertMessages.deleteActivityConfirmation(dialogParent, activity)) {
 				try {

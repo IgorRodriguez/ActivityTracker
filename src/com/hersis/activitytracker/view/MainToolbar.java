@@ -53,6 +53,11 @@ public class MainToolbar extends javax.swing.JPanel {
         btnNewTime.setFocusable(false);
         btnNewTime.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         btnNewTime.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        btnNewTime.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnNewTimeActionPerformed(evt);
+            }
+        });
         mainToolbar.add(btnNewTime);
 
         btnViewActivities.setText("Ver act");
@@ -94,6 +99,10 @@ public class MainToolbar extends javax.swing.JPanel {
 	private void btnViewActivitiesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnViewActivitiesActionPerformed
 		controller.viewActivities();
 	}//GEN-LAST:event_btnViewActivitiesActionPerformed
+
+	private void btnNewTimeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnNewTimeActionPerformed
+		controller.showNewTime();
+	}//GEN-LAST:event_btnNewTimeActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnBackup;

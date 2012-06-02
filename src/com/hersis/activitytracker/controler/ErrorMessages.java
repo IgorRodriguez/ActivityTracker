@@ -3,6 +3,7 @@ package com.hersis.activitytracker.controler;
 import ch.qos.logback.classic.Logger;
 import java.sql.SQLException;
 import javax.swing.JOptionPane;
+import javax.swing.UnsupportedLookAndFeelException;
 import org.slf4j.LoggerFactory;
 
 /**
@@ -39,5 +40,11 @@ public class ErrorMessages {
 
 	void nullPointerError(String methodName, NullPointerException ex) {
 		log.error(ex.getLocalizedMessage());
+	}
+
+	void unsupportedLookAndFeelError(String methodName, UnsupportedLookAndFeelException e) {
+		String message = "Unable to load the class in method '" + methodName + "': \n" + e.getLocalizedMessage();
+		log.error(message);
+		JOptionPane.showMessageDialog(null, message, "Error", JOptionPane.ERROR_MESSAGE);
 	}
 }

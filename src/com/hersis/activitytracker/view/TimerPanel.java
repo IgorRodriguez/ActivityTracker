@@ -155,9 +155,11 @@ public class TimerPanel extends javax.swing.JPanel {
         gridBagConstraints.insets = new java.awt.Insets(12, 5, 7, 7);
         add(btnStop, gridBagConstraints);
 
+        txtStartTime.setBackground(new java.awt.Color(229, 229, 229));
         txtStartTime.setEditable(false);
         txtStartTime.setFont(new java.awt.Font("Dialog", 0, 20)); // NOI18N
         txtStartTime.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+        txtStartTime.setFocusable(false);
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 1;
         gridBagConstraints.gridy = 1;
@@ -193,9 +195,11 @@ public class TimerPanel extends javax.swing.JPanel {
         gridBagConstraints.insets = new java.awt.Insets(7, 7, 0, 5);
         add(lblTotalTime, gridBagConstraints);
 
+        txtPausedAt.setBackground(new java.awt.Color(229, 229, 229));
         txtPausedAt.setEditable(false);
         txtPausedAt.setFont(new java.awt.Font("Dialog", 0, 20)); // NOI18N
         txtPausedAt.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+        txtPausedAt.setFocusable(false);
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 1;
         gridBagConstraints.gridy = 2;
@@ -207,9 +211,11 @@ public class TimerPanel extends javax.swing.JPanel {
         gridBagConstraints.insets = new java.awt.Insets(7, 5, 0, 7);
         add(txtPausedAt, gridBagConstraints);
 
+        txtTotalTime.setBackground(new java.awt.Color(229, 229, 229));
         txtTotalTime.setEditable(false);
         txtTotalTime.setFont(new java.awt.Font("Dialog", 0, 20)); // NOI18N
         txtTotalTime.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+        txtTotalTime.setFocusable(false);
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 1;
         gridBagConstraints.gridy = 3;
