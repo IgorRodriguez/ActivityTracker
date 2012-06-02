@@ -18,8 +18,6 @@ import org.slf4j.LoggerFactory;
 public class Controller {
 	private static final Logger log = (Logger) LoggerFactory.getLogger("controller.Controller");
 	private Dao dao;
-	private ActivityDao activityDao = new ActivityDao();
-	private TimeDao timeDao = new TimeDao();
 	
 	private MainForm mainForm = new MainForm(this);
 	private MainToolbar mainToolbar = new MainToolbar(this);

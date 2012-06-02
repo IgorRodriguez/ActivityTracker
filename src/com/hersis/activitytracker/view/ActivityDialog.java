@@ -21,6 +21,12 @@ public class ActivityDialog extends javax.swing.JDialog {
 		this.getRootPane().setDefaultButton(btnAccept);
 	}
 	
+	public void newActivity() {
+		setActivity(null);
+		clearAllFields();
+		btnDelete.setVisible(false);
+	}
+	
 	public Activity getActivity() {
 		return activity;
 	}
@@ -32,6 +38,13 @@ public class ActivityDialog extends javax.swing.JDialog {
 	public void setActivity(Activity activity) {
 		this.activity = activity;
 		
+	}
+	
+	public Activity getActivityFromFields() {
+		String name = txtName.getText();
+		String description = txaDescription.getText();
+		
+		return new Activity(name, description);
 	}
 	
 	public void clearAllFields() {

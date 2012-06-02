@@ -7,6 +7,9 @@ import com.hersis.activitytracker.view.ActivityDialog;
 import com.hersis.activitytracker.view.ActivityListDialog;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -28,13 +31,6 @@ public class ActivityBO {
 		this.activityListDialog = activityListDialog;
 	}
 
-	void newActivity() {
-		activityDialog.setActivity(null);
-		activityDialog.clearAllFields();
-		activityDialog.setVisibleBtnDelete(false);
-		activityDialog.setVisible(true);
-	}
-
 	void saveActivity() {
 		boolean saved;
 		
@@ -45,20 +41,15 @@ public class ActivityBO {
 		} 
 		
 		if (saved) {
+			activityDialog.setActivity(null);
 			activityDialog.setVisible(false);
 			controller.loadCmbActivities();
+			updateActivityTable();
 		}
-	}
-	
-	private Activity getActivityFromFields() {
-		String name = activityDialog.getTextName();
-		String description = activityDialog.getTextDescription();
-		
-		return new Activity(name, description);
 	}
 
 	private boolean insertActivity() {
-		Activity activity = getActivityFromFields();
+		Activity activity = activityDialog.getActivityFromFields();
 		String activityName = activity.getName();
 		boolean saved = false;
 		
@@ -85,7 +76,30 @@ public class ActivityBO {
 	}
 
 	private boolean updateActivity() {
-		throw new UnsupportedOperationException("Not yet implemented");
+		Activity newActivity = activityDialog.getActivityFromFields();
+		Activity oldActivity = activityDialog.getActivity();
+		boolean saved = false;
+		
+		try {
+			Connection conn = dao.connect();
+			if (!"".equals(newActivity.getName())) {
+				if (!activityDao.nameExists(conn, newActivity.getName())) {
+					int updateActivity = activityDao.updateActivity(conn, oldActivity, newActivity);
+					if (updateActivity > 0) saved = true;
+				} else {
+					alertMessages.activityNameExists(activityDialog, newActivity.getName());
+				}
+			} else {
+				alertMessages.emptyActivityFields(activityDialog);
+			}
+		} catch (SQLException ex) {
+			errorMessages.sqlExceptionError("updateActivity()", ex);
+		} catch (ClassNotFoundException ex) {
+			errorMessages.classNotFoundError("updateActivity()", ex);
+		} finally {
+			dao.disconnect();
+		}
+		return saved;
 	}
 
 	void cancelActivityEdition() {
@@ -99,6 +113,8 @@ public class ActivityBO {
 			try {
 				dao.connect();
 				activityDao.deleteActivity(dao.getConnection(), activity);
+				updateActivityTable();
+				activityDialog.setActivity(null);
 				activityDialog.setVisible(false);
 			} catch (SQLException ex) {
 				errorMessages.sqlExceptionError("deleteActivity()", ex);
@@ -115,7 +131,26 @@ public class ActivityBO {
 	}
 
 	void viewActivities() {
+		updateActivityTable();
 		activityListDialog.setVisible(true);
+	}
+
+	void updateActivityTable() {
+		try {
+			dao.connect();
+			ArrayList<Activity> activities = activityDao.getActivities(dao.getConnection());
+			activityListDialog.updateActivityTable(activities);
+		} catch (SQLException ex) {
+			errorMessages.sqlExceptionError("updateActivityTable()", ex);
+		} catch (ClassNotFoundException ex) {
+			errorMessages.classNotFoundError("updateActivityTable()", ex);
+		} finally {
+			dao.disconnect();
+		}
+	}
+
+	void newActivity() {
+		activityDialog.newActivity();
 	}
 	
 }
