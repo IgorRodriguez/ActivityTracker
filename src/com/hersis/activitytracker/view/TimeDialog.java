@@ -1,10 +1,14 @@
 package com.hersis.activitytracker.view;
 
 import com.hersis.activitytracker.controler.Controller;
+import com.toedter.calendar.IDateEditor;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.Locale;
+import java.util.TimeZone;
+import javax.swing.JOptionPane;
 
 /**
  *
@@ -25,7 +29,53 @@ public class TimeDialog extends javax.swing.JDialog {
 		String localeDatePattern = 
 				((SimpleDateFormat) DateFormat.getDateInstance(SimpleDateFormat.LONG, locale)).toPattern();		
 		startTimeDateChooser.setDateFormatString(localeDatePattern);
-		startTimeDateChooser.setDate(Calendar.getInstance().getTime());
+		endTimeDateChooser.setDateFormatString(localeDatePattern);
+		
+	}
+	
+	public void setControlTime() {
+		Date now = Calendar.getInstance().getTime();
+		startTimeDateChooser.setDate(now);
+		spnHourStartTime.setValue(now);
+		spnMinuteStartTime.setValue(now);
+		endTimeDateChooser.setDate(now);
+		spnHourEndTime.setValue(now);
+		spnMinuteEndTime.setValue(now);
+	}
+	
+	public void calculateDuration() {
+		long duration = 0;
+		Calendar startTime = startTimeDateChooser.getCalendar();
+		Calendar endTime = endTimeDateChooser.getCalendar();
+		if (startTime != null && endTime != null) {
+			Calendar hour = Calendar.getInstance();
+			Calendar minute = Calendar.getInstance();
+			// Calculate Start time
+			hour.clear();
+			minute.clear();
+			hour.setTime((Date) spnHourStartTime.getValue());
+			minute.setTime((Date) spnMinuteStartTime.getValue());
+			startTime.set(Calendar.HOUR, hour.get(Calendar.HOUR));
+			startTime.set(Calendar.MINUTE, minute.get(Calendar.MINUTE));
+			// Calculate End time
+			hour.clear();
+			minute.clear();
+			hour.setTime((Date) spnHourEndTime.getValue());
+			minute.setTime((Date) spnMinuteEndTime.getValue());
+			endTime.set(Calendar.HOUR, hour.get(Calendar.HOUR));
+			endTime.set(Calendar.MINUTE, minute.get(Calendar.MINUTE));
+			
+			duration = endTime.getTimeInMillis() - startTime.getTimeInMillis();
+			Calendar durationCalendar = Calendar.getInstance();
+			durationCalendar.setTimeInMillis(duration);
+			
+			// Create string, not dateFormatter.
+			DateFormat dateFormatter = new SimpleDateFormat("HH:mm:ss");
+			dateFormatter.setTimeZone(TimeZone.getTimeZone("GMT"));
+			txtDuration.setText(dateFormatter.format(durationCalendar.getTime()));
+		} else {
+			txtDuration.setText("0");
+		}
 	}
 	
 	public static void main(String [] args) {
@@ -64,8 +114,8 @@ public class TimeDialog extends javax.swing.JDialog {
         lblHourEndTime = new javax.swing.JLabel();
         spnHourEndTime = new javax.swing.JSpinner();
         endTimeMinutePanel = new javax.swing.JPanel();
-        lblMinuteStartTime1 = new javax.swing.JLabel();
-        spnMinuteStartTime1 = new javax.swing.JSpinner();
+        lblMinuteEndTime = new javax.swing.JLabel();
+        spnMinuteEndTime = new javax.swing.JSpinner();
         durationPanel = new javax.swing.JPanel();
         lblDuration = new javax.swing.JLabel();
         txtDuration = new javax.swing.JTextField();
@@ -128,6 +178,12 @@ public class TimeDialog extends javax.swing.JDialog {
         gridBagConstraints.weightx = 0.5;
         gridBagConstraints.weighty = 1.0;
         startTimeDatePanel.add(lblDateStartTime, gridBagConstraints);
+
+        startTimeDateChooser.addPropertyChangeListener(new java.beans.PropertyChangeListener() {
+            public void propertyChange(java.beans.PropertyChangeEvent evt) {
+                startTimeDateChooserPropertyChange(evt);
+            }
+        });
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 1;
         gridBagConstraints.gridy = 0;
@@ -161,7 +217,7 @@ public class TimeDialog extends javax.swing.JDialog {
         gridBagConstraints.weighty = 1.0;
         startTimeHourPanel.add(lblHourStartTime, gridBagConstraints);
 
-        spnHourStartTime.setModel(new javax.swing.SpinnerDateModel(new java.util.Date(), null, null, java.util.Calendar.MINUTE));
+        spnHourStartTime.setModel(new javax.swing.SpinnerDateModel(new java.util.Date(), null, null, java.util.Calendar.HOUR));
         spnHourStartTime.setEditor(new javax.swing.JSpinner.DateEditor(spnHourStartTime, "HH"));
         spnHourStartTime.setVerifyInputWhenFocusTarget(false);
         gridBagConstraints = new java.awt.GridBagConstraints();
@@ -274,7 +330,7 @@ public class TimeDialog extends javax.swing.JDialog {
         gridBagConstraints.weighty = 1.0;
         endTimeHourPanel.add(lblHourEndTime, gridBagConstraints);
 
-        spnHourEndTime.setModel(new javax.swing.SpinnerDateModel(new java.util.Date(), null, null, java.util.Calendar.MINUTE));
+        spnHourEndTime.setModel(new javax.swing.SpinnerDateModel(new java.util.Date(), null, null, java.util.Calendar.HOUR));
         spnHourEndTime.setEditor(new javax.swing.JSpinner.DateEditor(spnHourEndTime, "HH"));
         spnHourEndTime.setVerifyInputWhenFocusTarget(false);
         gridBagConstraints = new java.awt.GridBagConstraints();
@@ -299,7 +355,7 @@ public class TimeDialog extends javax.swing.JDialog {
 
         endTimeMinutePanel.setLayout(new java.awt.GridBagLayout());
 
-        lblMinuteStartTime1.setText("Minute:");
+        lblMinuteEndTime.setText("Minute:");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 0;
@@ -307,10 +363,10 @@ public class TimeDialog extends javax.swing.JDialog {
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
         gridBagConstraints.weightx = 1.0;
         gridBagConstraints.weighty = 1.0;
-        endTimeMinutePanel.add(lblMinuteStartTime1, gridBagConstraints);
+        endTimeMinutePanel.add(lblMinuteEndTime, gridBagConstraints);
 
-        spnMinuteStartTime1.setModel(new javax.swing.SpinnerDateModel());
-        spnMinuteStartTime1.setEditor(new javax.swing.JSpinner.DateEditor(spnMinuteStartTime1, "mm"));
+        spnMinuteEndTime.setModel(new javax.swing.SpinnerDateModel());
+        spnMinuteEndTime.setEditor(new javax.swing.JSpinner.DateEditor(spnMinuteEndTime, "mm"));
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 1;
         gridBagConstraints.gridy = 0;
@@ -319,7 +375,7 @@ public class TimeDialog extends javax.swing.JDialog {
         gridBagConstraints.weightx = 10.0;
         gridBagConstraints.weighty = 1.0;
         gridBagConstraints.insets = new java.awt.Insets(0, 10, 0, 0);
-        endTimeMinutePanel.add(spnMinuteStartTime1, gridBagConstraints);
+        endTimeMinutePanel.add(spnMinuteEndTime, gridBagConstraints);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 1;
@@ -499,6 +555,10 @@ public class TimeDialog extends javax.swing.JDialog {
 		
 	}//GEN-LAST:event_btnAcceptActionPerformed
 
+	private void startTimeDateChooserPropertyChange(java.beans.PropertyChangeEvent evt) {//GEN-FIRST:event_startTimeDateChooserPropertyChange
+		calculateDuration();
+	}//GEN-LAST:event_startTimeDateChooserPropertyChange
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel activityPanel;
     private javax.swing.JButton btnAccept;
@@ -519,13 +579,13 @@ public class TimeDialog extends javax.swing.JDialog {
     private javax.swing.JLabel lblDuration;
     private javax.swing.JLabel lblHourEndTime;
     private javax.swing.JLabel lblHourStartTime;
+    private javax.swing.JLabel lblMinuteEndTime;
     private javax.swing.JLabel lblMinuteStartTime;
-    private javax.swing.JLabel lblMinuteStartTime1;
     private javax.swing.JPanel separatorPanel;
     private javax.swing.JSpinner spnHourEndTime;
     private javax.swing.JSpinner spnHourStartTime;
+    private javax.swing.JSpinner spnMinuteEndTime;
     private javax.swing.JSpinner spnMinuteStartTime;
-    private javax.swing.JSpinner spnMinuteStartTime1;
     private com.toedter.calendar.JDateChooser startTimeDateChooser;
     private javax.swing.JPanel startTimeDatePanel;
     private javax.swing.JPanel startTimeHourPanel;

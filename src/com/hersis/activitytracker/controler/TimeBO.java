@@ -17,6 +17,8 @@ public class TimeBO {
 	}
 
 	void showNewTime() {
+		timeDialog.setControlTime();
+		timeDialog.calculateDuration();
 		timeDialog.setVisible(true);
 	}
 	

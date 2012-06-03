@@ -105,6 +105,9 @@
                   </Constraints>
                 </Component>
                 <Component class="com.toedter.calendar.JDateChooser" name="startTimeDateChooser">
+                  <Events>
+                    <EventHandler event="propertyChange" listener="java.beans.PropertyChangeListener" parameters="java.beans.PropertyChangeEvent" handler="startTimeDateChooserPropertyChange"/>
+                  </Events>
                   <Constraints>
                     <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout" value="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout$GridBagConstraintsDescription">
                       <GridBagConstraints gridX="1" gridY="0" gridWidth="1" gridHeight="1" fill="1" ipadX="0" ipadY="0" insetsTop="0" insetsLeft="10" insetsBottom="0" insetsRight="0" anchor="13" weightX="10.0" weightY="1.0"/>
@@ -135,7 +138,7 @@
                 <Component class="javax.swing.JSpinner" name="spnHourStartTime">
                   <Properties>
                     <Property name="model" type="javax.swing.SpinnerModel" editor="org.netbeans.modules.form.editors2.SpinnerModelEditor">
-                      <SpinnerModel initial="now" stepSize="12" type="date"/>
+                      <SpinnerModel initial="now" stepSize="10" type="date"/>
                     </Property>
                     <Property name="editor" type="javax.swing.JComponent" editor="org.netbeans.modules.form.editors.SpinnerEditorEditor">
                       <SpinnerEditor format="HH" type="1"/>
@@ -254,7 +257,7 @@
                 <Component class="javax.swing.JSpinner" name="spnHourEndTime">
                   <Properties>
                     <Property name="model" type="javax.swing.SpinnerModel" editor="org.netbeans.modules.form.editors2.SpinnerModelEditor">
-                      <SpinnerModel initial="now" stepSize="12" type="date"/>
+                      <SpinnerModel initial="now" stepSize="10" type="date"/>
                     </Property>
                     <Property name="editor" type="javax.swing.JComponent" editor="org.netbeans.modules.form.editors.SpinnerEditorEditor">
                       <SpinnerEditor format="HH" type="1"/>
@@ -278,7 +281,7 @@
 
               <Layout class="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout"/>
               <SubComponents>
-                <Component class="javax.swing.JLabel" name="lblMinuteStartTime1">
+                <Component class="javax.swing.JLabel" name="lblMinuteEndTime">
                   <Properties>
                     <Property name="text" type="java.lang.String" value="Minute:"/>
                   </Properties>
@@ -288,7 +291,7 @@
                     </Constraint>
                   </Constraints>
                 </Component>
-                <Component class="javax.swing.JSpinner" name="spnMinuteStartTime1">
+                <Component class="javax.swing.JSpinner" name="spnMinuteEndTime">
                   <Properties>
                     <Property name="model" type="javax.swing.SpinnerModel" editor="org.netbeans.modules.form.editors2.SpinnerModelEditor">
                       <SpinnerModel initial="now" stepSize="5" type="date"/>
