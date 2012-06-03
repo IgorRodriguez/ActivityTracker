@@ -183,7 +183,7 @@ public class TimerBO {
 		try {
 			// Set the JComboBox values from the database in descendant order by date.
 			Connection conn = dao.connect();
-			timerPanel.setCmbActivities(orderActivitiesByTime(activityDao.getActivities(conn), 
+			timerPanel.setCmbActivities(activityDao.orderActivitiesByTime(activityDao.getActivities(conn), 
 					timeDao.getDistinctActivityIdsByTime(conn)));
 		} catch (SQLException ex) {
 			errorMessages.sqlExceptionError("loadCmbActivities()", ex);
@@ -192,29 +192,5 @@ public class TimerBO {
 		} finally {
 			dao.disconnect();
 		}
-	}
-	
-	/**
-	 * Orders the given list of <code>Activity</code> in the order in which his ACTIVITY_ID appears 
-	 * in the LinkedHashSet. The activities that doesn't appear in the set will be added after this 
-	 * ones.
-	 * @param activities A list of <code>Activity</code> to be ordered.
-	 * @param activityIds a LinkedHashSet containing ACTIVITY_ID Integers in the desired order.
-	 * @return The ordered list.
-	 */
-	ArrayList<Activity> orderActivitiesByTime(ArrayList<Activity> activities, LinkedHashSet<Integer> activityIds) {
-		ArrayList<Activity> reorderedActivities = new ArrayList<>();
-		for (int i : new LinkedHashSet<>(activityIds)) {
-			for (Activity a : activities) {
-				if (i == a.getIdActivity()) {
-					reorderedActivities.add(a);
-					break;
-				}
-			}
-		}
-		for (Activity a : activities) {
-			if (!reorderedActivities.contains(a)) reorderedActivities.add(a);
-		}
-		return reorderedActivities;
 	}
 }

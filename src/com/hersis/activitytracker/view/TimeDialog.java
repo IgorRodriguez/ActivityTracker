@@ -1,14 +1,16 @@
 package com.hersis.activitytracker.view;
 
+import com.hersis.activitytracker.Activity;
+import com.hersis.activitytracker.Time;
 import com.hersis.activitytracker.controler.Controller;
-import com.toedter.calendar.IDateEditor;
+import java.awt.Color;
+import java.sql.Timestamp;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
-import java.util.TimeZone;
-import javax.swing.JOptionPane;
 
 /**
  *
@@ -16,6 +18,7 @@ import javax.swing.JOptionPane;
  */
 public class TimeDialog extends javax.swing.JDialog {
 	private final Controller controller;
+	private Time oldTime = null;
 
 	/**
 	 * Creates new form TimeDialog
@@ -33,7 +36,7 @@ public class TimeDialog extends javax.swing.JDialog {
 		
 	}
 	
-	public void setControlTime() {
+	void setTimeOnFields() {
 		Date now = Calendar.getInstance().getTime();
 		startTimeDateChooser.setDate(now);
 		spnHourStartTime.setValue(now);
@@ -41,13 +44,11 @@ public class TimeDialog extends javax.swing.JDialog {
 		endTimeDateChooser.setDate(now);
 		spnHourEndTime.setValue(now);
 		spnMinuteEndTime.setValue(now);
-	}
+	}	
 	
-	public void calculateDuration() {
-		long duration = 0;
+	Calendar getStartTimeFromFields() {
 		Calendar startTime = startTimeDateChooser.getCalendar();
-		Calendar endTime = endTimeDateChooser.getCalendar();
-		if (startTime != null && endTime != null) {
+		if (startTime != null) {
 			Calendar hour = Calendar.getInstance();
 			Calendar minute = Calendar.getInstance();
 			// Calculate Start time
@@ -57,6 +58,15 @@ public class TimeDialog extends javax.swing.JDialog {
 			minute.setTime((Date) spnMinuteStartTime.getValue());
 			startTime.set(Calendar.HOUR, hour.get(Calendar.HOUR));
 			startTime.set(Calendar.MINUTE, minute.get(Calendar.MINUTE));
+		}
+		return startTime;
+	}
+	
+	Calendar getEndTimeFromFields() {
+		Calendar endTime = endTimeDateChooser.getCalendar();
+		if (endTime != null) {
+			Calendar hour = Calendar.getInstance();
+			Calendar minute = Calendar.getInstance();
 			// Calculate End time
 			hour.clear();
 			minute.clear();
@@ -64,23 +74,64 @@ public class TimeDialog extends javax.swing.JDialog {
 			minute.setTime((Date) spnMinuteEndTime.getValue());
 			endTime.set(Calendar.HOUR, hour.get(Calendar.HOUR));
 			endTime.set(Calendar.MINUTE, minute.get(Calendar.MINUTE));
-			
-			duration = endTime.getTimeInMillis() - startTime.getTimeInMillis();
-			Calendar durationCalendar = Calendar.getInstance();
-			durationCalendar.setTimeInMillis(duration);
-			
-			// Create string, not dateFormatter.
-			DateFormat dateFormatter = new SimpleDateFormat("HH:mm:ss");
-			dateFormatter.setTimeZone(TimeZone.getTimeZone("GMT"));
-			txtDuration.setText(dateFormatter.format(durationCalendar.getTime()));
-		} else {
-			txtDuration.setText("0");
+		}
+		return endTime;
+	}
+	
+	/**
+	 * Prepares the window to be ready to insert a new Time.
+	 */
+	public void showNewTime() {
+		oldTime = null;
+		clearTextFields();
+		setTimeOnFields();
+		refreshDurationField();
+		loadCmbActivities();
+		btnDelete.setVisible(false);
+		this.pack();
+		
+	}
+	
+	private void clearTextFields() {
+		txaDescription.setText("");
+	}
+	
+	private void loadCmbActivities() {
+		ArrayList<Activity> activities = controller.getActivitiesOrderedByTime();
+		cmbActivities.removeAllItems();
+		for (Activity a : activities) {
+			cmbActivities.addItem(a);
 		}
 	}
 	
-	public static void main(String [] args) {
-		TimeDialog timeDialog = new TimeDialog(null, true, null);
-		timeDialog.setVisible(true);
+	private void refreshDurationField() {
+		final Color defaultColor = Color.BLACK;
+		final Color errorColor = Color.RED;
+		
+		long duration = controller.calculateDuration(getStartTimeFromFields(), getEndTimeFromFields());
+		txtDuration.setForeground((duration >= 0) ? defaultColor : errorColor);
+		String durationString = controller.getDurationString(duration);
+		txtDuration.setText(durationString);
+	}
+	
+	public Activity getSelectedActivity() {
+		return (Activity) cmbActivities.getSelectedItem();
+	}
+	
+	public int getSelectedActivityIndex() {
+		return cmbActivities.getSelectedIndex();
+	}
+	
+	private Time getTimeFromFields() {
+		int activityId = getSelectedActivity().getIdActivity();
+		Calendar startTimeCal = getStartTimeFromFields();
+		Calendar endTimeCal = getEndTimeFromFields();
+		Timestamp startTime = new Timestamp(startTimeCal.getTimeInMillis());
+		Timestamp endTime = new Timestamp(endTimeCal.getTimeInMillis());
+		Timestamp duration = new Timestamp(controller.calculateDuration(startTimeCal, endTimeCal));
+		String description = txaDescription.getText();
+		
+		return new Time(activityId, startTime, endTime, duration, description);
 	}
 
 	/**
@@ -95,7 +146,7 @@ public class TimeDialog extends javax.swing.JDialog {
         timePanel = new javax.swing.JPanel();
         activityPanel = new javax.swing.JPanel();
         lblActivity = new javax.swing.JLabel();
-        timeCmbActivities = new javax.swing.JComboBox();
+        cmbActivities = new javax.swing.JComboBox();
         startTimePanel = new javax.swing.JPanel();
         startTimeDatePanel = new javax.swing.JPanel();
         lblDateStartTime = new javax.swing.JLabel();
@@ -145,7 +196,7 @@ public class TimeDialog extends javax.swing.JDialog {
         gridBagConstraints.weighty = 1.0;
         activityPanel.add(lblActivity, gridBagConstraints);
 
-        timeCmbActivities.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        cmbActivities.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 1;
         gridBagConstraints.gridy = 0;
@@ -154,7 +205,7 @@ public class TimeDialog extends javax.swing.JDialog {
         gridBagConstraints.weightx = 20.0;
         gridBagConstraints.weighty = 1.0;
         gridBagConstraints.insets = new java.awt.Insets(0, 10, 0, 0);
-        activityPanel.add(timeCmbActivities, gridBagConstraints);
+        activityPanel.add(cmbActivities, gridBagConstraints);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
@@ -220,6 +271,11 @@ public class TimeDialog extends javax.swing.JDialog {
         spnHourStartTime.setModel(new javax.swing.SpinnerDateModel(new java.util.Date(), null, null, java.util.Calendar.HOUR));
         spnHourStartTime.setEditor(new javax.swing.JSpinner.DateEditor(spnHourStartTime, "HH"));
         spnHourStartTime.setVerifyInputWhenFocusTarget(false);
+        spnHourStartTime.addChangeListener(new javax.swing.event.ChangeListener() {
+            public void stateChanged(javax.swing.event.ChangeEvent evt) {
+                spnHourStartTimeStateChanged(evt);
+            }
+        });
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 1;
         gridBagConstraints.gridy = 0;
@@ -254,6 +310,11 @@ public class TimeDialog extends javax.swing.JDialog {
 
         spnMinuteStartTime.setModel(new javax.swing.SpinnerDateModel());
         spnMinuteStartTime.setEditor(new javax.swing.JSpinner.DateEditor(spnMinuteStartTime, "mm"));
+        spnMinuteStartTime.addChangeListener(new javax.swing.event.ChangeListener() {
+            public void stateChanged(javax.swing.event.ChangeEvent evt) {
+                spnMinuteStartTimeStateChanged(evt);
+            }
+        });
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 1;
         gridBagConstraints.gridy = 0;
@@ -297,6 +358,12 @@ public class TimeDialog extends javax.swing.JDialog {
         gridBagConstraints.weightx = 0.5;
         gridBagConstraints.weighty = 1.0;
         endTimeDatePanel.add(lblDateEndTime, gridBagConstraints);
+
+        endTimeDateChooser.addPropertyChangeListener(new java.beans.PropertyChangeListener() {
+            public void propertyChange(java.beans.PropertyChangeEvent evt) {
+                endTimeDateChooserPropertyChange(evt);
+            }
+        });
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 1;
         gridBagConstraints.gridy = 0;
@@ -333,6 +400,11 @@ public class TimeDialog extends javax.swing.JDialog {
         spnHourEndTime.setModel(new javax.swing.SpinnerDateModel(new java.util.Date(), null, null, java.util.Calendar.HOUR));
         spnHourEndTime.setEditor(new javax.swing.JSpinner.DateEditor(spnHourEndTime, "HH"));
         spnHourEndTime.setVerifyInputWhenFocusTarget(false);
+        spnHourEndTime.addChangeListener(new javax.swing.event.ChangeListener() {
+            public void stateChanged(javax.swing.event.ChangeEvent evt) {
+                spnHourEndTimeStateChanged(evt);
+            }
+        });
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 1;
         gridBagConstraints.gridy = 0;
@@ -367,6 +439,11 @@ public class TimeDialog extends javax.swing.JDialog {
 
         spnMinuteEndTime.setModel(new javax.swing.SpinnerDateModel());
         spnMinuteEndTime.setEditor(new javax.swing.JSpinner.DateEditor(spnMinuteEndTime, "mm"));
+        spnMinuteEndTime.addChangeListener(new javax.swing.event.ChangeListener() {
+            public void stateChanged(javax.swing.event.ChangeEvent evt) {
+                spnMinuteEndTimeStateChanged(evt);
+            }
+        });
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 1;
         gridBagConstraints.gridy = 0;
@@ -409,13 +486,15 @@ public class TimeDialog extends javax.swing.JDialog {
         durationPanel.add(lblDuration, gridBagConstraints);
 
         txtDuration.setBackground(new java.awt.Color(229, 229, 229));
-        txtDuration.setEnabled(false);
+        txtDuration.setEditable(false);
+        txtDuration.setFont(new java.awt.Font("Dialog", 0, 20)); // NOI18N
+        txtDuration.setHorizontalAlignment(javax.swing.JTextField.CENTER);
         txtDuration.setFocusable(false);
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 1;
         gridBagConstraints.gridy = 0;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.EAST;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
         gridBagConstraints.weightx = 20.0;
         gridBagConstraints.weighty = 1.0;
         gridBagConstraints.insets = new java.awt.Insets(0, 10, 0, 0);
@@ -548,16 +627,36 @@ public class TimeDialog extends javax.swing.JDialog {
 	}//GEN-LAST:event_btnDeleteActionPerformed
 
 	private void btnCancelActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCancelActionPerformed
-		
+		controller.cancelTimeEdition();
 	}//GEN-LAST:event_btnCancelActionPerformed
 
 	private void btnAcceptActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAcceptActionPerformed
-		
+		controller.saveTime(oldTime, getTimeFromFields());
 	}//GEN-LAST:event_btnAcceptActionPerformed
 
 	private void startTimeDateChooserPropertyChange(java.beans.PropertyChangeEvent evt) {//GEN-FIRST:event_startTimeDateChooserPropertyChange
-		calculateDuration();
+		refreshDurationField();
 	}//GEN-LAST:event_startTimeDateChooserPropertyChange
+
+	private void endTimeDateChooserPropertyChange(java.beans.PropertyChangeEvent evt) {//GEN-FIRST:event_endTimeDateChooserPropertyChange
+		refreshDurationField();
+	}//GEN-LAST:event_endTimeDateChooserPropertyChange
+
+	private void spnHourStartTimeStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_spnHourStartTimeStateChanged
+		refreshDurationField();
+	}//GEN-LAST:event_spnHourStartTimeStateChanged
+
+	private void spnMinuteStartTimeStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_spnMinuteStartTimeStateChanged
+		refreshDurationField();
+	}//GEN-LAST:event_spnMinuteStartTimeStateChanged
+
+	private void spnHourEndTimeStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_spnHourEndTimeStateChanged
+		refreshDurationField();
+	}//GEN-LAST:event_spnHourEndTimeStateChanged
+
+	private void spnMinuteEndTimeStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_spnMinuteEndTimeStateChanged
+		refreshDurationField();
+	}//GEN-LAST:event_spnMinuteEndTimeStateChanged
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel activityPanel;
@@ -565,6 +664,7 @@ public class TimeDialog extends javax.swing.JDialog {
     private javax.swing.JButton btnCancel;
     private javax.swing.JButton btnDelete;
     private javax.swing.JPanel buttonPanel;
+    private javax.swing.JComboBox cmbActivities;
     private javax.swing.JPanel descriptionPanel;
     private javax.swing.JPanel durationPanel;
     private com.toedter.calendar.JDateChooser endTimeDateChooser;
@@ -591,10 +691,11 @@ public class TimeDialog extends javax.swing.JDialog {
     private javax.swing.JPanel startTimeHourPanel;
     private javax.swing.JPanel startTimeMinutePanel;
     private javax.swing.JPanel startTimePanel;
-    private javax.swing.JComboBox timeCmbActivities;
     private javax.swing.JPanel timePanel;
     private javax.swing.JTextArea txaDescription;
     private javax.swing.JScrollPane txaDescriptionScrollPane;
     private javax.swing.JTextField txtDuration;
     // End of variables declaration//GEN-END:variables
+
+
 }

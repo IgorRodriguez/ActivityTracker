@@ -8,7 +8,6 @@ import com.hersis.activitytracker.controler.Controller;
  * @author Igor Rodriguez <igorrodriguezelvira@gmail.com>
  */
 public class ActivityDialog extends javax.swing.JDialog {
-
 	private final Controller controller;
 	private Activity activity;
 

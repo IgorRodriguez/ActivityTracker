@@ -2,6 +2,7 @@ package com.hersis.activitytracker.controler;
 
 import ch.qos.logback.classic.Logger;
 import com.hersis.activitytracker.Activity;
+import com.hersis.activitytracker.Time;
 import com.hersis.activitytracker.model.ActivityDao;
 import com.hersis.activitytracker.model.Dao;
 import com.hersis.activitytracker.model.TimeDao;
@@ -9,6 +10,8 @@ import com.hersis.activitytracker.view.*;
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Calendar;
 import javax.swing.JOptionPane;
 import javax.swing.WindowConstants;
 import org.slf4j.LoggerFactory;
@@ -187,5 +190,25 @@ public class Controller {
 
 	public void showNewTime() {
 		timeBo.showNewTime();
+	}
+
+	public long calculateDuration(Calendar startTime, Calendar endTime) {
+		return controllerBo.calculateDuration(startTime, endTime);
+	}
+
+	public String getDurationString(long time) {
+		return controllerBo.getDurationString(time);
+	}
+
+	public ArrayList<Activity> getActivitiesOrderedByTime() {
+		return timeBo.getActivities();
+	}
+
+	public void cancelTimeEdition() {
+		timeBo.cancelTimeEdition();
+	}
+
+	public void saveTime(Time oldTime, Time newTime) {
+		timeBo.saveTime(oldTime, newTime);
 	}
 }

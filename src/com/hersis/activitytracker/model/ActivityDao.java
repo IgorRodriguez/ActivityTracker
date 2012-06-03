@@ -7,6 +7,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import org.slf4j.LoggerFactory;
 
 /**
@@ -105,5 +106,29 @@ public class ActivityDao {
 					ex.getMessage(), ex.getErrorCode());
             throw ex;
         } 
+	}
+	
+	/**
+	 * Orders the given list of <code>Activity</code> in the order in which his ACTIVITY_ID appears 
+	 * in the LinkedHashSet. The activities that doesn't appear in the set will be added after this 
+	 * ones.
+	 * @param activities A list of <code>Activity</code> to be ordered.
+	 * @param activityIds a LinkedHashSet containing ACTIVITY_ID Integers in the desired order.
+	 * @return The ordered list.
+	 */
+	public ArrayList<Activity> orderActivitiesByTime(ArrayList<Activity> activities, LinkedHashSet<Integer> activityIds) {
+		ArrayList<Activity> reorderedActivities = new ArrayList<>();
+		for (int i : new LinkedHashSet<>(activityIds)) {
+			for (Activity a : activities) {
+				if (i == a.getIdActivity()) {
+					reorderedActivities.add(a);
+					break;
+				}
+			}
+		}
+		for (Activity a : activities) {
+			if (!reorderedActivities.contains(a)) reorderedActivities.add(a);
+		}
+		return reorderedActivities;
 	}
 }
