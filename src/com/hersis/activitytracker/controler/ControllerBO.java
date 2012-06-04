@@ -59,8 +59,8 @@ class ControllerBO {
 		
 		if (startTime != null && endTime != null) {	
 			duration = endTime.getTimeInMillis() - startTime.getTimeInMillis();
-			
 		}
+		
 		return duration;
 	}
 	

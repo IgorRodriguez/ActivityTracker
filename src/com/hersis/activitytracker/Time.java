@@ -8,8 +8,8 @@ import java.util.Objects;
  * @author Igor Rodriguez <igorrodriguezelvira@gmail.com>
  */
 public class Time implements Comparable{
-	private int idTime;
-	private int idActivity;
+	private int idTime = -1;
+	private int idActivity = -1;
 	private Timestamp startTime;
 	private Timestamp endTime;
 	private Timestamp duration;
@@ -144,5 +144,25 @@ public class Time implements Comparable{
 		if (end != 0) return end;
 		if (dur != 0) return dur;
 		else return desc;
+	}
+
+	/**
+	 * Check if the object properties needed for inserting it in the database are been initialized.
+	 * @return True if idActivity, startTime, endTime and duration are been initialized.
+	 */
+	public boolean isFullFilled() {
+		boolean isFilled = true;
+		
+		boolean aId = idActivity >= 0;
+		boolean sTime = startTime != null;
+		boolean eTime = endTime != null;
+		boolean dur = duration != null;
+		
+		if (!aId) isFilled = false;
+		if (!sTime) isFilled = false;
+		if (!eTime) isFilled = false;
+		if (!dur) isFilled = false;
+		
+		return isFilled;
 	}
 }

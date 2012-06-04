@@ -106,6 +106,7 @@
                 </Component>
                 <Component class="com.toedter.calendar.JDateChooser" name="startTimeDateChooser">
                   <Events>
+                    <EventHandler event="focusLost" listener="java.awt.event.FocusListener" parameters="java.awt.event.FocusEvent" handler="startTimeDateChooserFocusLost"/>
                     <EventHandler event="propertyChange" listener="java.beans.PropertyChangeListener" parameters="java.beans.PropertyChangeEvent" handler="startTimeDateChooserPropertyChange"/>
                   </Events>
                   <Constraints>
@@ -234,6 +235,7 @@
                 </Component>
                 <Component class="com.toedter.calendar.JDateChooser" name="endTimeDateChooser">
                   <Events>
+                    <EventHandler event="focusLost" listener="java.awt.event.FocusListener" parameters="java.awt.event.FocusEvent" handler="endTimeDateChooserFocusLost"/>
                     <EventHandler event="propertyChange" listener="java.beans.PropertyChangeListener" parameters="java.beans.PropertyChangeEvent" handler="endTimeDateChooserPropertyChange"/>
                   </Events>
                   <Constraints>

@@ -15,6 +15,7 @@ import java.util.ArrayList;
  * @author Igor Rodriguez <igorrodriguezelvira@gmail.com>
  */
 public class TimeBO {
+	private static final int MINIMUM_TIME_DURATION = 60_000;
 	private final Dao dao;
 	private final ActivityDao activityDao = new ActivityDao();
 	private final TimeDao timeDao = new TimeDao();
@@ -55,6 +56,59 @@ public class TimeBO {
 	}
 
 	void saveTime(Time oldTime, Time newTime) {
+		boolean saved;
+		
+		if (oldTime == null) {
+			saved = insertTime(newTime);
+		} else {
+			saved = updateTime(oldTime, newTime);
+		} 
+		
+		if (saved) {
+			timeDialog.setTime(null);
+			timeDialog.setVisible(false);
+			//updateTimeTable();
+			//timeListDialog.selectLastInsertedRow(newTime);
+		}
+	}
+
+	private boolean insertTime(Time newTime) {
+		boolean saved = false;
+		
+		try {
+			Connection conn = dao.connect();
+			// Check that the fields are not null and that the duration is greater than 1 minute.
+			if (newTime.isFullFilled() && newTime.getDuration().getTime() >= MINIMUM_TIME_DURATION) {
+				int insertTime = timeDao.insertTime(conn, newTime);
+				if (insertTime > 0) saved = true;				
+			} else {
+				checkTimeFields(newTime);
+			}
+		} catch (SQLException ex) {
+			errorMessages.sqlExceptionError("insertTime()", ex);
+		} catch (ClassNotFoundException ex) {
+			errorMessages.classNotFoundError("insertTime()", ex);
+		} finally {
+			dao.disconnect();
+		}
+		return saved;
+	}
+
+	private boolean updateTime(Time oldTime, Time newTime) {
 		throw new UnsupportedOperationException("Not yet implemented");
+	}
+	
+	private void checkTimeFields(Time time) {
+		if (time.getIdActivity() < 0) {
+			alertMessages.emptyTimeField(timeDialog, AlertMessages.ACTIVITY_ID);
+		} else if (time.getStartTime() == null) {
+			alertMessages.emptyTimeField(timeDialog, AlertMessages.START_TIME);
+		} else if (time.getEndTime() == null) {
+			alertMessages.emptyTimeField(timeDialog, AlertMessages.END_TIME);
+		} else if (time.getDuration() == null || time.getDuration().getTime() < MINIMUM_TIME_DURATION) {
+			alertMessages.emptyTimeField(timeDialog, AlertMessages.DURATION);
+		} else {
+			alertMessages.emptyTimeField(timeDialog, AlertMessages.OTHER_PROBLEM);
+		}
 	}
 }
