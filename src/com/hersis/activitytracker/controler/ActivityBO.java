@@ -139,17 +139,7 @@ public class ActivityBO {
 	}
 
 	void updateActivityTable() {
-		try {
-			dao.connect();
-			ArrayList<Activity> activities = activityDao.getActivities(dao.getConnection());
-			activityListDialog.updateActivityTable(activities);
-		} catch (SQLException ex) {
-			errorMessages.sqlExceptionError("updateActivityTable()", ex);
-		} catch (ClassNotFoundException ex) {
-			errorMessages.classNotFoundError("updateActivityTable()", ex);
-		} finally {
-			dao.disconnect();
-		}
+		activityListDialog.updateActivityTable(getActivities());
 	}
 
 	void showNewActivity() {
@@ -164,6 +154,23 @@ public class ActivityBO {
 		} else {
 			alertMessages.noActivitySelectedInTableForEditing(activityListDialog);
 		}
+	}
+
+	ArrayList<Activity> getActivities() {
+		ArrayList<Activity> activities = null;
+		
+		try {
+			dao.connect();
+			activities = activityDao.getActivities(dao.getConnection());
+		} catch (SQLException ex) {
+			errorMessages.sqlExceptionError("getActivities()", ex);
+		} catch (ClassNotFoundException ex) {
+			errorMessages.classNotFoundError("getActivities()", ex);
+		} finally {
+			dao.disconnect();
+		}
+		
+		return activities;
 	}
 	
 }

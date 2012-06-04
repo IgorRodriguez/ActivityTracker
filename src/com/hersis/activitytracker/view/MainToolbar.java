@@ -75,6 +75,11 @@ public class MainToolbar extends javax.swing.JPanel {
         btnViewTimes.setFocusable(false);
         btnViewTimes.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         btnViewTimes.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        btnViewTimes.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnViewTimesActionPerformed(evt);
+            }
+        });
         mainToolbar.add(btnViewTimes);
 
         btnBackup.setText("Backup");
@@ -103,6 +108,10 @@ public class MainToolbar extends javax.swing.JPanel {
 	private void btnNewTimeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnNewTimeActionPerformed
 		controller.showNewTime();
 	}//GEN-LAST:event_btnNewTimeActionPerformed
+
+	private void btnViewTimesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnViewTimesActionPerformed
+		controller.viewTimes();
+	}//GEN-LAST:event_btnViewTimesActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnBackup;

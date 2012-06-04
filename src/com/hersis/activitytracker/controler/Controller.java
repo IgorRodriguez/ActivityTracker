@@ -36,6 +36,7 @@ public class Controller {
 	private TimerBO timerBo;	
 	private ActivityBO activityBo;
 	private TimeBO timeBo;
+	private TimeListDialog timeListDialog;
 	
 	public Controller() {
 		init();
@@ -45,7 +46,7 @@ public class Controller {
 			
 			timerBo = new TimerBO(dao, timerPanel);
 			activityBo = new ActivityBO(this, dao, activityDialog, activityListDialog);
-			timeBo = new TimeBO(dao, timeDialog);
+			timeBo = new TimeBO(dao, timeDialog, timeListDialog);
 			//dao.connect();
 			loadCmbActivities();
 			
@@ -78,6 +79,8 @@ public class Controller {
 		activityListDialog.setLocationRelativeTo(mainForm);
 		timeDialog = new TimeDialog(mainForm, true, this);
 		timeDialog.setLocationRelativeTo(mainForm);
+		timeListDialog = new TimeListDialog(mainForm, true, this);
+		timeListDialog.setLocationRelativeTo(mainForm);
 	}
 	
 	final void loadCmbActivities() {
@@ -210,5 +213,21 @@ public class Controller {
 
 	public void saveTime(Time oldTime, Time newTime) {
 		timeBo.saveTime(oldTime, newTime);
+	}
+	
+	public ArrayList<Activity> getActivities() {
+		return activityBo.getActivities();
+	}
+
+	public void showEditTime(Time time) {
+		timeBo.showEditTime(time);
+	}
+
+	public void deleteTime(Component dialogParent, Time time) {
+		timeBo.deleteTime(dialogParent, time);
+	}
+
+	public void viewTimes() {
+		timeBo.viewTimes();
 	}
 }

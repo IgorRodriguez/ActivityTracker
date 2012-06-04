@@ -6,6 +6,8 @@ import com.hersis.activitytracker.model.ActivityDao;
 import com.hersis.activitytracker.model.Dao;
 import com.hersis.activitytracker.model.TimeDao;
 import com.hersis.activitytracker.view.TimeDialog;
+import com.hersis.activitytracker.view.TimeListDialog;
+import java.awt.Component;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -21,12 +23,14 @@ public class TimeBO {
 	private final TimeDao timeDao = new TimeDao();
 	
 	private final TimeDialog timeDialog;
+	private final TimeListDialog timeListDialog;
 	private AlertMessages alertMessages = new AlertMessages();
 	private ErrorMessages errorMessages = new ErrorMessages();
 
-	TimeBO(Dao dao, TimeDialog timeDialog) {
+	TimeBO(Dao dao, TimeDialog timeDialog, TimeListDialog timeListDialog) {
 		this.dao = dao;
 		this.timeDialog = timeDialog;
+		this.timeListDialog = timeListDialog;
 	}
 
 	void showNewTime() {
@@ -110,5 +114,40 @@ public class TimeBO {
 		} else {
 			alertMessages.emptyTimeField(timeDialog, AlertMessages.OTHER_PROBLEM);
 		}
+	}
+
+	void showEditTime(Time time) {
+		timeDialog.showEditTime();
+		timeDialog.setVisible(true);
+	}
+
+	void deleteTime(Component dialogParent, Time time) {
+		throw new UnsupportedOperationException("Not yet implemented");
+	}
+
+	void viewTimes() {
+		updateTimeTable();
+		timeListDialog.setVisible(true);
+	}
+
+	private void updateTimeTable() {
+		timeListDialog.updateTimeTable(getTimes());
+	}
+
+	private ArrayList<Time> getTimes() {
+		ArrayList<Time> times = null;
+		
+		try {
+			dao.connect();
+			times = timeDao.getTimes(dao.getConnection());
+		} catch (SQLException ex) {
+			errorMessages.sqlExceptionError("getTimes()", ex);
+		} catch (ClassNotFoundException ex) {
+			errorMessages.classNotFoundError("getTimes()", ex);
+		} finally {
+			dao.disconnect();
+		}
+		
+		return times;
 	}
 }

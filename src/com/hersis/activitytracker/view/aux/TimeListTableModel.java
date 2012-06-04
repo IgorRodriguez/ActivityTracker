@@ -1,27 +1,38 @@
 package com.hersis.activitytracker.view.aux;
 
 import com.hersis.activitytracker.Activity;
+import com.hersis.activitytracker.Time;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 import javax.swing.table.TableModel;
 
 /**
- * Model for <code>ActivityList</code>. Each row is an <code>Activity</code> and the
- * columns are the data of that Activity.
- * Implements TableModel and some methods for adding and deleting activities from 
+ * Model for <code>TimeList</code>. Each row is a <code>Time</code> and the
+ * columns are the data of that Time.
+ * Implements TableModel and some methods for adding and deleting times from 
  * the model.
  * @author Igor Rodriguez <igorrodriguezelvira@gmail.com>
  * @since 2012-06-02
  */
-public class ActivityListTableModel implements TableModel{
-    private ArrayList<Activity> activities = new ArrayList<>();
+public class TimeListTableModel implements TableModel{
+	private static final String ACTIVITY_COLUMN = "Activity";
+	private static final String START_TIME_COLUMN = "Start time";
+	private static final String END_TIME_COLUMN = "End time";
+	private static final String DURATION_COLUMN = "Duration";
+	private static final String DESCRIPTION_COLUMN = "Description";
+	
+    private ArrayList<Time> times = new ArrayList<>();
     private ArrayList<String> columnNames = new ArrayList<>();
     private ArrayList<TableModelListener> listeners = new ArrayList<>();
     
-    public ActivityListTableModel() {
-        columnNames.add("Name");
-        columnNames.add("Description");
+    public TimeListTableModel() {
+        columnNames.add(ACTIVITY_COLUMN);
+        columnNames.add(START_TIME_COLUMN);
+        columnNames.add(END_TIME_COLUMN);
+        columnNames.add(DURATION_COLUMN);
+        columnNames.add(DESCRIPTION_COLUMN);
     }
     
     /** Returns the number of rows in the model. A
@@ -35,7 +46,7 @@ public class ActivityListTableModel implements TableModel{
      */
     @Override
     public int getRowCount() {
-        return activities.size();
+        return times.size();
     }
 
     /** Returns the number of columns in the model. A
@@ -79,9 +90,15 @@ public class ActivityListTableModel implements TableModel{
     @Override
     public Class<?> getColumnClass(int columnIndex) {
         // Returns the class of each column
-        if (columnIndex == columnNames.indexOf("Name")) {
-            return String.class;
-        } else if (columnIndex == columnNames.indexOf("Description")) {
+        if (columnIndex == columnNames.indexOf(ACTIVITY_COLUMN)) {
+            return Integer.class;
+        } else if (columnIndex == columnNames.indexOf(START_TIME_COLUMN)) {
+            return Timestamp.class;
+        } else if (columnIndex == columnNames.indexOf(END_TIME_COLUMN)) {
+            return Timestamp.class;
+        } else if (columnIndex == columnNames.indexOf(DURATION_COLUMN)) {
+            return Timestamp.class;
+        } else if (columnIndex == columnNames.indexOf(DESCRIPTION_COLUMN)) {
             return String.class;
         } else {
             return Object.class;
@@ -114,17 +131,23 @@ public class ActivityListTableModel implements TableModel{
      */
     @Override
     public Object getValueAt(int rowIndex, int columnIndex) {
-        Activity activity;
+        Time time;
         
-		if (rowIndex < activities.size()) {
+		if (rowIndex < times.size()) {
 			// Get the Activity from the indicated row.
-			activity = activities.get(rowIndex);
+			time = times.get(rowIndex);
 
 			// Get the appropriate field from the columnIndex
-			if (columnIndex == columnNames.indexOf("Name")) {
-				return activity.getName();
-			} else if (columnIndex == columnNames.indexOf("Description")) {
-				return activity.getDescription();
+			 if (columnIndex == columnNames.indexOf(ACTIVITY_COLUMN)) {
+				return time.getIdActivity();
+			} else if (columnIndex == columnNames.indexOf(START_TIME_COLUMN)) {
+				return time.getStartTime();
+			} else if (columnIndex == columnNames.indexOf(END_TIME_COLUMN)) {
+				return time.getEndTime();
+			} else if (columnIndex == columnNames.indexOf(DURATION_COLUMN)) {
+				return time.getDuration();
+			} else if (columnIndex == columnNames.indexOf(DESCRIPTION_COLUMN)) {
+				return time.getDescription();
 			} else {
 				return null;
 			}   
@@ -133,17 +156,17 @@ public class ActivityListTableModel implements TableModel{
     }
     
     /**
-     * Returns the Activity in the given row.
+     * Returns the Time in the given row.
      * @param rowIndex
      * @return The Activity that is shown in the given row.
      */
-    public Activity getActivityAt(int rowIndex) {
-		Activity activity = null;
+    public Time getTimeAt(int rowIndex) {
+		Time time = null;
 		
-		if (rowIndex < activities.size()) {
-			activity = activities.get(rowIndex);
+		if (rowIndex < times.size()) {
+			time = times.get(rowIndex);
 		}
-		return activity;
+		return time;
     }
 
     /** Sets the value in the cell at <code>columnIndex</code> and
@@ -158,13 +181,19 @@ public class ActivityListTableModel implements TableModel{
     @Override
     public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
         // Get the Activity from the given row
-        Activity activity = activities.get(rowIndex);
+        Time time = times.get(rowIndex);
         
         // Change the field of Activity given by rowIndex, setting aValue.
-        if (columnIndex == columnNames.indexOf("Name")) {
-            activity.setName((String) aValue);
-        } else if (columnIndex == columnNames.indexOf("Description")) {
-            activity.setDescription((String) aValue);
+        if (columnIndex == columnNames.indexOf(ACTIVITY_COLUMN)) {
+            time.setIdActivity((Integer) aValue);
+        } else if (columnIndex == columnNames.indexOf(START_TIME_COLUMN)) {
+            time.setStartTime((Timestamp) aValue);
+        } else if (columnIndex == columnNames.indexOf(END_TIME_COLUMN)) {
+            time.setEndTime((Timestamp) aValue);
+        } else if (columnIndex == columnNames.indexOf(DURATION_COLUMN)) {
+            time.setDuration((Timestamp) aValue);
+        } else if (columnIndex == columnNames.indexOf(DESCRIPTION_COLUMN)) {
+            time.setDescription((String) aValue);
         } 
         
         // Notify observers
@@ -199,28 +228,30 @@ public class ActivityListTableModel implements TableModel{
     }
     
     /**
-     * Removes a Activity from the given row.
+     * Removes a Time from the given row.
      * @param row The row to be deleted.
      */
-    public void deleteActivity(int row) {
-        // Remove the row
-        activities.remove(row);
-        
-        // Notify observers
-        TableModelEvent event = new TableModelEvent(this, row, row, 
-                TableModelEvent.ALL_COLUMNS, TableModelEvent.DELETE);
-        
-        // And send to the observers
-        notifyObservers(event);
+    public void deleteTime(int row) {
+		if (row < times.size()) {
+			// Remove the row
+			times.remove(row);
+
+			// Notify observers
+			TableModelEvent event = new TableModelEvent(this, row, row, 
+					TableModelEvent.ALL_COLUMNS, TableModelEvent.DELETE);
+
+			// And send to the observers
+			notifyObservers(event);
+		}
     }
     
     /**
-     * Adds a Activity to the model.
+     * Adds a Time to the model.
      * @param msg The Activity to add to the model.
      */
-    public void addActivity(Activity activity) {
+    public void addTime(Time time) {
         // Add the Activity to the model
-        activities.add(activity);
+        times.add(time);
         
         // Notify observers
         TableModelEvent event = new TableModelEvent (this, this.getRowCount()-1,
@@ -236,19 +267,25 @@ public class ActivityListTableModel implements TableModel{
         }
     }
 
-	public void removeAllActivities() {
-		activities.clear();
+	public void removeAllTimes() {
+		times.clear();
 	}
 
-	public int getActivityIndex(Activity activity) {
+	public int getTimeIndex(Time time) {
 		int index = -1;
 		
-		if (activity.getIdActivity() > -1) {
-			index = activities.indexOf(activity);
+		if (time.getIdTime() > -1) {
+			index = times.indexOf(time);
 		} else {
-			for (Activity a : activities) {
-				if (a.getName().equals(activity.getName())) {
-					index = activities.indexOf(a);
+			for (Time t : times) {
+				boolean actId = t.getIdActivity() == time.getIdActivity();
+				boolean sTime = t.getStartTime().equals(time.getStartTime());
+				boolean eTime = t.getEndTime().equals(time.getEndTime());
+				boolean dur = t.getDuration().equals(time.getDuration());
+				boolean desc = t.getDescription().equals(time.getDescription());
+				
+				if (actId == true && sTime == true && eTime == true && dur == true && desc == true) {
+					index = times.indexOf(t);
 					break;
 				}
 			}

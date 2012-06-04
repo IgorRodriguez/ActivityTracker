@@ -101,6 +101,11 @@ public class MainForm extends javax.swing.JFrame {
         mnuEdit.add(mniViewActivities);
 
         mniViewTimes.setText("View times");
+        mniViewTimes.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                mniViewTimesActionPerformed(evt);
+            }
+        });
         mnuEdit.add(mniViewTimes);
 
         mainMenuBar.add(mnuEdit);
@@ -132,6 +137,10 @@ public class MainForm extends javax.swing.JFrame {
 	private void mniNewTimeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_mniNewTimeActionPerformed
 		controller.showNewTime();
 	}//GEN-LAST:event_mniNewTimeActionPerformed
+
+	private void mniViewTimesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_mniViewTimesActionPerformed
+		controller.viewTimes();
+	}//GEN-LAST:event_mniViewTimesActionPerformed
 
 	
     // Variables declaration - do not modify//GEN-BEGIN:variables

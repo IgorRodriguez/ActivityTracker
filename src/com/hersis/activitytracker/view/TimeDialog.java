@@ -99,7 +99,10 @@ public class TimeDialog extends javax.swing.JDialog {
 		loadCmbActivities();
 		btnDelete.setVisible(false);
 		this.pack();
-		
+	}
+	
+	public void showEditTime() {
+		throw new UnsupportedOperationException("Not yet implemented");
 	}
 	
 	private void clearTextFields() {
@@ -742,4 +745,5 @@ public class TimeDialog extends javax.swing.JDialog {
     private javax.swing.JScrollPane txaDescriptionScrollPane;
     private javax.swing.JTextField txtDuration;
     // End of variables declaration//GEN-END:variables
+
 }
