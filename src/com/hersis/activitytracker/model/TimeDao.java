@@ -28,7 +28,7 @@ public class TimeDao {
 				int idActivity = rs.getInt("ID_ACTIVITY");
 				Timestamp startTime = rs.getTimestamp("START_TIME");
 				Timestamp endTime = rs.getTimestamp("END_TIME");
-				Timestamp duration = rs.getTimestamp("DURATION");
+				long duration = rs.getLong("DURATION");
 				String description = rs.getString("DESCRIPTION");
 				times.add(new Time(idTime, idActivity, startTime, endTime, duration, description));
 			}
@@ -69,7 +69,7 @@ public class TimeDao {
 			stmt.setInt(1, time.getIdActivity());
 			stmt.setTimestamp(2, time.getStartTime());
 			stmt.setTimestamp(3, time.getEndTime());
-			stmt.setTimestamp(4, time.getDuration());
+			stmt.setLong(4, time.getDuration());
 			stmt.setString(5, time.getDescription());
 			
 			return stmt.executeUpdate();

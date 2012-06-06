@@ -1,9 +1,7 @@
 package com.hersis.activitytracker.view.aux;
 
+import com.hersis.activitytracker.controler.Controller;
 import java.awt.Component;
-import java.sql.Timestamp;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import javax.swing.JLabel;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableCellRenderer;
@@ -14,19 +12,25 @@ import javax.swing.table.TableCellRenderer;
  * @author Igor Rodriguez <igorrodriguezelvira@gmail.com>
  * @since 2012-06-04
  */
-public class TimestampTableCellRenderer extends JLabel implements TableCellRenderer{
+public class DurationTableCellRenderer extends JLabel implements TableCellRenderer{
+	private final Controller controller;
+
+	public DurationTableCellRenderer(Controller controller) {
+		super();
+		this.controller = controller;
+	}
+	
     @Override
-    public Component getTableCellRendererComponent(JTable table, Object date,
+    public Component getTableCellRendererComponent(JTable table, Object number,
             boolean isSelected, boolean hasFocus, int row, int column) {
         
         DefaultTableCellRenderer defaultRenderer = new DefaultTableCellRenderer();
         Component renderer = defaultRenderer.getTableCellRendererComponent(table, 
-                    date, isSelected, hasFocus, row, column);
+                    number, isSelected, hasFocus, row, column);
         
-        Timestamp value = (Timestamp) date;
-        DateFormat formatter = new SimpleDateFormat();
+        long value = (long) number;
 
-        this.setText(formatter.format(value.getTime()));
+        this.setText(controller.getDurationString(value));
 		this.setHorizontalAlignment(CENTER);
         this.setBackground(renderer.getBackground());
         this.setFont(renderer.getFont());

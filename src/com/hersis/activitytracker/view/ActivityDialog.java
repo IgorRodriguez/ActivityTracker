@@ -27,6 +27,14 @@ public class ActivityDialog extends javax.swing.JDialog {
 		btnDelete.setVisible(false);
 	}
 	
+	public void editActivity(Activity activity) {
+		clearAllFields();
+		fillAllFields(activity);
+		setActivity(activity);
+		btnDelete.setVisible(true);
+		this.pack();
+	}
+	
 	public Activity getActivity() {
 		return activity;
 	}
@@ -243,10 +251,4 @@ public class ActivityDialog extends javax.swing.JDialog {
     private javax.swing.JTextField txtName;
     // End of variables declaration//GEN-END:variables
 
-	public void editActivity(Activity activity) {
-		clearAllFields();
-		fillAllFields(activity);
-		setActivity(activity);
-		btnDelete.setVisible(true);
-	}
 }

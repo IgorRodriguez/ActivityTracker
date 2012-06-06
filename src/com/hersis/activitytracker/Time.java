@@ -12,10 +12,10 @@ public class Time implements Comparable{
 	private int idActivity = -1;
 	private Timestamp startTime;
 	private Timestamp endTime;
-	private Timestamp duration;
+	private long duration = -1;
 	private String description;
 
-	public Time(int idActivity, Timestamp startTime, Timestamp endTime, Timestamp duration, String description) {
+	public Time(int idActivity, Timestamp startTime, Timestamp endTime, long duration, String description) {
 		this.idActivity = idActivity;
 		this.startTime = startTime;
 		this.endTime = endTime;
@@ -23,7 +23,7 @@ public class Time implements Comparable{
 		this.description = description;
 	}
 
-	public Time(int idTime, int idActivity, Timestamp startTime, Timestamp endTime, Timestamp duration, String description) {
+	public Time(int idTime, int idActivity, Timestamp startTime, Timestamp endTime, long duration, String description) {
 		this.idTime = idTime;
 		this.idActivity = idActivity;
 		this.startTime = startTime;
@@ -40,11 +40,11 @@ public class Time implements Comparable{
 		this.description = description;
 	}
 
-	public Timestamp getDuration() {
+	public long getDuration() {
 		return duration;
 	}
 
-	public void setDuration(Timestamp duration) {
+	public void setDuration(long duration) {
 		this.duration = duration;
 	}
 
@@ -136,7 +136,7 @@ public class Time implements Comparable{
 		int act = (this.getIdActivity() == t.getIdActivity()) ? 0 : (this.getIdActivity() < t.getIdActivity()) ? -1 : 1;
 		int start = this.getStartTime().compareTo(t.getStartTime());
 		int end = this.getEndTime().compareTo(t.getEndTime());
-		int dur = this.getDuration().compareTo(t.getDuration());
+		int dur = (this.getDuration() == t.getDuration()) ? 0 : (this.getDuration() < t.getDuration()) ? -1 : 1;
 		int desc = this.getDescription().compareTo(t.getDescription());
 		
 		if (act != 0) return act;
@@ -156,7 +156,7 @@ public class Time implements Comparable{
 		boolean aId = idActivity >= 0;
 		boolean sTime = startTime != null;
 		boolean eTime = endTime != null;
-		boolean dur = duration != null;
+		boolean dur = duration >= 0;
 		
 		if (!aId) isFilled = false;
 		if (!sTime) isFilled = false;

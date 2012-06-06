@@ -13,10 +13,7 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.LinkedHashSet;
 import java.util.TimeZone;
-import java.util.logging.Level;
 import javax.swing.Timer;
 import org.slf4j.LoggerFactory;
 
@@ -139,12 +136,12 @@ public class TimerBO {
 		
 		// Pause() will we executed for the case "stop" is pressed being in "play" status.
 		pause();
-		if (startTime > 0) {
+		if (startTime > 0 && totalTime >= TimeBO.MINIMUM_TIME_DURATION) {
 			try {
 				activity = timerPanel.getSelectedActivity();
 				Connection conn = dao.connect();
 				timeDao.insertTime(conn, new Time(activity.getIdActivity(), new Timestamp(startTime), 
-						new Timestamp(pauseTime), new Timestamp(totalTime), ""));
+						new Timestamp(pauseTime), totalTime, ""));
 				startTime = -1;
 				totalTime = 0;
 			} catch (SQLException | ClassNotFoundException ex) {

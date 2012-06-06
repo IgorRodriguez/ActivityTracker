@@ -14,11 +14,11 @@ import javax.swing.table.TableCellRenderer;
  * @author Igor Rodriguez <igorrodriguezelvira@gmail.com>
  * @since 2012-06-04
  */
-public class IntegerTableCellRenderer extends JLabel implements TableCellRenderer{
+public class ActivityIdTableCellRenderer extends JLabel implements TableCellRenderer{
 	private final Controller controller;
 	private final ArrayList<Activity> activities;
 
-	public IntegerTableCellRenderer(Controller controller) {
+	public ActivityIdTableCellRenderer(Controller controller) {
 		super();
 		this.controller = controller;
 		this.activities = controller.getActivities();

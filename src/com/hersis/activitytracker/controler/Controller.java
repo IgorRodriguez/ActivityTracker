@@ -3,9 +3,7 @@ package com.hersis.activitytracker.controler;
 import ch.qos.logback.classic.Logger;
 import com.hersis.activitytracker.Activity;
 import com.hersis.activitytracker.Time;
-import com.hersis.activitytracker.model.ActivityDao;
 import com.hersis.activitytracker.model.Dao;
-import com.hersis.activitytracker.model.TimeDao;
 import com.hersis.activitytracker.view.*;
 import java.awt.BorderLayout;
 import java.awt.Component;
@@ -229,5 +227,9 @@ public class Controller {
 
 	public void viewTimes() {
 		timeBo.viewTimes();
+	}
+
+	public void closeTimeList() {
+		timeBo.closeTimeList();
 	}
 }

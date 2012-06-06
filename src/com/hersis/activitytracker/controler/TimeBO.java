@@ -17,7 +17,7 @@ import java.util.ArrayList;
  * @author Igor Rodriguez <igorrodriguezelvira@gmail.com>
  */
 public class TimeBO {
-	private static final int MINIMUM_TIME_DURATION = 60_000;
+	public static final int MINIMUM_TIME_DURATION = 60_000;
 	private final Dao dao;
 	private final ActivityDao activityDao = new ActivityDao();
 	private final TimeDao timeDao = new TimeDao();
@@ -82,7 +82,7 @@ public class TimeBO {
 		try {
 			Connection conn = dao.connect();
 			// Check that the fields are not null and that the duration is greater than 1 minute.
-			if (newTime.isFullFilled() && newTime.getDuration().getTime() >= MINIMUM_TIME_DURATION) {
+			if (newTime.isFullFilled() && newTime.getDuration() >= MINIMUM_TIME_DURATION) {
 				int insertTime = timeDao.insertTime(conn, newTime);
 				if (insertTime > 0) saved = true;				
 			} else {
@@ -109,7 +109,7 @@ public class TimeBO {
 			alertMessages.emptyTimeField(timeDialog, AlertMessages.START_TIME);
 		} else if (time.getEndTime() == null) {
 			alertMessages.emptyTimeField(timeDialog, AlertMessages.END_TIME);
-		} else if (time.getDuration() == null || time.getDuration().getTime() < MINIMUM_TIME_DURATION) {
+		} else if (time.getDuration() < MINIMUM_TIME_DURATION) {
 			alertMessages.emptyTimeField(timeDialog, AlertMessages.DURATION);
 		} else {
 			alertMessages.emptyTimeField(timeDialog, AlertMessages.OTHER_PROBLEM);
@@ -117,7 +117,7 @@ public class TimeBO {
 	}
 
 	void showEditTime(Time time) {
-		timeDialog.showEditTime();
+		timeDialog.showEditTime(time);
 		timeDialog.setVisible(true);
 	}
 
@@ -149,5 +149,9 @@ public class TimeBO {
 		}
 		
 		return times;
+	}
+
+	void closeTimeList() {
+		timeListDialog.setVisible(false);
 	}
 }

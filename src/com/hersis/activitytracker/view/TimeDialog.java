@@ -101,20 +101,52 @@ public class TimeDialog extends javax.swing.JDialog {
 		this.pack();
 	}
 	
-	public void showEditTime() {
-		throw new UnsupportedOperationException("Not yet implemented");
+	public void showEditTime(Time time) {
+		clearTextFields();
+		fillAllFields(time);
+		setTime(time);
+		btnDelete.setVisible(true);
+		this.pack();
 	}
 	
 	private void clearTextFields() {
 		txaDescription.setText("");
 	}
 	
-	private void loadCmbActivities() {
+	private void fillAllFields(Time time) {
+		ArrayList<Activity> activities = loadCmbActivities();
+		for (Activity a : activities) {
+			if (a.getIdActivity() == time.getIdActivity()) cmbActivities.getModel().setSelectedItem(a);
+		}
+		setStartTimeFields(time.getStartTime());
+		setEndTimeFields(time.getEndTime());
+		refreshDurationField();
+		txaDescription.setText(time.getDescription());
+	}
+	
+	private void setStartTimeFields(Timestamp time) {
+		Date date = new Date(time.getTime());
+		
+		startTimeDateChooser.setDate(date);
+		spnHourStartTime.setValue(date);
+		spnMinuteStartTime.setValue(date);
+	}
+	
+	private void setEndTimeFields(Timestamp time) {
+		Date date = new Date(time.getTime());
+		
+		endTimeDateChooser.setDate(date);
+		spnHourEndTime.setValue(date);
+		spnMinuteEndTime.setValue(date);
+	}
+	
+	private ArrayList<Activity> loadCmbActivities() {
 		ArrayList<Activity> activities = controller.getActivitiesOrderedByTime();
 		cmbActivities.removeAllItems();
 		for (Activity a : activities) {
 			cmbActivities.addItem(a);
 		}
+		return activities;
 	}
 	
 	private void refreshDurationField() {
@@ -147,11 +179,11 @@ public class TimeDialog extends javax.swing.JDialog {
 		Calendar endTimeCal = getEndTimeFromFields();
 		Timestamp startTime = null;
 		Timestamp endTime = null;
-		Timestamp duration = null;
+		long duration = -1;
 		if (startTimeCal != null) startTime = new Timestamp(startTimeCal.getTimeInMillis());
 		if (endTimeCal != null) endTime = new Timestamp(endTimeCal.getTimeInMillis());
 		if (startTime != null && endTime != null) {
-			duration = new Timestamp(controller.calculateDuration(startTimeCal, endTimeCal));
+			duration = controller.calculateDuration(startTimeCal, endTimeCal);
 		}
 		String description = txaDescription.getText();
 		
@@ -565,6 +597,7 @@ public class TimeDialog extends javax.swing.JDialog {
         txaDescriptionScrollPane.setPreferredSize(new java.awt.Dimension(301, 100));
 
         txaDescription.setColumns(20);
+        txaDescription.setLineWrap(true);
         txaDescription.setRows(5);
         txaDescription.setPreferredSize(new java.awt.Dimension(300, 75));
         txaDescriptionScrollPane.setViewportView(txaDescription);

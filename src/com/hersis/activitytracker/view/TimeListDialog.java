@@ -2,13 +2,12 @@ package com.hersis.activitytracker.view;
 
 import com.hersis.activitytracker.Time;
 import com.hersis.activitytracker.controler.Controller;
-import com.hersis.activitytracker.view.aux.CustomDefaultTableCellRenderer;
-import com.hersis.activitytracker.view.aux.IntegerTableCellRenderer;
-import com.hersis.activitytracker.view.aux.TimeListTableModel;
-import com.hersis.activitytracker.view.aux.TimestampTableCellRenderer;
+import com.hersis.activitytracker.view.aux.*;
 import java.awt.Point;
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import javax.swing.JLabel;
+import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumnModel;
 
 /**
@@ -29,19 +28,31 @@ public class TimeListDialog extends javax.swing.JDialog {
 		initComponents();
 		this.getRootPane().setDefaultButton(btnClose);
 	}
+	
+	private void init() {
+		
+        
+        
+		
+	}
 
 	public void updateTimeTable(ArrayList<Time> times) {
 		timeListModel.removeAllTimes();
 		for (Time t : times) {
 			timeListModel.addTime(t);
 		}
-   
+		TableCellRenderer renderer = tblTimes.getTableHeader().getDefaultRenderer();
+		JLabel label = (JLabel)renderer;
+		label.setHorizontalAlignment(JLabel.CENTER);
+		
         TableColumnModel cm = tblTimes.getColumnModel();
-        cm.getColumn(0).setPreferredWidth(100);
-        
-        tblTimes.setDefaultRenderer(Integer.class, new IntegerTableCellRenderer(controller));
+        cm.getColumn(0).setPreferredWidth(130);
+		cm.getColumn(3).setPreferredWidth(45);
+		
+		tblTimes.setDefaultRenderer(Integer.class, new ActivityIdTableCellRenderer(controller));
         tblTimes.setDefaultRenderer(Timestamp.class, new TimestampTableCellRenderer());
         tblTimes.setDefaultRenderer(String.class, new CustomDefaultTableCellRenderer());
+        tblTimes.setDefaultRenderer(Long.class, new DurationTableCellRenderer(controller));
     }
 	
 	public void selectPreviousRow() {
@@ -204,11 +215,11 @@ public class TimeListDialog extends javax.swing.JDialog {
     }// </editor-fold>//GEN-END:initComponents
 
 	private void btnCloseActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCloseActionPerformed
-		controller.closeActivityList();
+		controller.closeTimeList();
 	}//GEN-LAST:event_btnCloseActionPerformed
 
 	private void btnNewActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnNewActionPerformed
-		controller.showNewActivity();
+		controller.showNewTime();
 	}//GEN-LAST:event_btnNewActionPerformed
 
 	private void btnEditActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEditActionPerformed

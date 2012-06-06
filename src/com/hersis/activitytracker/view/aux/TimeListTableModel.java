@@ -1,6 +1,5 @@
 package com.hersis.activitytracker.view.aux;
 
-import com.hersis.activitytracker.Activity;
 import com.hersis.activitytracker.Time;
 import java.sql.Timestamp;
 import java.util.ArrayList;
@@ -97,7 +96,7 @@ public class TimeListTableModel implements TableModel{
         } else if (columnIndex == columnNames.indexOf(END_TIME_COLUMN)) {
             return Timestamp.class;
         } else if (columnIndex == columnNames.indexOf(DURATION_COLUMN)) {
-            return Timestamp.class;
+            return Long.class;
         } else if (columnIndex == columnNames.indexOf(DESCRIPTION_COLUMN)) {
             return String.class;
         } else {
@@ -191,7 +190,7 @@ public class TimeListTableModel implements TableModel{
         } else if (columnIndex == columnNames.indexOf(END_TIME_COLUMN)) {
             time.setEndTime((Timestamp) aValue);
         } else if (columnIndex == columnNames.indexOf(DURATION_COLUMN)) {
-            time.setDuration((Timestamp) aValue);
+            time.setDuration((Long) aValue);
         } else if (columnIndex == columnNames.indexOf(DESCRIPTION_COLUMN)) {
             time.setDescription((String) aValue);
         } 
@@ -281,7 +280,7 @@ public class TimeListTableModel implements TableModel{
 				boolean actId = t.getIdActivity() == time.getIdActivity();
 				boolean sTime = t.getStartTime().equals(time.getStartTime());
 				boolean eTime = t.getEndTime().equals(time.getEndTime());
-				boolean dur = t.getDuration().equals(time.getDuration());
+				boolean dur = t.getDuration() == time.getDuration();
 				boolean desc = t.getDescription().equals(time.getDescription());
 				
 				if (actId == true && sTime == true && eTime == true && dur == true && desc == true) {

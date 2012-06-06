@@ -1,22 +1,23 @@
 package com.hersis.activitytracker.controler;
 
+import ch.qos.logback.classic.Logger;
 import com.hersis.activitytracker.images.Icons;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.util.Calendar;
 import java.util.Locale;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.LookAndFeel;
 import javax.swing.UIManager;
 import javax.swing.UIManager.LookAndFeelInfo;
 import javax.swing.UnsupportedLookAndFeelException;
+import org.slf4j.LoggerFactory;
 
 /**
  *
  * @author Igor Rodriguez <igorrodriguezelvira@gmail.com>
  */
 class ControllerBO {
+	private static final Logger log = (Logger) LoggerFactory.getLogger("controller.ControllerBO");
 	private static final Icons ICONS = new Icons();
 	private final ErrorMessages errorMessages = new ErrorMessages();
 	
@@ -32,7 +33,8 @@ class ControllerBO {
 					break;
 				}
 			}
-		} catch (Exception e) {
+		} catch (ClassNotFoundException | InstantiationException | IllegalAccessException | UnsupportedLookAndFeelException e) {
+			log.error("Error trying to set Nimbus as LookAndFeel: {}", e.getLocalizedMessage());
 			try {
 				UIManager.setLookAndFeel(laf);
 			} catch (UnsupportedLookAndFeelException ex) {
@@ -81,4 +83,5 @@ class ControllerBO {
 		
 		return doubleFormatter.format(doubleTime);
 	}
+	
 }
