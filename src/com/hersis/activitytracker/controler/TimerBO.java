@@ -13,6 +13,8 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
+import java.util.Observable;
+import java.util.Observer;
 import java.util.TimeZone;
 import javax.swing.Timer;
 import org.slf4j.LoggerFactory;
@@ -21,12 +23,12 @@ import org.slf4j.LoggerFactory;
  *
  * @author Igor Rodriguez <igorrodriguezelvira@gmail.com>
  */
-public class TimerBO {
+public class TimerBO implements Observer {
 	private final Logger log = (Logger) LoggerFactory.getLogger("controller.TimerBO");
 	private TimerPanel timerPanel;
 	private Dao dao;
-	private TimeDao timeDao = new TimeDao();
-	private ActivityDao activityDao = new ActivityDao();
+	private TimeDao timeDao = TimeDao.getInstance();
+	private ActivityDao activityDao = ActivityDao.getInstance();
 	private final ErrorMessages errorMessages = new ErrorMessages();
 	
 	private long totalTime = 0;     // Total of time in "play" status
@@ -51,6 +53,9 @@ public class TimerBO {
 		
 		this.dao = dao;
 		this.timerPanel = timerPanel;
+		
+		activityDao.addObserver(this);
+		timeDao.addObserver(this);
 		
 		timerPanel.setEnabledBtnPlay(false);
 		timerPanel.setEnabledBtnPause(false);
@@ -189,5 +194,10 @@ public class TimerBO {
 		} finally {
 			dao.disconnect();
 		}
+	}
+
+	@Override
+	public void update(Observable o, Object arg) {
+		loadCmbActivities();
 	}
 }

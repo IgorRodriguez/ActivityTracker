@@ -28,6 +28,7 @@ public class TimeDialog extends javax.swing.JDialog {
 		this.controller = controller;
 		initComponents();
 		
+		// Set dateChoosers date format.
 		Locale locale = Locale.getDefault();
 		String localeDatePattern = 
 				((SimpleDateFormat) DateFormat.getDateInstance(SimpleDateFormat.LONG, locale)).toPattern();		
@@ -96,7 +97,7 @@ public class TimeDialog extends javax.swing.JDialog {
 		clearTextFields();
 		setTimeOnFields();
 		refreshDurationField();
-		loadCmbActivities();
+//		loadCmbActivities();
 		btnDelete.setVisible(false);
 		this.pack();
 	}
@@ -114,7 +115,7 @@ public class TimeDialog extends javax.swing.JDialog {
 	}
 	
 	private void fillAllFields(Time time) {
-		ArrayList<Activity> activities = loadCmbActivities();
+		ArrayList<Activity> activities = controller.getActivities();
 		for (Activity a : activities) {
 			if (a.getIdActivity() == time.getIdActivity()) cmbActivities.getModel().setSelectedItem(a);
 		}
@@ -140,7 +141,7 @@ public class TimeDialog extends javax.swing.JDialog {
 		spnMinuteEndTime.setValue(date);
 	}
 	
-	private ArrayList<Activity> loadCmbActivities() {
+	public ArrayList<Activity> loadCmbActivities() {
 		ArrayList<Activity> activities = controller.getActivitiesOrderedByTime();
 		cmbActivities.removeAllItems();
 		for (Activity a : activities) {

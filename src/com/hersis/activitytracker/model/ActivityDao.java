@@ -8,18 +8,26 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
+import java.util.Observable;
 import org.slf4j.LoggerFactory;
 
 /**
  *
  * @author Igor Rodriguez <igorrodriguezelvira@gmail.com>
  */
-public class ActivityDao {
+public class ActivityDao extends Observable {
+	private static ActivityDao activityDao;
 	private final Logger log = (Logger) LoggerFactory.getLogger("model.ActivityDao");
 	
-	public ActivityDao() {
-	}
+	private ActivityDao() {}
 	
+	public static ActivityDao getInstance() {
+		if (activityDao == null) {
+			activityDao = new ActivityDao();
+		}
+		return activityDao;
+	}
+		
 	public boolean nameExists(Connection conn, String name) throws SQLException {
 		final String sql = "SELECT * FROM APP.ACTIVITIES " +
 							"WHERE NAME = '" + name + "'";
@@ -61,17 +69,25 @@ public class ActivityDao {
 								"NAME, " +
 								"DESCRIPTION) " +
 							"VALUES (?, ?)";
-				
+		int affectedRows = -1;
+		
 		try (PreparedStatement stmt = conn.prepareStatement(sql)) {
 			stmt.setString(1, activity.getName());
 			stmt.setString(2, activity.getDescription());
 			
-			return stmt.executeUpdate();
+			affectedRows = stmt.executeUpdate();
+			// If there are changes, notify observers.
+			if (affectedRows > 0) {
+				setChanged();
+				notifyObservers();
+			}
 		} catch (SQLException ex) {
             log.error("Unable to insert activity in the database.\nMessage: {}\nError code: {}", 
 					ex.getMessage(), ex.getErrorCode());
             throw ex;
         } 
+		
+		return affectedRows;
 	}
 	
 	public int updateActivity(Connection conn, Activity oldActivity, Activity newActivity) throws SQLException {
@@ -79,33 +95,47 @@ public class ActivityDao {
 								"NAME = ?, " +
 								"DESCRIPTION = ? " +
 							"WHERE NAME = ?";
+		int affectedRows = -1;
 				
 		try (PreparedStatement stmt = conn.prepareStatement(sql)) {
 			stmt.setString(1, newActivity.getName());
 			stmt.setString(2, newActivity.getDescription());
 			stmt.setString(3, oldActivity.getName());
 			
-			return stmt.executeUpdate();
+			affectedRows = stmt.executeUpdate();
+			// If there are changes, notify observers.
+			if (affectedRows > 0) {
+				setChanged();
+				notifyObservers();
+			}
 		} catch (SQLException ex) {
             log.error("Unable to update activity in the database.\nMessage: {}\nError code: {}", 
 					ex.getMessage(), ex.getErrorCode());
             throw ex;
         } 
+		return affectedRows;
 	}
 	
 	public int deleteActivity(Connection conn, Activity activity) throws SQLException {
 		final String sql = "DELETE FROM APP.ACTIVITIES " +
 							"WHERE ID_ACTIVITY = ?";
+		int affectedRows = -1;
 				
 		try (PreparedStatement stmt = conn.prepareStatement(sql)) {
 			stmt.setInt(1, activity.getIdActivity());
 			
-			return stmt.executeUpdate();
+			affectedRows = stmt.executeUpdate();
+			// If there are changes, notify observers.
+			if (affectedRows > 0) {
+				setChanged();
+				notifyObservers();
+			}
 		} catch (SQLException ex) {
             log.error("Unable to delete activity from the database.\nMessage: {}\nError code: {}", 
 					ex.getMessage(), ex.getErrorCode());
             throw ex;
         } 
+		return affectedRows;
 	}
 	
 	/**
@@ -118,17 +148,19 @@ public class ActivityDao {
 	 */
 	public ArrayList<Activity> orderActivitiesByTime(ArrayList<Activity> activities, LinkedHashSet<Integer> activityIds) {
 		ArrayList<Activity> reorderedActivities = new ArrayList<>();
-		for (int i : new LinkedHashSet<>(activityIds)) {
-			for (Activity a : activities) {
-				if (i == a.getIdActivity()) {
-					reorderedActivities.add(a);
-					break;
+//		if (activityIds != null) {
+			for (int i : activityIds) {
+				for (Activity a : activities) {
+					if (i == a.getIdActivity()) {
+						reorderedActivities.add(a);
+						break;
+					}
 				}
 			}
-		}
-		for (Activity a : activities) {
-			if (!reorderedActivities.contains(a)) reorderedActivities.add(a);
-		}
+			for (Activity a : activities) {
+				if (!reorderedActivities.contains(a)) reorderedActivities.add(a);
+			}
+//		}
 		return reorderedActivities;
 	}
 }

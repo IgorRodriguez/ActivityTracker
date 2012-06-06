@@ -9,17 +9,18 @@ import java.awt.Component;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.LinkedHashSet;
+import java.util.Observable;
+import java.util.Observer;
 
 /**
  *
  * @author Igor Rodriguez <igorrodriguezelvira@gmail.com>
  */
-public class ActivityBO {
+public class ActivityBO implements Observer {
 	private final Dao dao;
 	private final ActivityDialog activityDialog;
 	private final ActivityListDialog activityListDialog;
-	private final ActivityDao activityDao = new ActivityDao();
+	private final ActivityDao activityDao = ActivityDao.getInstance();
 	private final AlertMessages alertMessages = new AlertMessages();
 	private final ErrorMessages errorMessages = new ErrorMessages();
 	private final Controller controller;
@@ -29,6 +30,8 @@ public class ActivityBO {
 		this.dao = dao;
 		this.activityDialog = activityDialog;	
 		this.activityListDialog = activityListDialog;
+		
+		activityDao.addObserver(this);
 	}
 
 	void saveActivity(Activity oldActivity, Activity newActivity) {
@@ -43,8 +46,8 @@ public class ActivityBO {
 		if (saved) {
 			activityDialog.setActivity(null);
 			activityDialog.setVisible(false);
-			controller.loadCmbActivities();
-			updateActivityTable();
+//			controller.loadCmbActivities();
+//			updateActivityTable();
 			activityListDialog.selectLastInsertedRow(newActivity);
 		}
 	}
@@ -112,7 +115,7 @@ public class ActivityBO {
 				try {
 					dao.connect();
 					activityDao.deleteActivity(dao.getConnection(), activity);
-					updateActivityTable();
+//					updateActivityTable();
 					activityDialog.setActivity(null);
 					activityListDialog.selectPreviousRow();
 					activityDialog.setVisible(false);
@@ -134,7 +137,7 @@ public class ActivityBO {
 	}
 
 	void viewActivities() {
-		updateActivityTable();
+//		updateActivityTable();
 		activityListDialog.setVisible(true);
 	}
 
@@ -171,6 +174,11 @@ public class ActivityBO {
 		}
 		
 		return activities;
+	}
+
+	@Override
+	public void update(Observable o, Object arg) {
+		updateActivityTable();
 	}
 	
 }

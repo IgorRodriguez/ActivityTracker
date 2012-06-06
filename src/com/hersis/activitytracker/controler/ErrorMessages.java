@@ -39,7 +39,7 @@ public class ErrorMessages {
 	}
 
 	void nullPointerError(String methodName, NullPointerException ex) {
-		log.error(ex.getLocalizedMessage());
+		log.error("NullPointerException on {}: {}", methodName, ex.getLocalizedMessage());
 	}
 
 	void unsupportedLookAndFeelError(String methodName, UnsupportedLookAndFeelException e) {

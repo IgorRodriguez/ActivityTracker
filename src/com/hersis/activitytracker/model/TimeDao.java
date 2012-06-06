@@ -5,16 +5,25 @@ import com.hersis.activitytracker.Time;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
+import java.util.Observable;
 import org.slf4j.LoggerFactory;
 
 /**
  *
  * @author Igor Rodriguez <igorrodriguezelvira@gmail.com>
  */
-public class TimeDao {
+public class TimeDao extends Observable {
+	private static TimeDao timeDao;
 	private final Logger log = (Logger) LoggerFactory.getLogger("model.ActivityDao");
 	
-	public TimeDao() {
+	private TimeDao() {
+	}
+	
+	public static TimeDao getInstance() {
+		if (timeDao == null) {
+			timeDao = new TimeDao();
+		}
+		return timeDao;
 	}
 	
 	public ArrayList<Time> getTimes(Connection conn) throws SQLException {
@@ -64,6 +73,7 @@ public class TimeDao {
 								"DURATION, " + 
 								"DESCRIPTION) " +
 							"VALUES (?, ?, ?, ?, ?)";
+		int affectedRows = -1;
 				
 		try (PreparedStatement stmt = conn.prepareStatement(sql)) {
 			stmt.setInt(1, time.getIdActivity());
@@ -72,11 +82,17 @@ public class TimeDao {
 			stmt.setLong(4, time.getDuration());
 			stmt.setString(5, time.getDescription());
 			
-			return stmt.executeUpdate();
+			affectedRows = stmt.executeUpdate();
+			
+			if (affectedRows > 0) {
+				setChanged();
+				notifyObservers();
+			}
 		} catch (SQLException ex) {
             log.error("Unable to insert time to the database.\nMessage: {}\nError code: {}", 
 					ex.getMessage(), ex.getErrorCode());
             throw ex;
         } 
+		return affectedRows;
 	}
 }

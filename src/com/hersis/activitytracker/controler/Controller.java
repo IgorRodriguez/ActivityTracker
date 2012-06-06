@@ -40,12 +40,13 @@ public class Controller {
 		init();
 		
 		try {
-			dao = new Dao();
+			dao = Dao.getInstance();
 			
 			timerBo = new TimerBO(dao, timerPanel);
 			activityBo = new ActivityBO(this, dao, activityDialog, activityListDialog);
 			timeBo = new TimeBO(dao, timeDialog, timeListDialog);
-			//dao.connect();
+			
+			// CmbActivities need to be loaded here, cannot be done in their's respectives BO constructors.
 			loadCmbActivities();
 			
 			mainForm.setVisible(true);
@@ -61,6 +62,7 @@ public class Controller {
 	private void init() {
 		controllerBo.modifyLookAndFeel();
 		
+		// Main form creation and settings
 		mainForm = new MainForm(this);
 		mainToolbar = new MainToolbar(this);
 		timerPanel = new TimerPanel(this);
@@ -71,6 +73,7 @@ public class Controller {
 		mainForm.setLocationRelativeTo(null);
 		mainForm.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
 		
+		// Dialog creation and settings
 		activityDialog = new ActivityDialog(mainForm, true, this);
 		activityDialog.setLocationRelativeTo(mainForm);
 		activityListDialog = new ActivityListDialog(mainForm, true, this);
@@ -83,6 +86,7 @@ public class Controller {
 	
 	final void loadCmbActivities() {
 		timerBo.loadCmbActivities();
+		timeBo.loadCmbActivities();
 	}
 	
 	/**

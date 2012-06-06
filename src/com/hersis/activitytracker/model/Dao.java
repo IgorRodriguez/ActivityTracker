@@ -16,6 +16,7 @@ import org.slf4j.LoggerFactory;
  * @author Igor Rodriguez <igorrodriguezelvira@gmail.com>
  */
 public class Dao implements Closeable{
+	private static Dao dao = null;
     private final Logger log = (Logger) LoggerFactory.getLogger("model.Dao");
     private static final String DERBY_SYSTEM_HOME = System.getProperty("user.dir");
     private static final String DB_NAME = "db";
@@ -41,13 +42,20 @@ public class Dao implements Closeable{
     private Properties dbProperties;
     private Connection dbConnection;
 
-    public Dao() throws ClassNotFoundException, SQLException {
+    private Dao() throws ClassNotFoundException, SQLException {
         setDBSystemDir();
         createDbProperties();
         if(!dbExists()) { // Commented for test purpouses only
             createDatabase();
         }
     }
+	
+	public static Dao getInstance() throws ClassNotFoundException, SQLException {
+		if (dao == null) {
+			dao = new Dao();
+		}
+		return dao;
+	}
 
 	/**
 	 * Creates a connection to the database. It's needed to close it with the <code>disconnect()</code> method when 

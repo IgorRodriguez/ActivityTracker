@@ -11,16 +11,18 @@ import java.awt.Component;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Observable;
+import java.util.Observer;
 
 /**
  *
  * @author Igor Rodriguez <igorrodriguezelvira@gmail.com>
  */
-public class TimeBO {
+public class TimeBO implements Observer {
 	public static final int MINIMUM_TIME_DURATION = 60_000;
 	private final Dao dao;
-	private final ActivityDao activityDao = new ActivityDao();
-	private final TimeDao timeDao = new TimeDao();
+	private final ActivityDao activityDao = ActivityDao.getInstance();
+	private final TimeDao timeDao = TimeDao.getInstance();
 	
 	private final TimeDialog timeDialog;
 	private final TimeListDialog timeListDialog;
@@ -31,6 +33,8 @@ public class TimeBO {
 		this.dao = dao;
 		this.timeDialog = timeDialog;
 		this.timeListDialog = timeListDialog;
+		
+		activityDao.addObserver(this);
 	}
 
 	void showNewTime() {
@@ -41,14 +45,14 @@ public class TimeBO {
 	ArrayList<Activity> getActivities() {
 		ArrayList<Activity> activities = null;
 		try {
-			// Set the JComboBox values from the database in descendant order by date.
+			// Returns the JComboBox values from the database in descendant order by date.
 			Connection conn = dao.connect();
 			activities = activityDao.orderActivitiesByTime(activityDao.getActivities(conn), 
 					timeDao.getDistinctActivityIdsByTime(conn));
 		} catch (SQLException ex) {
-			errorMessages.sqlExceptionError("setActivities()", ex);
+			errorMessages.sqlExceptionError("getActivities()", ex);
 		} catch (ClassNotFoundException ex) {
-			errorMessages.classNotFoundError("setActivities()", ex);
+			errorMessages.classNotFoundError("getActivities()", ex);
 		} finally {
 			dao.disconnect();
 		}
@@ -153,5 +157,20 @@ public class TimeBO {
 
 	void closeTimeList() {
 		timeListDialog.setVisible(false);
+	}
+
+	@Override
+	public void update(Observable o, Object arg) {
+		timeDialog.loadCmbActivities();
+		
+		if (o instanceof ActivityDao) {
+			
+		} else if (o instanceof TimeDao) {
+			
+		}
+	}
+
+	void loadCmbActivities() {
+		timeDialog.loadCmbActivities();
 	}
 }
