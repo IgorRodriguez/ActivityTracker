@@ -47,11 +47,8 @@ public class TimerBO implements Observer {
 	private SimpleDateFormat totalTimeFormatter = new SimpleDateFormat(TIME_FORMAT);
 	private Timer timer;
 	
-	TimerBO(Dao dao, TimerPanel timerPanel) throws NullPointerException {
-		if (dao == null) throw new NullPointerException("dao is null");
-		if (timerPanel == null) throw new NullPointerException("timerPanel is null");
-		
-		this.dao = dao;
+	TimerBO(TimerPanel timerPanel) throws ClassNotFoundException, SQLException {
+		this.dao = Dao.getInstance();
 		this.timerPanel = timerPanel;
 		
 		activityDao.addObserver(this);

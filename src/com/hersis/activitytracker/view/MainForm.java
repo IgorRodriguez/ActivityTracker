@@ -57,6 +57,11 @@ public class MainForm extends javax.swing.JFrame {
         mnuFile.setText("File");
 
         mniBackup.setText("Backup");
+        mniBackup.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                mniBackupActionPerformed(evt);
+            }
+        });
         mnuFile.add(mniBackup);
 
         mniOptions.setText("Options...");
@@ -127,20 +132,24 @@ public class MainForm extends javax.swing.JFrame {
 	}//GEN-LAST:event_mniExitActionPerformed
 
 	private void mniNewActivityActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_mniNewActivityActionPerformed
-		controller.showNewActivity();
+		controller.showNewActivityWindow();
 	}//GEN-LAST:event_mniNewActivityActionPerformed
 
 	private void mniViewActivitiesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_mniViewActivitiesActionPerformed
-		controller.viewActivities();
+		controller.viewActivitiesWindow();
 	}//GEN-LAST:event_mniViewActivitiesActionPerformed
 
 	private void mniNewTimeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_mniNewTimeActionPerformed
-		controller.showNewTime();
+		controller.showNewTimeWindow();
 	}//GEN-LAST:event_mniNewTimeActionPerformed
 
 	private void mniViewTimesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_mniViewTimesActionPerformed
-		controller.viewTimes();
+		controller.viewTimesWindow();
 	}//GEN-LAST:event_mniViewTimesActionPerformed
+
+	private void mniBackupActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_mniBackupActionPerformed
+		controller.showBackupWindow();
+	}//GEN-LAST:event_mniBackupActionPerformed
 
 	
     // Variables declaration - do not modify//GEN-BEGIN:variables

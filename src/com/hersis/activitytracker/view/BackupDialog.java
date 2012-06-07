@@ -16,9 +16,9 @@ public class BackupDialog extends javax.swing.JDialog {
 	/**
 	 * Creates new form BackupDialog
 	 */
-	public BackupDialog(java.awt.Frame parent, boolean modal, Controller controller) {
+	public BackupDialog(java.awt.Frame parent, boolean modal) {
 		super(parent, modal);
-		this.controller = controller;
+		this.controller = Controller.getInstance();
 		initComponents();
 	}
 
@@ -148,7 +148,7 @@ public class BackupDialog extends javax.swing.JDialog {
 	}//GEN-LAST:event_btnBackupNowActionPerformed
 
 	private void btnConfigureActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnConfigureActionPerformed
-		// TODO add your handling code here:
+		controller.showBackupConfigWindow();
 	}//GEN-LAST:event_btnConfigureActionPerformed
 
 	private void btnCloseActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCloseActionPerformed

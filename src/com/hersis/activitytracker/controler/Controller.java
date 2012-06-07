@@ -20,6 +20,7 @@ import org.slf4j.LoggerFactory;
  */
 public class Controller {
 	private static final Logger log = (Logger) LoggerFactory.getLogger("controller.Controller");
+	private static Controller controller;
 	private Dao dao;
 	
 	private MainForm mainForm;
@@ -30,6 +31,7 @@ public class Controller {
 	private TimeDialog timeDialog;
 	private TimeListDialog timeListDialog;
 	private BackupDialog backupDialog;
+	private BackupConfigDialog backupConfigDialog;
 	
 	private ControllerBO controllerBo = new ControllerBO();
 	private TimerBO timerBo;	
@@ -38,16 +40,16 @@ public class Controller {
 	private BackupBO backupBo;
 	private final ErrorMessages errorMessages = new ErrorMessages();
 	
-	public Controller() {
+	private Controller() {
 		init();
 		
 		try {
 			dao = Dao.getInstance();
 			
-			timerBo = new TimerBO(dao, timerPanel);
-			activityBo = new ActivityBO(this, dao, activityDialog, activityListDialog);
-			timeBo = new TimeBO(dao, timeDialog, timeListDialog);
-			backupBo = new backupBO()
+			timerBo = new TimerBO(timerPanel);
+			activityBo = new ActivityBO(this, activityDialog, activityListDialog);
+			timeBo = new TimeBO(timeDialog, timeListDialog);
+			backupBo = new BackupBO(backupDialog, backupConfigDialog);
 			
 			// CmbActivities need to be loaded here, cannot be done in their's respectives BO constructors.
 			loadCmbActivities();
@@ -62,6 +64,13 @@ public class Controller {
 		} catch (SQLException ex) {
 			errorMessages.sqlExceptionError("Controller()", ex);
 		}
+	}
+	
+	public static Controller getInstance() {
+		if (controller == null) {
+			controller = new Controller();
+		}
+		return controller;
 	}
 	
 	private void init() {
@@ -80,16 +89,18 @@ public class Controller {
 		mainForm.getRootPane().setDefaultButton(timerPanel.getNewButton());
 		
 		// Dialog creation and settings
-		activityDialog = new ActivityDialog(mainForm, true, this);
+		activityDialog = new ActivityDialog(mainForm, true);
 		activityDialog.setLocationRelativeTo(mainForm);
-		activityListDialog = new ActivityListDialog(mainForm, true, this);
+		activityListDialog = new ActivityListDialog(mainForm, true);
 		activityListDialog.setLocationRelativeTo(mainForm);
-		timeDialog = new TimeDialog(mainForm, true, this);
+		timeDialog = new TimeDialog(mainForm, true);
 		timeDialog.setLocationRelativeTo(mainForm);
-		timeListDialog = new TimeListDialog(mainForm, true, this);
+		timeListDialog = new TimeListDialog(mainForm, true);
 		timeListDialog.setLocationRelativeTo(mainForm);
-		backupDialog = new BackupDialog(mainForm, true, this);
+		backupDialog = new BackupDialog(mainForm, true);
 		backupDialog.setLocationRelativeTo(mainForm);
+		backupConfigDialog = new BackupConfigDialog(mainForm, true);
+		backupConfigDialog.setLocationRelativeTo(mainForm);
 	}
 	
 	final void loadCmbActivities() {
@@ -170,7 +181,7 @@ public class Controller {
 	/**
 	 * Action when "new activity" is selected in the GUI.
 	 */
-	public void showNewActivity() {
+	public void showNewActivityWindow() {
 		activityBo.showNewActivity();
 	}
 
@@ -189,11 +200,11 @@ public class Controller {
 		activityBo.closeActivityList();
 	}
 
-	public void viewActivities() {
+	public void viewActivitiesWindow() {
 		activityBo.viewActivities();
 	}
 
-	public void showEditActivity(Activity activity) {
+	public void showEditActivityWindow(Activity activity) {
 		activityBo.showEditActivity(activity);
 	}
 
@@ -201,7 +212,7 @@ public class Controller {
 		activityBo.deleteActivity(dialogParent, activity);
 	}
 
-	public void showNewTime() {
+	public void showNewTimeWindow() {
 		timeBo.showNewTime();
 	}
 
@@ -229,7 +240,7 @@ public class Controller {
 		return activityBo.getActivities();
 	}
 
-	public void showEditTime(Time time) {
+	public void showEditTimeWindow(Time time) {
 		timeBo.showEditTime(time);
 	}
 
@@ -237,7 +248,7 @@ public class Controller {
 		timeBo.deleteTime(dialogParent, time);
 	}
 
-	public void viewTimes() {
+	public void viewTimesWindow() {
 		timeBo.viewTimes();
 	}
 
@@ -246,6 +257,14 @@ public class Controller {
 	}
 
 	public void closeBackup() {
-		throw new UnsupportedOperationException("Not yet implemented");
+		backupBo.closeBackupWindow();
+	}
+
+	public void showBackupWindow() {
+		backupBo.showBackupWindow();
+	}
+
+	public void showBackupConfigWindow() {
+		backupBo.showBackupConfigWindow();
 	}
 }

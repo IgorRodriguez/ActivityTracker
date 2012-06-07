@@ -86,6 +86,11 @@ public class MainToolbar extends javax.swing.JPanel {
         btnBackup.setFocusable(false);
         btnBackup.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         btnBackup.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        btnBackup.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnBackupActionPerformed(evt);
+            }
+        });
         mainToolbar.add(btnBackup);
 
         btnOptions.setText("Opciones");
@@ -98,20 +103,24 @@ public class MainToolbar extends javax.swing.JPanel {
     }// </editor-fold>//GEN-END:initComponents
 
 	private void btnNewActivityActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnNewActivityActionPerformed
-		controller.showNewActivity();
+		controller.showNewActivityWindow();
 	}//GEN-LAST:event_btnNewActivityActionPerformed
 
 	private void btnViewActivitiesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnViewActivitiesActionPerformed
-		controller.viewActivities();
+		controller.viewActivitiesWindow();
 	}//GEN-LAST:event_btnViewActivitiesActionPerformed
 
 	private void btnNewTimeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnNewTimeActionPerformed
-		controller.showNewTime();
+		controller.showNewTimeWindow();
 	}//GEN-LAST:event_btnNewTimeActionPerformed
 
 	private void btnViewTimesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnViewTimesActionPerformed
-		controller.viewTimes();
+		controller.viewTimesWindow();
 	}//GEN-LAST:event_btnViewTimesActionPerformed
+
+	private void btnBackupActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBackupActionPerformed
+		controller.showBackupWindow();
+	}//GEN-LAST:event_btnBackupActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnBackup;

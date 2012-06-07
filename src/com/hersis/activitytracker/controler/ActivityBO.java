@@ -28,9 +28,10 @@ public class ActivityBO implements Observer {
 	private final ErrorMessages errorMessages = new ErrorMessages();
 	private final Controller controller;
 
-	public ActivityBO(Controller controller, Dao dao, ActivityDialog activityDialog, ActivityListDialog activityListDialog) {
+	public ActivityBO(Controller controller, ActivityDialog activityDialog, ActivityListDialog activityListDialog) 
+			throws ClassNotFoundException, SQLException {
 		this.controller = controller;
-		this.dao = dao;
+		this.dao = Dao.getInstance();
 		this.activityDialog = activityDialog;	
 		this.activityListDialog = activityListDialog;
 		
@@ -49,8 +50,6 @@ public class ActivityBO implements Observer {
 		if (saved) {
 			activityDialog.setActivity(null);
 			activityDialog.setVisible(false);
-//			controller.loadCmbActivities();
-//			updateActivityTable();
 			activityListDialog.selectLastInsertedRow(newActivity);
 		}
 	}

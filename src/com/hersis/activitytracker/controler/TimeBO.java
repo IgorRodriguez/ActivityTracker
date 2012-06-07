@@ -29,8 +29,8 @@ public class TimeBO implements Observer {
 	private AlertMessages alertMessages = new AlertMessages();
 	private ErrorMessages errorMessages = new ErrorMessages();
 
-	TimeBO(Dao dao, TimeDialog timeDialog, TimeListDialog timeListDialog) {
-		this.dao = dao;
+	TimeBO(TimeDialog timeDialog, TimeListDialog timeListDialog) throws ClassNotFoundException, SQLException {
+		this.dao = Dao.getInstance();
 		this.timeDialog = timeDialog;
 		this.timeListDialog = timeListDialog;
 		
