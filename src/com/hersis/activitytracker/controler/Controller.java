@@ -28,13 +28,15 @@ public class Controller {
 	private ActivityDialog activityDialog;
 	private ActivityListDialog activityListDialog;
 	private TimeDialog timeDialog;
+	private TimeListDialog timeListDialog;
+	private BackupDialog backupDialog;
 	
 	private ControllerBO controllerBo = new ControllerBO();
-	private final ErrorMessages errorMessages = new ErrorMessages();
 	private TimerBO timerBo;	
 	private ActivityBO activityBo;
 	private TimeBO timeBo;
-	private TimeListDialog timeListDialog;
+	private BackupBO backupBo;
+	private final ErrorMessages errorMessages = new ErrorMessages();
 	
 	public Controller() {
 		init();
@@ -45,6 +47,7 @@ public class Controller {
 			timerBo = new TimerBO(dao, timerPanel);
 			activityBo = new ActivityBO(this, dao, activityDialog, activityListDialog);
 			timeBo = new TimeBO(dao, timeDialog, timeListDialog);
+			backupBo = new backupBO()
 			
 			// CmbActivities need to be loaded here, cannot be done in their's respectives BO constructors.
 			loadCmbActivities();
@@ -85,6 +88,8 @@ public class Controller {
 		timeDialog.setLocationRelativeTo(mainForm);
 		timeListDialog = new TimeListDialog(mainForm, true, this);
 		timeListDialog.setLocationRelativeTo(mainForm);
+		backupDialog = new BackupDialog(mainForm, true, this);
+		backupDialog.setLocationRelativeTo(mainForm);
 	}
 	
 	final void loadCmbActivities() {
@@ -238,5 +243,9 @@ public class Controller {
 
 	public void closeTimeList() {
 		timeBo.closeTimeList();
+	}
+
+	public void closeBackup() {
+		throw new UnsupportedOperationException("Not yet implemented");
 	}
 }
