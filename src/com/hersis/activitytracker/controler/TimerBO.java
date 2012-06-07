@@ -57,9 +57,7 @@ public class TimerBO implements Observer {
 		activityDao.addObserver(this);
 		timeDao.addObserver(this);
 		
-		timerPanel.setEnabledBtnPlay(false);
-		timerPanel.setEnabledBtnPause(false);
-		timerPanel.setEnabledBtnStop(false);
+		timerPanel.resetControls();
 		
 		/* Configuration for SimpleDateFormat that allows to show the time in GMT mode. Used in this 
 		 * case to prevent the lapsed time to have an incorrect value. For example, without this 
@@ -69,17 +67,16 @@ public class TimerBO implements Observer {
 	}
 
 	void play() {
-		// Refreshing the GUI.
-		timerPanel.setEnabledBtnPlay(false);
-		timerPanel.setEnabledBtnPause(true);
-		timerPanel.setEnabledBtnStop(true);
-		timerPanel.setPausedAtText("");
-		isPaused = false;
+		String startTimeString = null; // If null, txtStartTime will not be reseted. 
 		
+		isPaused = false;
+				
 		if (startTime == -1) { // First "play"
 			startTime = System.currentTimeMillis();
-			timerPanel.setStartTimeText(timeFormatter.format(startTime));
+			startTimeString = timeFormatter.format(startTime);
 		}
+		// Refreshing the GUI.
+		timerPanel.setPlayControls(startTimeString);
 		
 		restartTime = System.currentTimeMillis();
 		startTimer();
@@ -116,18 +113,15 @@ public class TimerBO implements Observer {
 
 	void pause() {
 		if(!isPaused) {
-            // Refresh the GUI
-			timerPanel.setEnabledBtnPlay(true);
-			timerPanel.setEnabledBtnPause(false);
-			
             pauseTime = System.currentTimeMillis();
-            
+            // Refresh the GUI
+			timerPanel.setPauseControls(timeFormatter.format(pauseTime));
+			
             timer.stop();
 			// Refresh for showing the last time in the JTextField.
             refreshTotalTime();     
 			// Increase totalTime with the lapse time since "play" was pressed last time.
             totalTime += pauseTime - restartTime;
-			timerPanel.setPausedAtText(timeFormatter.format(pauseTime));
 			
 			/* To prevent that no instructions will be executed if this method is called without 
 			 * having pressed first "play" (i.e. at pressing "stop").
@@ -147,20 +141,16 @@ public class TimerBO implements Observer {
 				Connection conn = dao.connect();
 				timeDao.insertTime(conn, new Time(activity.getIdActivity(), new Timestamp(startTime), 
 						new Timestamp(pauseTime), totalTime, ""));
-				startTime = -1;
-				totalTime = 0;
 			} catch (SQLException | ClassNotFoundException ex) {
 				throw ex;
 			} finally {			
 				dao.disconnect();
 			}
 		}
+		startTime = -1;
+		totalTime = 0;
 		// Refreshing the GUI
-		timerPanel.setEnabledBtnPlay(false);
-		timerPanel.setEnabledBtnPause(false);
-		timerPanel.setEnabledBtnStop(false);
-		timerPanel.setEnabledBtnNew(true);
-		timerPanel.setEnabledCmbActivities(true);
+		timerPanel.resetControls();
 	}
 
 	/**
@@ -169,13 +159,7 @@ public class TimerBO implements Observer {
 	 */
 	void startTracking() throws IndexOutOfBoundsException {
 		if (timerPanel.getSelectedIndex() != -1) {
-			timerPanel.setEnabledBtnPlay(true);
-			timerPanel.setEnabledBtnNew(false);
-			timerPanel.setEnabledCmbActivities(false);
-			timerPanel.setEnabledBtnStop(true);
-			timerPanel.setStartTimeText("");
-			timerPanel.setPausedAtText("");
-			timerPanel.setTotalTimeText("");
+			timerPanel.startTracking();
 		} else {
 			throw new IndexOutOfBoundsException("There isn't any activity selected in the list!");
 		}
@@ -185,7 +169,7 @@ public class TimerBO implements Observer {
 		try {
 			// Set the JComboBox values from the database in descendant order by date.
 			Connection conn = dao.connect();
-			timerPanel.setCmbActivities(activityDao.orderActivitiesByTime(activityDao.getActivities(conn), 
+			timerPanel.loadCmbActivities(activityDao.orderActivitiesByTime(activityDao.getActivities(conn), 
 					timeDao.getDistinctActivityIdsByTime(conn)));
 		} catch (SQLException ex) {
 			errorMessages.sqlExceptionError("loadCmbActivities()", ex);

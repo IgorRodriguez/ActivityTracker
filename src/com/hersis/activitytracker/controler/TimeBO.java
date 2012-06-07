@@ -35,6 +35,7 @@ public class TimeBO implements Observer {
 		this.timeListDialog = timeListDialog;
 		
 		activityDao.addObserver(this);
+		timeDao.addObserver(this);
 	}
 
 	void showNewTime() {
@@ -75,8 +76,7 @@ public class TimeBO implements Observer {
 		if (saved) {
 			timeDialog.setTime(null);
 			timeDialog.setVisible(false);
-			//updateTimeTable();
-			//timeListDialog.selectLastInsertedRow(newTime);
+			timeListDialog.selectLastInsertedRow(newTime);
 		}
 	}
 
@@ -103,7 +103,25 @@ public class TimeBO implements Observer {
 	}
 
 	private boolean updateTime(Time oldTime, Time newTime) {
-		throw new UnsupportedOperationException("Not yet implemented");
+		boolean saved = false;
+		
+		try {
+			Connection conn = dao.connect();
+			// Check that the fields are not null and that the duration is greater than 1 minute.
+			if (newTime.isFullFilled() && newTime.getDuration() >= MINIMUM_TIME_DURATION) {
+				int updateTime = timeDao.updateTime(conn, oldTime, newTime);
+				if (updateTime > 0) saved = true;				
+			} else {
+				checkTimeFields(newTime);
+			}
+		} catch (SQLException ex) {
+			errorMessages.sqlExceptionError("updateTime()", ex);
+		} catch (ClassNotFoundException ex) {
+			errorMessages.classNotFoundError("updateTime()", ex);
+		} finally {
+			dao.disconnect();
+		}
+		return saved;
 	}
 	
 	private void checkTimeFields(Time time) {
@@ -121,20 +139,41 @@ public class TimeBO implements Observer {
 	}
 
 	void showEditTime(Time time) {
-		timeDialog.showEditTime(time);
-		timeDialog.setVisible(true);
+		if (time != null) {
+			timeDialog.showEditTime(time);
+			timeDialog.setVisible(true);
+		} else {
+			alertMessages.noTimeSelectedInTableForEditing(timeDialog);
+		}
 	}
 
 	void deleteTime(Component dialogParent, Time time) {
-		throw new UnsupportedOperationException("Not yet implemented");
+		if (time != null) {
+			if (alertMessages.deleteTimeConfirmation(dialogParent, time)) {
+				try {
+					dao.connect();
+					timeDao.deleteTime(dao.getConnection(), time);
+					timeDialog.setTime(null);
+					timeListDialog.selectPreviousRow();
+					timeDialog.setVisible(false);
+				} catch (SQLException ex) {
+					errorMessages.sqlExceptionError("deleteTime()", ex);
+				} catch (ClassNotFoundException ex) {
+					errorMessages.classNotFoundError("deleteTime()", ex);
+				} finally {
+					dao.disconnect();
+				}
+			}
+		} else {
+			alertMessages.noTimeSelectedInTableForDeleting(timeListDialog);
+		}
 	}
 
 	void viewTimes() {
-		updateTimeTable();
 		timeListDialog.setVisible(true);
 	}
 
-	private void updateTimeTable() {
+	public void updateTimeTable() {
 		timeListDialog.updateTimeTable(getTimes());
 	}
 
@@ -166,7 +205,7 @@ public class TimeBO implements Observer {
 		if (o instanceof ActivityDao) {
 			
 		} else if (o instanceof TimeDao) {
-			
+			updateTimeTable();
 		}
 	}
 

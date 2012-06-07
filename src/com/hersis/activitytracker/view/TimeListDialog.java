@@ -28,13 +28,6 @@ public class TimeListDialog extends javax.swing.JDialog {
 		initComponents();
 		this.getRootPane().setDefaultButton(btnClose);
 	}
-	
-	private void init() {
-		
-        
-        
-		
-	}
 
 	public void updateTimeTable(ArrayList<Time> times) {
 		timeListModel.removeAllTimes();

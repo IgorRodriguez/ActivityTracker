@@ -94,13 +94,13 @@ public class ActivityDao extends Observable {
 		final String sql = "UPDATE APP.ACTIVITIES SET " +
 								"NAME = ?, " +
 								"DESCRIPTION = ? " +
-							"WHERE NAME = ?";
+							"WHERE ID_ACTIVITY = ?";
 		int affectedRows = -1;
 				
 		try (PreparedStatement stmt = conn.prepareStatement(sql)) {
 			stmt.setString(1, newActivity.getName());
 			stmt.setString(2, newActivity.getDescription());
-			stmt.setString(3, oldActivity.getName());
+			stmt.setInt(3, oldActivity.getIdActivity());
 			
 			affectedRows = stmt.executeUpdate();
 			// If there are changes, notify observers.

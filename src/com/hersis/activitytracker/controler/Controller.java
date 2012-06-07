@@ -48,6 +48,8 @@ public class Controller {
 			
 			// CmbActivities need to be loaded here, cannot be done in their's respectives BO constructors.
 			loadCmbActivities();
+			activityBo.updateActivityTable();
+			timeBo.updateTimeTable();
 			
 			mainForm.setVisible(true);
 		} catch (NullPointerException ex) {
@@ -72,6 +74,7 @@ public class Controller {
 		mainForm.pack();
 		mainForm.setLocationRelativeTo(null);
 		mainForm.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
+		mainForm.getRootPane().setDefaultButton(timerPanel.getNewButton());
 		
 		// Dialog creation and settings
 		activityDialog = new ActivityDialog(mainForm, true, this);

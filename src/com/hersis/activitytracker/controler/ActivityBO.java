@@ -1,8 +1,10 @@
 package com.hersis.activitytracker.controler;
 
 import com.hersis.activitytracker.Activity;
+import com.hersis.activitytracker.Time;
 import com.hersis.activitytracker.model.ActivityDao;
 import com.hersis.activitytracker.model.Dao;
+import com.hersis.activitytracker.model.TimeDao;
 import com.hersis.activitytracker.view.ActivityDialog;
 import com.hersis.activitytracker.view.ActivityListDialog;
 import java.awt.Component;
@@ -21,6 +23,7 @@ public class ActivityBO implements Observer {
 	private final ActivityDialog activityDialog;
 	private final ActivityListDialog activityListDialog;
 	private final ActivityDao activityDao = ActivityDao.getInstance();
+	private final TimeDao timeDao = TimeDao.getInstance();
 	private final AlertMessages alertMessages = new AlertMessages();
 	private final ErrorMessages errorMessages = new ErrorMessages();
 	private final Controller controller;
@@ -113,9 +116,11 @@ public class ActivityBO implements Observer {
 		if (activity != null) {
 			if (alertMessages.deleteActivityConfirmation(dialogParent, activity)) {
 				try {
-					dao.connect();
-					activityDao.deleteActivity(dao.getConnection(), activity);
-//					updateActivityTable();
+					Connection conn = dao.connect();
+					for (Time t : timeDao.getTimesByActivity(conn, activity)) {
+						timeDao.deleteTime(conn, t);
+					}
+					activityDao.deleteActivity(conn, activity);
 					activityDialog.setActivity(null);
 					activityListDialog.selectPreviousRow();
 					activityDialog.setVisible(false);

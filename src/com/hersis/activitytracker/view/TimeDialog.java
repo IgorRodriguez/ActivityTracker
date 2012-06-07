@@ -13,7 +13,8 @@ import java.util.Date;
 import java.util.Locale;
 
 /**
- *
+ * Shows a window with controls to create, edit and delete Time instances.
+ * 
  * @author Igor Rodriguez <igorrodriguezelvira@gmail.com>
  */
 public class TimeDialog extends javax.swing.JDialog {
@@ -35,8 +36,12 @@ public class TimeDialog extends javax.swing.JDialog {
 		startTimeDateChooser.setDateFormatString(localeDatePattern);
 		endTimeDateChooser.setDateFormatString(localeDatePattern);
 		
+		this.getRootPane().setDefaultButton(btnAccept);
 	}
 	
+	/**
+	 * Sets the current time in the start and end fields.
+	 */
 	void setTimeOnFields() {
 		Date now = Calendar.getInstance().getTime();
 		startTimeDateChooser.setDate(now);
@@ -47,6 +52,10 @@ public class TimeDialog extends javax.swing.JDialog {
 		spnMinuteEndTime.setValue(now);
 	}	
 	
+	/**
+	 * Calculates the start time with the content of the start time fields.
+	 * @return Calendar containing the date from the fields.
+	 */
 	Calendar getStartTimeFromFields() {
 		Calendar startTime = startTimeDateChooser.getCalendar();
 		if (startTime != null) {
@@ -68,6 +77,10 @@ public class TimeDialog extends javax.swing.JDialog {
 		return startTime;
 	}
 	
+	/**
+	 * Calculates the end time with the content of the end time fields.
+	 * @return Calendar containing the date from the fields.
+	 */
 	Calendar getEndTimeFromFields() {
 		Calendar endTime = endTimeDateChooser.getCalendar();
 		if (endTime != null) {
@@ -97,11 +110,14 @@ public class TimeDialog extends javax.swing.JDialog {
 		clearTextFields();
 		setTimeOnFields();
 		refreshDurationField();
-//		loadCmbActivities();
 		btnDelete.setVisible(false);
 		this.pack();
 	}
 	
+	/**
+	 * Prepares the window to edit the given time.
+	 * @param time A non null Time instance.
+	 */
 	public void showEditTime(Time time) {
 		clearTextFields();
 		fillAllFields(time);
@@ -110,10 +126,17 @@ public class TimeDialog extends javax.swing.JDialog {
 		this.pack();
 	}
 	
+	/**
+	 * Resets all the JTextFields to blank.
+	 */
 	private void clearTextFields() {
 		txaDescription.setText("");
 	}
 	
+	/**
+	 * Fills all the fields with the values in the given Time.
+	 * @param time A non null Time instance.
+	 */
 	private void fillAllFields(Time time) {
 		ArrayList<Activity> activities = controller.getActivities();
 		for (Activity a : activities) {
@@ -125,6 +148,10 @@ public class TimeDialog extends javax.swing.JDialog {
 		txaDescription.setText(time.getDescription());
 	}
 	
+	/**
+	 * Fills the start time fields with the given date.
+	 * @param time The date with which fill the fields.
+	 */
 	private void setStartTimeFields(Timestamp time) {
 		Date date = new Date(time.getTime());
 		
@@ -133,6 +160,10 @@ public class TimeDialog extends javax.swing.JDialog {
 		spnMinuteStartTime.setValue(date);
 	}
 	
+	/**
+	 * Fills the end time fields with the given date.
+	 * @param time The date with which fill the fields.
+	 */
 	private void setEndTimeFields(Timestamp time) {
 		Date date = new Date(time.getTime());
 		
@@ -141,6 +172,10 @@ public class TimeDialog extends javax.swing.JDialog {
 		spnMinuteEndTime.setValue(date);
 	}
 	
+	/**
+	 * Fills cmbActivities.
+	 * @return The list of activities with which it has been filed.
+	 */
 	public ArrayList<Activity> loadCmbActivities() {
 		ArrayList<Activity> activities = controller.getActivitiesOrderedByTime();
 		cmbActivities.removeAllItems();
@@ -150,6 +185,9 @@ public class TimeDialog extends javax.swing.JDialog {
 		return activities;
 	}
 	
+	/**
+	 * Refresh the value of txtDuration with the values of the start and end time fields.
+	 */
 	private void refreshDurationField() {
 		final Color defaultColor = Color.BLACK;
 		final Color errorColor = Color.RED;
@@ -166,14 +204,27 @@ public class TimeDialog extends javax.swing.JDialog {
 		txtDuration.setText(durationString);
 	}
 	
+	/**
+	 * Returns the activity selected in cmbActivities.
+	 * @return The Activity selected in cmbActivities. Doesn't check if there is an activity selected.
+	 */
 	public Activity getSelectedActivity() {
 		return (Activity) cmbActivities.getSelectedItem();
 	}
 	
+	/**
+	 * Returns the index of the Activity selected in cmbActivities.
+	 * @return The index of the activity selected in cmbActivities. -1 if there is no activity selected.
+	 */
 	public int getSelectedActivityIndex() {
 		return cmbActivities.getSelectedIndex();
 	}
 	
+	/**
+	 * Fills a Time with the values of the fields.
+	 * @return Time containing the values of the fields. It won't be null be can be not completely 
+	 * filled.
+	 */
 	private Time getTimeFromFields() {
 		int activityId = getSelectedActivity().getIdActivity();
 		Calendar startTimeCal = getStartTimeFromFields();
@@ -294,11 +345,6 @@ public class TimeDialog extends javax.swing.JDialog {
         gridBagConstraints.weighty = 1.0;
         startTimeDatePanel.add(lblDateStartTime, gridBagConstraints);
 
-        startTimeDateChooser.addFocusListener(new java.awt.event.FocusAdapter() {
-            public void focusLost(java.awt.event.FocusEvent evt) {
-                startTimeDateChooserFocusLost(evt);
-            }
-        });
         startTimeDateChooser.addPropertyChangeListener(new java.beans.PropertyChangeListener() {
             public void propertyChange(java.beans.PropertyChangeEvent evt) {
                 startTimeDateChooserPropertyChange(evt);
@@ -428,11 +474,6 @@ public class TimeDialog extends javax.swing.JDialog {
         gridBagConstraints.weighty = 1.0;
         endTimeDatePanel.add(lblDateEndTime, gridBagConstraints);
 
-        endTimeDateChooser.addFocusListener(new java.awt.event.FocusAdapter() {
-            public void focusLost(java.awt.event.FocusEvent evt) {
-                endTimeDateChooserFocusLost(evt);
-            }
-        });
         endTimeDateChooser.addPropertyChangeListener(new java.beans.PropertyChangeListener() {
             public void propertyChange(java.beans.PropertyChangeEvent evt) {
                 endTimeDateChooserPropertyChange(evt);
@@ -698,7 +739,7 @@ public class TimeDialog extends javax.swing.JDialog {
     }// </editor-fold>//GEN-END:initComponents
 
 	private void btnDeleteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDeleteActionPerformed
-		
+		controller.deleteTime(this, oldTime);
 	}//GEN-LAST:event_btnDeleteActionPerformed
 
 	private void btnCancelActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCancelActionPerformed
@@ -732,14 +773,6 @@ public class TimeDialog extends javax.swing.JDialog {
 	private void spnMinuteEndTimeStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_spnMinuteEndTimeStateChanged
 		refreshDurationField();
 	}//GEN-LAST:event_spnMinuteEndTimeStateChanged
-
-	private void startTimeDateChooserFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_startTimeDateChooserFocusLost
-		
-	}//GEN-LAST:event_startTimeDateChooserFocusLost
-
-	private void endTimeDateChooserFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_endTimeDateChooserFocusLost
-
-	}//GEN-LAST:event_endTimeDateChooserFocusLost
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel activityPanel;

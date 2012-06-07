@@ -136,7 +136,9 @@ public class ActivityDialog extends javax.swing.JDialog {
         txaDescriptionScrollPane.setPreferredSize(new java.awt.Dimension(301, 100));
 
         txaDescription.setColumns(20);
+        txaDescription.setLineWrap(true);
         txaDescription.setRows(5);
+        txaDescription.setWrapStyleWord(true);
         txaDescription.setPreferredSize(new java.awt.Dimension(300, 75));
         txaDescriptionScrollPane.setViewportView(txaDescription);
 

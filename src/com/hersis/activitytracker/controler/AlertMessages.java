@@ -1,7 +1,9 @@
 package com.hersis.activitytracker.controler;
 
 import com.hersis.activitytracker.Activity;
+import com.hersis.activitytracker.Time;
 import com.hersis.activitytracker.view.TimeDialog;
+import com.hersis.activitytracker.view.TimeListDialog;
 import java.awt.Component;
 import javax.swing.JOptionPane;
 
@@ -43,6 +45,7 @@ public class AlertMessages {
 	boolean deleteActivityConfirmation(Component dialogParent, Activity activity) {
 		boolean delete = false;
 		String message = "Are you sure that do you like to delete the activity '" + activity.getName() + "'?";
+		message += "\nNote that all the times stored with this activity will be erased as well.";
 		String title = "Alert";
 		int response = JOptionPane.showConfirmDialog(dialogParent, message, title, 
 				JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
@@ -70,6 +73,29 @@ public class AlertMessages {
 			case OTHER_PROBLEM: default:
 				message = "Couldn't save this activity time. Check that you filled all the fields correctly";
 		}
+		String title = "Alert";
+		JOptionPane.showMessageDialog(dialogParent, message, title, JOptionPane.WARNING_MESSAGE);
+	}
+
+	boolean deleteTimeConfirmation(Component dialogParent, Time time) {
+		boolean delete = false;
+		String message = "Are you sure that do you like to delete this time?";
+		String title = "Alert";
+		int response = JOptionPane.showConfirmDialog(dialogParent, message, title, 
+				JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
+		if (response == JOptionPane.OK_OPTION) delete = true;
+		
+		return delete;
+	}
+
+	void noTimeSelectedInTableForDeleting(Component dialogParent) {
+		String message = "You need to select a time in the table in order to delete it";
+		String title = "Alert";
+		JOptionPane.showMessageDialog(dialogParent, message, title, JOptionPane.WARNING_MESSAGE);
+	}
+
+	void noTimeSelectedInTableForEditing(Component dialogParent) {
+		String message = "You need to select a time in the table in order to edit it";
 		String title = "Alert";
 		JOptionPane.showMessageDialog(dialogParent, message, title, JOptionPane.WARNING_MESSAGE);
 	}
