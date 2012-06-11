@@ -4,6 +4,7 @@
  */
 package com.hersis.activitytracker.view;
 
+import com.hersis.activitytracker.BackupPeriod;
 import com.hersis.activitytracker.controler.Controller;
 
 /**
@@ -16,9 +17,9 @@ public class BackupDialog extends javax.swing.JDialog {
 	/**
 	 * Creates new form BackupDialog
 	 */
-	public BackupDialog(java.awt.Frame parent, boolean modal) {
+	public BackupDialog(java.awt.Frame parent, boolean modal, Controller controller) {
 		super(parent, modal);
-		this.controller = Controller.getInstance();
+		this.controller = controller;
 		initComponents();
 	}
 

@@ -14,9 +14,9 @@ public class ActivityDialog extends javax.swing.JDialog {
 	/**
 	 * Creates new form ActivityDialog
 	 */
-	public ActivityDialog(java.awt.Frame parent, boolean modal) {
+	public ActivityDialog(java.awt.Frame parent, boolean modal, Controller controller) {
 		super(parent, modal);
-		this.controller = Controller.getInstance();
+		this.controller = controller;
 		initComponents();
 		this.getRootPane().setDefaultButton(btnAccept);
 	}

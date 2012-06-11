@@ -1,17 +1,20 @@
 package com.hersis.activitytracker.controler;
 
+import ch.qos.logback.classic.Logger;
 import com.hersis.activitytracker.Activity;
 import com.hersis.activitytracker.Time;
-import com.hersis.activitytracker.view.TimeDialog;
-import com.hersis.activitytracker.view.TimeListDialog;
 import java.awt.Component;
+import java.io.IOException;
+import java.sql.SQLException;
 import javax.swing.JOptionPane;
+import org.slf4j.LoggerFactory;
 
 /**
  *
  * @author Igor Rodriguez <igorrodriguezelvira@gmail.com>
  */
 public class AlertMessages {
+	private final static Logger log = (Logger) LoggerFactory.getLogger("controller.AlertMessages");
 	public static final int OTHER_PROBLEM = -1;
 	public static final int ACTIVITY_ID = 0;
 	public static final int START_TIME = 1;
@@ -99,5 +102,40 @@ public class AlertMessages {
 		String title = "Alert";
 		JOptionPane.showMessageDialog(dialogParent, message, title, JOptionPane.WARNING_MESSAGE);
 	}
+
+	void propertiesLoadIOException(IOException e) {
+		String message = "Unable to load the previous configuration of the application.\n" +
+				"Default values will be loaded.";
+            JOptionPane.showMessageDialog(null, message, "Unable to load configuration",
+                            JOptionPane.WARNING_MESSAGE);
+            log.info(message + "\nMessage: {}", e.getLocalizedMessage());
+	}
+
+	void propertiesSaveIOException(IOException e) {
+		String message = "Unable to save the configuration of the application.";
+            JOptionPane.showMessageDialog(null, message, "Unable to save configuration",
+                            JOptionPane.WARNING_MESSAGE);
+            log.info(message + "\nMessage: {}", e.getLocalizedMessage());
+	}
+
+	boolean exitSQLException(Component mainParent, SQLException e) {
+		int errorCode = e.getErrorCode();
+		boolean exit = true;
+		// At shutdown, Derby throws error 50.000 and SQLState XJ015 to show 
+		// that the operation was successful.
+		if (errorCode != 50000 && "XJ015".equals(e.getSQLState())) {
+			String errorMessage = "The database isn't successfully closed.\n" +
+					"Do you like to force the closure of the application?";
+			int answer = JOptionPane.showConfirmDialog(mainParent, errorMessage, 
+					"¿Force and exit?", JOptionPane.OK_CANCEL_OPTION, JOptionPane.WARNING_MESSAGE);
+			if (answer == JOptionPane.CANCEL_OPTION) exit = false; 
+		}
+		return exit;
+	}
 	
+	void startTrackingIndexOutOfBounds(Component parent, IndexOutOfBoundsException ex) {
+		String message = ex.getLocalizedMessage();
+		log.error(message);
+		JOptionPane.showMessageDialog(parent, message, "Error", JOptionPane.ERROR_MESSAGE);
+	}
 }

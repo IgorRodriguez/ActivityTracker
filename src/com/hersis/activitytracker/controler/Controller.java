@@ -10,7 +10,6 @@ import java.awt.Component;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Calendar;
-import javax.swing.JOptionPane;
 import javax.swing.WindowConstants;
 import org.slf4j.LoggerFactory;
 
@@ -39,11 +38,11 @@ public class Controller {
 	private TimeBO timeBo;
 	private BackupBO backupBo;
 	private final ErrorMessages errorMessages = new ErrorMessages();
+	private final AlertMessages alertMessages = new AlertMessages();
 	
-	private Controller() {
-		init();
-		
+	public Controller() {
 		try {
+			init();
 			dao = Dao.getInstance();
 			
 			timerBo = new TimerBO(timerPanel);
@@ -66,7 +65,7 @@ public class Controller {
 		}
 	}
 	
-	public static Controller getInstance() {
+	private static Controller getInstance() {
 		if (controller == null) {
 			controller = new Controller();
 		}
@@ -75,6 +74,8 @@ public class Controller {
 	
 	private void init() {
 		controllerBo.modifyLookAndFeel();
+		
+		controllerBo.loadProperties();
 		
 		// Main form creation and settings
 		mainForm = new MainForm(this);
@@ -88,18 +89,18 @@ public class Controller {
 		mainForm.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
 		mainForm.getRootPane().setDefaultButton(timerPanel.getNewButton());
 		
-		// Dialog creation and settings
-		activityDialog = new ActivityDialog(mainForm, true);
+//		// Dialog creation and settings
+		activityDialog = new ActivityDialog(mainForm, true, this);
 		activityDialog.setLocationRelativeTo(mainForm);
-		activityListDialog = new ActivityListDialog(mainForm, true);
+		activityListDialog = new ActivityListDialog(mainForm, true, this);
 		activityListDialog.setLocationRelativeTo(mainForm);
-		timeDialog = new TimeDialog(mainForm, true);
+		timeDialog = new TimeDialog(mainForm, true, this);
 		timeDialog.setLocationRelativeTo(mainForm);
-		timeListDialog = new TimeListDialog(mainForm, true);
+		timeListDialog = new TimeListDialog(mainForm, true, this);
 		timeListDialog.setLocationRelativeTo(mainForm);
-		backupDialog = new BackupDialog(mainForm, true);
+		backupDialog = new BackupDialog(mainForm, true, this);
 		backupDialog.setLocationRelativeTo(mainForm);
-		backupConfigDialog = new BackupConfigDialog(mainForm, true);
+		backupConfigDialog = new BackupConfigDialog(mainForm, true, this);
 		backupConfigDialog.setLocationRelativeTo(mainForm);
 	}
 	
@@ -108,34 +109,23 @@ public class Controller {
 		timeBo.loadCmbActivities();
 	}
 	
+	public String getPropertie(String key) {
+		return controllerBo.getPropertie(key);
+	}
+	
+	public void setPropertie(String key, String value) {
+		controllerBo.setPropertie(key, value);
+	}
+	
+	public void removePropertie(String key) {
+		controllerBo.removePropertie(key);
+	}
+	
 	/**
 	 * Finalizes correctly the application and exits.
 	 */
 	public void exit() {
-		boolean exit = true;
-		int errorCode = -1;
-		
-        try {
-            dao.exitDatabase();
-        } catch (SQLException ex) {
-            errorCode = ex.getErrorCode();
-            // At shutdown, Derby throws error 50.000 and SQLState XJ015 to show 
-            // that the operation was successful.
-            if (errorCode != 50000 && "XJ015".equals(ex.getSQLState())) {
-                String errorMessage = "La base de datos no se ha cerrado " +
-                        "correctamente.\n" +
-                        "¿Desea forzar el cierre de la aplicacion?";
-                int answer = JOptionPane.showConfirmDialog(mainForm, errorMessage, 
-                        "¿Salir?", JOptionPane.OK_CANCEL_OPTION, JOptionPane.WARNING_MESSAGE);
-                if (answer == JOptionPane.CANCEL_OPTION) exit = false; 
-            }
-        } finally {
-            // Exits if not cancelled by the user.
-            if (exit) {
-				log.info("Successfully disconnected from database: {}", errorCode);
-				System.exit(0);
-			}
-        }
+		controllerBo.exit(dao, mainForm);
 	}
 
 	/**
@@ -172,9 +162,7 @@ public class Controller {
 		try {
 			timerBo.startTracking();
 		} catch (IndexOutOfBoundsException ex) {
-			String message = ex.getLocalizedMessage();
-			log.error(message);
-			JOptionPane.showMessageDialog(timerPanel, message, "Error", JOptionPane.ERROR_MESSAGE);
+			alertMessages.startTrackingIndexOutOfBounds(timerPanel, ex);
 		}
 	}
 

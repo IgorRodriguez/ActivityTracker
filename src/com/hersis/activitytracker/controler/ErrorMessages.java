@@ -1,6 +1,8 @@
 package com.hersis.activitytracker.controler;
 
 import ch.qos.logback.classic.Logger;
+import com.hersis.activitytracker.view.TimerPanel;
+import java.io.IOException;
 import java.sql.SQLException;
 import javax.swing.JOptionPane;
 import javax.swing.UnsupportedLookAndFeelException;
@@ -46,5 +48,11 @@ public class ErrorMessages {
 		String message = "Unable to load the class in method '" + methodName + "': \n" + e.getLocalizedMessage();
 		log.error(message);
 		JOptionPane.showMessageDialog(null, message, "Error", JOptionPane.ERROR_MESSAGE);
+	}
+
+	void createPropertiesFileIOException(String methodName, IOException e) {
+		String message = "Unable to create the configuration file in method '" + methodName + "': \n" + 
+				e.getLocalizedMessage();
+		log.error(message);
 	}
 }

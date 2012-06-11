@@ -2,10 +2,20 @@ package com.hersis.activitytracker.controler;
 
 import ch.qos.logback.classic.Logger;
 import com.hersis.activitytracker.images.Icons;
+import com.hersis.activitytracker.model.Dao;
+import java.awt.Component;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.sql.SQLException;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.util.Calendar;
 import java.util.Locale;
+import java.util.Properties;
+import java.util.logging.Level;
 import javax.swing.LookAndFeel;
 import javax.swing.UIManager;
 import javax.swing.UIManager.LookAndFeelInfo;
@@ -18,8 +28,12 @@ import org.slf4j.LoggerFactory;
  */
 class ControllerBO {
 	private static final Logger log = (Logger) LoggerFactory.getLogger("controller.ControllerBO");
+	private static final String PROPERTIES_FILE_PATH = System.getProperty("user.dir") + File.separatorChar +
+			"ActivityTracker.properties";
 	private static final Icons ICONS = new Icons();
 	private final ErrorMessages errorMessages = new ErrorMessages();
+	private final AlertMessages alertMessages = new AlertMessages();
+	private Properties appProperties = new Properties();
 	
 	/**
 	 * Changes some things on the default LookAndFeel, such as alert message's icons.
@@ -48,6 +62,46 @@ class ControllerBO {
 		UIManager.put("OptionPane.warningIcon", ICONS.getIcon(Icons.IconValues.WARNING));
 	}
 	
+	void loadProperties() {
+		if (!new File(PROPERTIES_FILE_PATH).exists()) createPropertiesFile();
+        try (FileInputStream propFis = new FileInputStream(PROPERTIES_FILE_PATH)) {
+            appProperties.load(propFis);
+            log.debug("Properties loaded successfully");
+        } catch (IOException ioe) {
+			alertMessages.propertiesLoadIOException(ioe);
+        } 
+    }
+	
+	void createPropertiesFile() {
+		File propertiesFile = new File(PROPERTIES_FILE_PATH);
+		try {
+			propertiesFile.createNewFile();
+		} catch (IOException ex) {
+			errorMessages.createPropertiesFileIOException("createPropertiesFile()", ex);
+		}
+	}
+    
+    void saveProperties() {
+		if (!new File(PROPERTIES_FILE_PATH).exists()) createPropertiesFile();
+        try (FileOutputStream propFos = new FileOutputStream(PROPERTIES_FILE_PATH)) {
+            appProperties.store(propFos, "Saved with date: ");
+            log.debug("Properties saved successfully");
+        } catch (IOException ioe) {
+			alertMessages.propertiesSaveIOException(ioe);
+        } 
+    }
+	
+	String getPropertie(String key) {
+		return appProperties.getProperty(key);
+	}
+	
+	void setPropertie(String key, String value) {
+		appProperties.setProperty(key, value);
+	}
+	
+	void removePropertie(String key) {
+		appProperties.remove(key);
+	}
 	
 	
 	/**
@@ -84,4 +138,25 @@ class ControllerBO {
 		return doubleFormatter.format(doubleTime);
 	}
 	
+	/**
+	 * Finalizes correctly the application and exits.
+	 */
+	public void exit(Dao dao, Component mainParent) {	
+		boolean exit = true;
+		int errorCode = -1;
+		
+        try {
+			saveProperties();
+            dao.exitDatabase();
+        } catch (SQLException ex) {
+			exit = alertMessages.exitSQLException(mainParent, ex);
+			errorCode = ex.getErrorCode();
+        } finally {
+            // Exits if not cancelled by the user.
+            if (exit) {
+				log.info("Successfully disconnected from database: {}", errorCode);
+				System.exit(0);
+			}
+        }
+	}
 }

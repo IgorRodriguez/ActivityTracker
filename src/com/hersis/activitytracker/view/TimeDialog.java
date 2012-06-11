@@ -24,9 +24,9 @@ public class TimeDialog extends javax.swing.JDialog {
 	/**
 	 * Creates new form TimeDialog
 	 */
-	public TimeDialog(java.awt.Frame parent, boolean modal) {
+	public TimeDialog(java.awt.Frame parent, boolean modal, Controller controller) {
 		super(parent, modal);
-		this.controller = Controller.getInstance();
+		this.controller = controller;
 		initComponents();
 		
 		// Set dateChoosers date format.

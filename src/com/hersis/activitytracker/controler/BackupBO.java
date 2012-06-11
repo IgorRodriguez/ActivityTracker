@@ -25,6 +25,7 @@ public class BackupBO {
 	}
 
 	void showBackupConfigWindow() {
+		backupConfigDialog.loadBackupValues();
 		backupConfigDialog.setVisible(true);
 	}
 	
