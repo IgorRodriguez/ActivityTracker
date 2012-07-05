@@ -34,7 +34,7 @@ class ControllerBO {
 	private final ErrorMessages errorMessages = new ErrorMessages();
 	private final AlertMessages alertMessages = new AlertMessages();
 	private Properties appProperties = new Properties();
-	
+		
 	/**
 	 * Changes some things on the default LookAndFeel, such as alert message's icons.
 	 */

@@ -3,6 +3,7 @@ package com.hersis.activitytracker.controler;
 import ch.qos.logback.classic.Logger;
 import com.hersis.activitytracker.Activity;
 import com.hersis.activitytracker.Time;
+import com.hersis.activitytracker.view.BackupConfigDialog;
 import java.awt.Component;
 import java.io.IOException;
 import java.sql.SQLException;
@@ -20,6 +21,18 @@ public class AlertMessages {
 	public static final int START_TIME = 1;
 	public static final int END_TIME = 2;
 	public static final int DURATION = 3;
+
+	public static void backupPathNull(Component dialogParent) {
+		String message = "The backup path cannot be empty";
+		String title = "Alert";
+		JOptionPane.showMessageDialog(dialogParent, message, title, JOptionPane.WARNING_MESSAGE);
+	}
+
+	public static void backupPeriodNull(Component dialogParent) {
+		String message = "Select a backup period";
+		String title = "Alert";
+		JOptionPane.showMessageDialog(dialogParent, message, title, JOptionPane.WARNING_MESSAGE);
+	}
 
 	void emptyActivityFields(Component dialogParent) {
 		String message = "The name of the activity cannot be empty";

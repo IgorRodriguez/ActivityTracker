@@ -1,6 +1,7 @@
 package com.hersis.activitytracker.view;
 
 import com.hersis.activitytracker.BackupPeriod;
+import com.hersis.activitytracker.controler.AlertMessages;
 import com.hersis.activitytracker.controler.Controller;
 
 /**
@@ -28,7 +29,7 @@ public class BackupConfigDialog extends javax.swing.JDialog {
 	}
 	
 	private void selectBackupPeriodOnComboBox() {
-		String propertie = controller.getPropertie("backupPeriod");
+		String propertie = controller.getPropertie(Controller.BACKUP_PERIOD_PROPERTIE);
 		BackupPeriod backupPeriod;
 		if (propertie != null) {
 			propertie = propertie.toUpperCase();
@@ -38,7 +39,7 @@ public class BackupConfigDialog extends javax.swing.JDialog {
 	}
 	
 	private void setBackupPath() {
-		String propertie = controller.getPropertie("backupPath");
+		String propertie = controller.getPropertie(Controller.BACKUP_PATH_PROPERTIE);
 		if (propertie != null) {
 			txtPath.setText(propertie);
 		} else {
@@ -67,6 +68,7 @@ public class BackupConfigDialog extends javax.swing.JDialog {
         periodsPanel = new javax.swing.JPanel();
         cmbPeriods = new javax.swing.JComboBox();
         buttonPanel = new javax.swing.JPanel();
+        btnCancel = new javax.swing.JButton();
         separatorPanel = new javax.swing.JPanel();
         btnAccept = new javax.swing.JButton();
 
@@ -139,6 +141,22 @@ public class BackupConfigDialog extends javax.swing.JDialog {
 
         buttonPanel.setLayout(new java.awt.GridBagLayout());
 
+        btnCancel.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/hersis/activitytracker/images/button_cancel.png"))); // NOI18N
+        btnCancel.setText("Cancel");
+        btnCancel.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnCancelActionPerformed(evt);
+            }
+        });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.weighty = 1.0;
+        buttonPanel.add(btnCancel, gridBagConstraints);
+
         separatorPanel.setLayout(new java.awt.BorderLayout());
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
@@ -155,7 +173,7 @@ public class BackupConfigDialog extends javax.swing.JDialog {
             }
         });
         gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridx = 2;
         gridBagConstraints.gridy = 0;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.EAST;
@@ -179,8 +197,21 @@ public class BackupConfigDialog extends javax.swing.JDialog {
     }// </editor-fold>//GEN-END:initComponents
 
 	private void btnAcceptActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAcceptActionPerformed
-		controller.setPropertie("backupPath", txtPath.getText());
-		controller.setPropertie("backupPeriod", cmbPeriods.getModel().getSelectedItem().toString());
+		String backupPath = txtPath.getText();
+		if (backupPath != null && !"".equals(backupPath.trim())) {
+			controller.setPropertie(Controller.BACKUP_PATH_PROPERTIE, backupPath.trim());
+		} else {
+			AlertMessages.backupPathNull(this);
+			return;
+		}
+		Object selectedPeriod = cmbPeriods.getModel().getSelectedItem();
+		if (selectedPeriod != null) {
+			controller.setPropertie(Controller.BACKUP_PERIOD_PROPERTIE, selectedPeriod.toString());
+		} else {
+			AlertMessages.backupPeriodNull(this);
+			return;
+		}
+		// This will execute only if there is no alert thrown.
 		this.setVisible(false);
 	}//GEN-LAST:event_btnAcceptActionPerformed
 
@@ -188,10 +219,15 @@ public class BackupConfigDialog extends javax.swing.JDialog {
 		// TODO add your handling code here:
 	}//GEN-LAST:event_btnFindPathActionPerformed
 
+	private void btnCancelActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCancelActionPerformed
+		this.setVisible(false);
+	}//GEN-LAST:event_btnCancelActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel backupConfigPanel;
     private javax.swing.JPanel backupPathPanel;
     private javax.swing.JButton btnAccept;
+    private javax.swing.JButton btnCancel;
     private javax.swing.JButton btnFindPath;
     private javax.swing.JPanel buttonPanel;
     private javax.swing.JComboBox cmbPeriods;

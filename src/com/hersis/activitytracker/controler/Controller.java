@@ -40,6 +40,9 @@ public class Controller {
 	private final ErrorMessages errorMessages = new ErrorMessages();
 	private final AlertMessages alertMessages = new AlertMessages();
 	
+	public static final String BACKUP_PERIOD_PROPERTIE = "backupPeriod";
+	public static final String BACKUP_PATH_PROPERTIE = "backupPath";
+		
 	public Controller() {
 		try {
 			init();
