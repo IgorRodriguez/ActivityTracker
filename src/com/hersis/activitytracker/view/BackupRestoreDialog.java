@@ -2,12 +2,18 @@ package com.hersis.activitytracker.view;
 
 import com.hersis.activitytracker.controler.Controller;
 import java.io.File;
+import java.util.ArrayList;
+import javax.swing.ComboBoxModel;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
+import javax.swing.event.ListDataListener;
 
 /**
  *
  * @author Igor Rodriguez <igorrodriguezelvira@gmail.com>
  */
 public class BackupRestoreDialog extends javax.swing.JDialog {
+	private String backupPath = "";
 
 	/**
 	 * Creates new form BackupRestoreDialog
@@ -15,11 +21,68 @@ public class BackupRestoreDialog extends javax.swing.JDialog {
 	public BackupRestoreDialog(java.awt.Frame parent, boolean modal) {
 		super(parent, modal);
 		initComponents();
+		cmbBackupSelection.setModel(new ComboBoxModel() {
+			ArrayList<File> fileList = new ArrayList<>();
+			File selectedFile = null;
+			
+			@Override
+			public void setSelectedItem(Object anItem) {
+				selectedFile = (File) anItem;
+			}
+
+			@Override
+			public Object getSelectedItem() {
+				return selectedFile;
+			}
+
+			@Override
+			public int getSize() {
+				return fileList.size();
+			}
+
+			@Override
+			public Object getElementAt(int index) {
+				return fileList.get(index);
+			}
+
+			@Override
+			public void addListDataListener(ListDataListener l) {
+				throw new UnsupportedOperationException("Not supported yet.");
+			}
+
+			@Override
+			public void removeListDataListener(ListDataListener l) {
+				throw new UnsupportedOperationException("Not supported yet.");
+			}
+			
+		});
+		// Updates the value of cmbAvailableBackups when the value of the JTextField txtPath changes.
+		txtPath.getDocument().addDocumentListener(new DocumentListener() {
+
+			@Override
+			public void insertUpdate(DocumentEvent e) {
+				changeAvailableBackups(e);
+			}
+
+			@Override
+			public void removeUpdate(DocumentEvent e) {
+				changeAvailableBackups(e);
+			}
+
+			@Override
+			public void changedUpdate(DocumentEvent e) {
+				changeAvailableBackups(e);
+			}
+			
+			private void changeAvailableBackups(final DocumentEvent e) {
+				loadAvailableBackups();
+			}
+			
+		});
 	}
 	
 	void loadBackupValues() {
 		setBackupPath();
-		loadAvailableBackups();
 	}
 	
 	private void setBackupPath() {
@@ -34,15 +97,16 @@ public class BackupRestoreDialog extends javax.swing.JDialog {
 	private void loadAvailableBackups() {
 		String path = txtPath.getText();
 		File filePath = new File(path);
-		File [] availableBackups = null;
 		
+		// Update only if the value of txtPath is a valid path.
 		if (path != null && !"".equals(path.trim()) && filePath.exists()) {
-			availableBackups = Controller.getAvailableBackups(filePath);
-		}
-		cmbBackupSelection.removeAllItems();
-		if (availableBackups != null) {
-			for (File f : availableBackups) {
-				cmbBackupSelection.addItem(f.getName());
+			backupPath = path;
+			File [] availableBackups = Controller.getAvailableBackups(new File(backupPath));
+			cmbBackupSelection.removeAllItems();
+			if (availableBackups != null) {
+				for (File f : availableBackups) {
+					cmbBackupSelection.addItem(f.getName());
+				}
 			}
 		}
 	}
@@ -72,7 +136,7 @@ public class BackupRestoreDialog extends javax.swing.JDialog {
         backupSelectionPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Select a backup"));
         backupSelectionPanel.setLayout(new java.awt.GridBagLayout());
 
-        cmbBackupSelection.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        cmbBackupSelection.setPreferredSize(new java.awt.Dimension(300, 24));
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 0;
@@ -192,7 +256,10 @@ public class BackupRestoreDialog extends javax.swing.JDialog {
 	}//GEN-LAST:event_btnCancelActionPerformed
 
 	private void btnAcceptActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAcceptActionPerformed
-		
+		if (cmbBackupSelection.getSelectedIndex() != -1) {
+			
+		}
+		String backup = backupPath + File.separatorChar + (String) cmbBackupSelection.getSelectedItem();
 	}//GEN-LAST:event_btnAcceptActionPerformed
 
 	private void btnFindPathActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnFindPathActionPerformed

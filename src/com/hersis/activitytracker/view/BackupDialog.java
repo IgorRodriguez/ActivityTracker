@@ -142,6 +142,7 @@ public class BackupDialog extends javax.swing.JDialog {
 	private void btnRestoreActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRestoreActionPerformed
 		String message = "The current database will be overwriten with ";
 		backupRestoreDialog.loadBackupValues();
+		backupRestoreDialog.setLocationRelativeTo(this);
 		backupRestoreDialog.setVisible(true);
 	}//GEN-LAST:event_btnRestoreActionPerformed
 

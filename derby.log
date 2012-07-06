@@ -1,7 +1,7 @@
 ----------------------------------------------------------------
-Fri Jul 06 19:17:15 CEST 2012:
-Booting Derby version The Apache Software Foundation - Apache Derby - 10.8.2.2 - (1181258): instance a816c00e-0138-5d4b-a52d-000002fc0e60 
-on database directory /media/Z/proyectos/java/ActivityTracker/db  with class loader sun.misc.Launcher$AppClassLoader@3ae86a5f 
+Fri Jul 06 20:42:02 CEST 2012:
+Booting Derby version The Apache Software Foundation - Apache Derby - 10.8.2.2 - (1181258): instance a816c00e-0138-5d99-42de-000002fc0528 
+on database directory /media/Z/proyectos/java/ActivityTracker/db  with class loader sun.misc.Launcher$AppClassLoader@709fa12f 
 Loaded from file:/media/Z/proyectos/java/ActivityTracker/lib/derby.jar
 java.vendor=Oracle Corporation
 java.runtime.version=1.7.0_03-b04
@@ -9,8 +9,8 @@ user.dir=/media/Z/proyectos/java/ActivityTracker
 derby.system.home=null
 Database Class Loader started - derby.database.classpath=''
 ----------------------------------------------------------------
-Fri Jul 06 19:18:23 CEST 2012: Shutting down Derby engine
+Fri Jul 06 20:43:04 CEST 2012: Shutting down Derby engine
 ----------------------------------------------------------------
-Fri Jul 06 19:18:23 CEST 2012:
-Shutting down instance a816c00e-0138-5d4b-a52d-000002fc0e60 on database directory /media/Z/proyectos/java/ActivityTracker/db with class loader sun.misc.Launcher$AppClassLoader@3ae86a5f 
+Fri Jul 06 20:43:05 CEST 2012:
+Shutting down instance a816c00e-0138-5d99-42de-000002fc0528 on database directory /media/Z/proyectos/java/ActivityTracker/db with class loader sun.misc.Launcher$AppClassLoader@709fa12f 
 ----------------------------------------------------------------
