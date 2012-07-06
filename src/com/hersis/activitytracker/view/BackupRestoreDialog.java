@@ -1,12 +1,14 @@
 package com.hersis.activitytracker.view;
 
 import com.hersis.activitytracker.controler.Controller;
+import java.awt.Component;
 import java.io.File;
-import java.util.ArrayList;
-import javax.swing.ComboBoxModel;
+import javax.swing.JLabel;
+import javax.swing.JList;
+import javax.swing.ListCellRenderer;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
-import javax.swing.event.ListDataListener;
+import javax.swing.plaf.basic.BasicComboBoxRenderer;
 
 /**
  *
@@ -21,60 +23,44 @@ public class BackupRestoreDialog extends javax.swing.JDialog {
 	public BackupRestoreDialog(java.awt.Frame parent, boolean modal) {
 		super(parent, modal);
 		initComponents();
-		cmbBackupSelection.setModel(new ComboBoxModel() {
-			ArrayList<File> fileList = new ArrayList<>();
-			File selectedFile = null;
-			
+		cmbBackupSelection.setRenderer(new ListCellRenderer() {
 			@Override
-			public void setSelectedItem(Object anItem) {
-				selectedFile = (File) anItem;
+			public Component getListCellRendererComponent(JList list, Object value, int index, 
+					boolean isSelected, boolean cellHasFocus) {
+				JLabel label = new JLabel();
+				
+				if (isSelected) {
+					label.setBackground(list.getSelectionBackground());
+					label.setForeground(list.getSelectionForeground());
+				} else {
+					label.setBackground(list.getBackground());
+					label.setForeground(list.getForeground());
+				}
+				if (value != null & value instanceof File) label.setText(((File) value).getName());
+				label.setOpaque(true);
+				
+				return label;
 			}
-
-			@Override
-			public Object getSelectedItem() {
-				return selectedFile;
-			}
-
-			@Override
-			public int getSize() {
-				return fileList.size();
-			}
-
-			@Override
-			public Object getElementAt(int index) {
-				return fileList.get(index);
-			}
-
-			@Override
-			public void addListDataListener(ListDataListener l) {
-				throw new UnsupportedOperationException("Not supported yet.");
-			}
-
-			@Override
-			public void removeListDataListener(ListDataListener l) {
-				throw new UnsupportedOperationException("Not supported yet.");
-			}
-			
 		});
 		// Updates the value of cmbAvailableBackups when the value of the JTextField txtPath changes.
 		txtPath.getDocument().addDocumentListener(new DocumentListener() {
 
 			@Override
 			public void insertUpdate(DocumentEvent e) {
-				changeAvailableBackups(e);
+				changeAvailableBackups();
 			}
 
 			@Override
 			public void removeUpdate(DocumentEvent e) {
-				changeAvailableBackups(e);
+				changeAvailableBackups();
 			}
 
 			@Override
 			public void changedUpdate(DocumentEvent e) {
-				changeAvailableBackups(e);
+				changeAvailableBackups();
 			}
 			
-			private void changeAvailableBackups(final DocumentEvent e) {
+			private void changeAvailableBackups() {
 				loadAvailableBackups();
 			}
 			
@@ -105,7 +91,7 @@ public class BackupRestoreDialog extends javax.swing.JDialog {
 			cmbBackupSelection.removeAllItems();
 			if (availableBackups != null) {
 				for (File f : availableBackups) {
-					cmbBackupSelection.addItem(f.getName());
+					cmbBackupSelection.addItem(f);
 				}
 			}
 		}
@@ -257,9 +243,10 @@ public class BackupRestoreDialog extends javax.swing.JDialog {
 
 	private void btnAcceptActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAcceptActionPerformed
 		if (cmbBackupSelection.getSelectedIndex() != -1) {
-			
+			File backupFile = (File) cmbBackupSelection.getSelectedItem();
+			Controller.restoreBackup(backupFile.getPath());
 		}
-		String backup = backupPath + File.separatorChar + (String) cmbBackupSelection.getSelectedItem();
+		this.setVisible(false);
 	}//GEN-LAST:event_btnAcceptActionPerformed
 
 	private void btnFindPathActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnFindPathActionPerformed

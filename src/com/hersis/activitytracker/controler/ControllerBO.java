@@ -30,7 +30,6 @@ class ControllerBO {
 	private static final String PROPERTIES_FILE_PATH = System.getProperty("user.dir") + File.separatorChar +
 			"ActivityTracker.properties";
 	private static final Icons ICONS = new Icons();
-	private final ErrorMessages errorMessages = new ErrorMessages();
 	private static final Properties appProperties = new Properties();
 		
 	/**
@@ -50,7 +49,7 @@ class ControllerBO {
 			try {
 				UIManager.setLookAndFeel(laf);
 			} catch (UnsupportedLookAndFeelException ex) {
-				errorMessages.unsupportedLookAndFeelError("modifyLookAndFeel()", ex);
+				ErrorMessages.unsupportedLookAndFeelError("modifyLookAndFeel()", ex);
 			}
 		}
 		// Change of the default icons for JOptionPanes
@@ -75,7 +74,7 @@ class ControllerBO {
 		try {
 			propertiesFile.createNewFile();
 		} catch (IOException ex) {
-			errorMessages.createPropertiesFileIOException("createPropertiesFile()", ex);
+			ErrorMessages.createPropertiesFileIOException("createPropertiesFile()", ex);
 		}
 	}
     
@@ -145,7 +144,7 @@ class ControllerBO {
 		
         try {
 			saveProperties();
-            dao.exitDatabase();
+            Dao.exitDatabase();
         } catch (SQLException ex) {
 			exit = AlertMessages.exitSQLException(mainParent, ex);
 			errorCode = ex.getErrorCode();

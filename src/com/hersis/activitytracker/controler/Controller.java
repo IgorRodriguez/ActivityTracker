@@ -62,11 +62,11 @@ public class Controller {
 			
 			mainForm.setVisible(true);
 		} catch (NullPointerException ex) {
-			errorMessages.nullPointerError("Controller()", ex);
+			ErrorMessages.nullPointerError("Controller()", ex);
 		} catch (ClassNotFoundException ex) {
-			errorMessages.classNotFoundError("Controller()", ex);
+			ErrorMessages.classNotFoundError("Controller()", ex);
 		} catch (SQLException ex) {
-			errorMessages.sqlExceptionError("Controller()", ex);
+			ErrorMessages.sqlExceptionError("Controller()", ex);
 		}
 	}
 	
@@ -154,9 +154,9 @@ public class Controller {
 		try {
 			timerBo.stop();
 		} catch (SQLException ex) {
-			errorMessages.sqlExceptionError("stop()", ex);
+			ErrorMessages.sqlExceptionError("stop()", ex);
 		} catch (ClassNotFoundException ex) {
-			errorMessages.classNotFoundError("stop()", ex);
+			ErrorMessages.classNotFoundError("stop()", ex);
 		}
 	}
 
@@ -271,5 +271,9 @@ public class Controller {
 	
 	public static File[] getAvailableBackups(File filePath) {
 		return BackupBO.getAvailableBackups(filePath);
+	}
+
+	public static void restoreBackup(String path) {
+		BackupBO.restoreBackup(path);
 	}
 }

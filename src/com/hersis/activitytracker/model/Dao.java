@@ -20,7 +20,7 @@ public class Dao implements Closeable{
     private static final String DERBY_SYSTEM_HOME = System.getProperty("user.dir");
     private static final String DB_NAME = "db";
     private static final String SQL_BACKUP_DATABASE = "CALL SYSCS_UTIL.SYSCS_BACKUP_DATABASE(?)";
-    private static final String SQL_RESTORE_DATABASE = "?;restoreFrom=?";
+    private static final String SQL_RESTORE_DATABASE = ";restoreFrom=";
     private static final String STR_NEW_DATABASE_FROM_BACKUP = "?;createFrom=?";
 	private static final String SQL_CREATE_ACTIVITIES_TABLE =
             "CREATE TABLE APP.ACTIVITIES (" +
@@ -100,7 +100,7 @@ public class Dao implements Closeable{
     /**
      * Shut-downs the database.
      */
-    public void exitDatabase() throws SQLException {
+    public static void exitDatabase() throws SQLException {
 //        if(dbConnection != null && !dbConnection.isClosed()) {
             dbProperties.put("shutdown", "true");
             DriverManager.getConnection(dbProperties.getProperty("derby.url"), 
@@ -210,13 +210,14 @@ public class Dao implements Closeable{
 		return -1;
 	}
 	
-	public static void restoreBackup(String backupSourcePath) throws SQLException {
+	public static void restoreBackup(String backupSourcePath) throws SQLException, ClassNotFoundException {
 		String connectionString = getDatabaseUrl() + SQL_RESTORE_DATABASE + backupSourcePath;
 		
-		disconnect();
-		dbConnection = DriverManager.getConnection(connectionString);
+		Class.forName(dbProperties.getProperty("derby.driver"));
+		dbConnection = DriverManager.getConnection(connectionString, dbProperties);
 		log.info("Database has been restored from {}", backupSourcePath);
-		disconnect();
+		
+//		disconnect();
 		
 //		public SeguimientoEstudiosDAO restaurarBackup(String origenBackup) throws SQLException {
 //        String urlRestaurar = getDatabaseUrl() + ";restoreFrom=" + origenBackup;

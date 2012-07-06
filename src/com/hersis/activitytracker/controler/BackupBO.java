@@ -12,6 +12,8 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -70,6 +72,16 @@ public class BackupBO {
 			fileList = filePath.listFiles(fileFilter);
 		}
 		return fileList;
+	}
+
+	static void restoreBackup(String path) {
+		try {
+			Dao.restoreBackup(path);
+		} catch (SQLException ex) {
+			ErrorMessages.sqlExceptionError("BackupBo.restoreBackup()", ex);
+		} catch (ClassNotFoundException ex) {
+			ErrorMessages.classNotFoundError("BackupBo.restoreBackup()", ex);
+		}
 	}
 	
 }
