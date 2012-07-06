@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package com.hersis.activitytracker.view;
 
 import com.hersis.activitytracker.controler.Controller;
@@ -12,6 +8,7 @@ import com.hersis.activitytracker.controler.Controller;
  */
 public class BackupDialog extends javax.swing.JDialog {
 	private final Controller controller;
+	private final BackupRestoreDialog backupRestoreDialog;
 
 	//TODO Change icons of the window
 	
@@ -21,6 +18,7 @@ public class BackupDialog extends javax.swing.JDialog {
 	public BackupDialog(java.awt.Frame parent, boolean modal, Controller controller) {
 		super(parent, modal);
 		this.controller = controller;
+		backupRestoreDialog = new BackupRestoreDialog(parent, true);
 		initComponents();
 	}
 
@@ -142,7 +140,9 @@ public class BackupDialog extends javax.swing.JDialog {
     }// </editor-fold>//GEN-END:initComponents
 
 	private void btnRestoreActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRestoreActionPerformed
-		
+		String message = "The current database will be overwriten with ";
+		backupRestoreDialog.loadBackupValues();
+		backupRestoreDialog.setVisible(true);
 	}//GEN-LAST:event_btnRestoreActionPerformed
 
 	private void btnBackupNowActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBackupNowActionPerformed

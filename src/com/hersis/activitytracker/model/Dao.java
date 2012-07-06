@@ -7,6 +7,7 @@ import java.io.File;
 import java.io.IOException;
 import java.sql.*;
 import java.util.Properties;
+import java.util.logging.Level;
 import org.slf4j.LoggerFactory;
 
 /**
@@ -19,7 +20,7 @@ public class Dao implements Closeable{
     private static final String DERBY_SYSTEM_HOME = System.getProperty("user.dir");
     private static final String DB_NAME = "db";
     private static final String SQL_BACKUP_DATABASE = "CALL SYSCS_UTIL.SYSCS_BACKUP_DATABASE(?)";
-    private static final String STR_RESTORE_DATABASE = "?;restoreFrom=?";
+    private static final String SQL_RESTORE_DATABASE = "?;restoreFrom=?";
     private static final String STR_NEW_DATABASE_FROM_BACKUP = "?;createFrom=?";
 	private static final String SQL_CREATE_ACTIVITIES_TABLE =
             "CREATE TABLE APP.ACTIVITIES (" +
@@ -207,6 +208,30 @@ public class Dao implements Closeable{
 			disconnect();
 		}
 		return -1;
+	}
+	
+	public static void restoreBackup(String backupSourcePath) throws SQLException {
+		String connectionString = getDatabaseUrl() + SQL_RESTORE_DATABASE + backupSourcePath;
+		
+		disconnect();
+		dbConnection = DriverManager.getConnection(connectionString);
+		log.info("Database has been restored from {}", backupSourcePath);
+		disconnect();
+		
+//		public SeguimientoEstudiosDAO restaurarBackup(String origenBackup) throws SQLException {
+//        String urlRestaurar = getDatabaseUrl() + ";restoreFrom=" + origenBackup;
+//
+//        if (isConnected) {
+//            disconnect();
+//        }
+//        dbConnection = DriverManager.getConnection(urlRestaurar);
+//        logger.log(Level.WARNING, "Se ha restaurado un backup de la BD: {0}", origenBackup);
+//        isConnected = true;
+//        disconnect();
+//        //@todo Corregir error al conectar. Tal vez sea cuestion de tiempo.
+////        connect();
+//        return new SeguimientoEstudiosDAO();
+//    }
 	}
 
 }

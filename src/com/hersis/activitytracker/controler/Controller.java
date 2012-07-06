@@ -7,6 +7,7 @@ import com.hersis.activitytracker.model.Dao;
 import com.hersis.activitytracker.view.*;
 import java.awt.BorderLayout;
 import java.awt.Component;
+import java.io.File;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -21,7 +22,7 @@ public class Controller {
 	private static final Logger log = (Logger) LoggerFactory.getLogger("controller.Controller");
 	private static Controller controller;
 	private static Dao dao;
-	
+
 	private MainForm mainForm;
 	private MainToolbar mainToolbar;
 	private TimerPanel timerPanel;
@@ -266,5 +267,9 @@ public class Controller {
 	
 	public void startBackup() {
 		backupBo.startBackup();
+	}
+	
+	public static File[] getAvailableBackups(File filePath) {
+		return BackupBO.getAvailableBackups(filePath);
 	}
 }

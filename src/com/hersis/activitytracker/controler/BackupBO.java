@@ -3,10 +3,14 @@ package com.hersis.activitytracker.controler;
 import com.hersis.activitytracker.model.Dao;
 import com.hersis.activitytracker.view.BackupConfigDialog;
 import com.hersis.activitytracker.view.BackupDialog;
+import com.hersis.activitytracker.view.aux.BackupFileFilter;
 import java.io.File;
+import java.io.FileFilter;
 import java.sql.SQLException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 
 /**
@@ -17,6 +21,7 @@ public class BackupBO {
 	private final BackupDialog backupDialog;
 	private final BackupConfigDialog backupConfigDialog;
 	private final DateFormat backupDateFormat = new SimpleDateFormat("yyyy-MM-dd_HH:mm:ss");
+	public static final String BACKUP_FORMAT_STRING = Controller.APPLICATION_NAME + "_";
 
 	BackupBO(BackupDialog backupDialog, BackupConfigDialog backupConfigDialog) {
 		this.backupDialog = backupDialog;
@@ -42,7 +47,7 @@ public class BackupBO {
 		
 		if (destinationRoot != null && !"".equals(destinationRoot.trim())) {
 			String backupDate = backupDateFormat.format(new Date());
-			String path = destinationRoot + File.separatorChar + Controller.APPLICATION_NAME + "_" +
+			String path = destinationRoot + File.separatorChar + BACKUP_FORMAT_STRING +
 					backupDate;
 			try {
 				backupResult = Dao.executeBackup(path);
@@ -55,6 +60,16 @@ public class BackupBO {
 		}
 		
 		return backupResult;
+	}
+
+	static File[] getAvailableBackups(File filePath) {
+		FileFilter fileFilter = new BackupFileFilter();
+		File [] fileList = null;
+		
+		if (filePath.exists()) {
+			fileList = filePath.listFiles(fileFilter);
+		}
+		return fileList;
 	}
 	
 }
