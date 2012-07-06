@@ -1,8 +1,10 @@
 package com.hersis.activitytracker.view;
 
 import com.hersis.activitytracker.BackupPeriod;
-import com.hersis.activitytracker.controler.AlertMessages;
 import com.hersis.activitytracker.controler.Controller;
+import java.io.File;
+import javax.swing.JFileChooser;
+import javax.swing.JOptionPane;
 
 /**
  *
@@ -198,7 +200,8 @@ public class BackupConfigDialog extends javax.swing.JDialog {
 
 	private void btnAcceptActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAcceptActionPerformed
 		String backupPath = txtPath.getText();
-		if (backupPath != null && !"".equals(backupPath.trim())) {
+		File filePath = new File(txtPath.getText().trim());
+		if (backupPath != null && !"".equals(backupPath.trim()) && filePath.exists()) {
 			controller.setPropertie(Controller.BACKUP_PATH_PROPERTIE, backupPath.trim());
 		} else {
 			AlertMessages.backupPathNull(this);
@@ -216,7 +219,11 @@ public class BackupConfigDialog extends javax.swing.JDialog {
 	}//GEN-LAST:event_btnAcceptActionPerformed
 
 	private void btnFindPathActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnFindPathActionPerformed
-		// TODO add your handling code here:
+		Common.setSelectedFile(txtPath.getText().trim());
+		int selected = Common.showDirectoryChooser(this, "Select");
+		if (selected == Common.APPROVE_OPTION) {
+			txtPath.setText(Common.getSelectedFile().getPath());
+		}
 	}//GEN-LAST:event_btnFindPathActionPerformed
 
 	private void btnCancelActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCancelActionPerformed

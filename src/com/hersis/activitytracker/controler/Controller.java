@@ -20,7 +20,7 @@ import org.slf4j.LoggerFactory;
 public class Controller {
 	private static final Logger log = (Logger) LoggerFactory.getLogger("controller.Controller");
 	private static Controller controller;
-	private Dao dao;
+	private static Dao dao;
 	
 	private MainForm mainForm;
 	private MainToolbar mainToolbar;
@@ -38,10 +38,11 @@ public class Controller {
 	private TimeBO timeBo;
 	private BackupBO backupBo;
 	private final ErrorMessages errorMessages = new ErrorMessages();
-	private final AlertMessages alertMessages = new AlertMessages();
 	
 	public static final String BACKUP_PERIOD_PROPERTIE = "backupPeriod";
 	public static final String BACKUP_PATH_PROPERTIE = "backupPath";
+	public static final String LAST_BACKUP_DATE = "lastBackupDate";
+	public static final String APPLICATION_NAME = "ActivityTrackerV2";
 		
 	public Controller() {
 		try {
@@ -112,16 +113,16 @@ public class Controller {
 		timeBo.loadCmbActivities();
 	}
 	
-	public String getPropertie(String key) {
-		return controllerBo.getPropertie(key);
+	public static String getPropertie(String key) {
+		return ControllerBO.getPropertie(key);
 	}
 	
-	public void setPropertie(String key, String value) {
-		controllerBo.setPropertie(key, value);
+	public static void setPropertie(String key, String value) {
+		ControllerBO.setPropertie(key, value);
 	}
 	
 	public void removePropertie(String key) {
-		controllerBo.removePropertie(key);
+		ControllerBO.removePropertie(key);
 	}
 	
 	/**
@@ -165,7 +166,7 @@ public class Controller {
 		try {
 			timerBo.startTracking();
 		} catch (IndexOutOfBoundsException ex) {
-			alertMessages.startTrackingIndexOutOfBounds(timerPanel, ex);
+			AlertMessages.startTrackingIndexOutOfBounds(timerPanel, ex);
 		}
 	}
 
@@ -247,7 +248,11 @@ public class Controller {
 		timeBo.closeTimeList();
 	}
 
-	public void closeBackup() {
+	/**********************************************************************************************
+	 * Backup
+	 **********************************************************************************************/
+	
+	public void closeBackupWindow() {
 		backupBo.closeBackupWindow();
 	}
 
@@ -257,5 +262,9 @@ public class Controller {
 
 	public void showBackupConfigWindow() {
 		backupBo.showBackupConfigWindow();
+	}
+	
+	public void startBackup() {
+		backupBo.startBackup();
 	}
 }

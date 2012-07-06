@@ -1,13 +1,11 @@
 package com.hersis.activitytracker.model;
 
 import ch.qos.logback.classic.Logger;
+import com.hersis.activitytracker.controler.ErrorMessages;
 import java.io.Closeable;
 import java.io.File;
 import java.io.IOException;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
 import java.util.Properties;
 import org.slf4j.LoggerFactory;
 
@@ -17,10 +15,10 @@ import org.slf4j.LoggerFactory;
  */
 public class Dao implements Closeable{
 	private static Dao dao = null;
-    private final Logger log = (Logger) LoggerFactory.getLogger("model.Dao");
+    private static final Logger log = (Logger) LoggerFactory.getLogger("model.Dao");
     private static final String DERBY_SYSTEM_HOME = System.getProperty("user.dir");
     private static final String DB_NAME = "db";
-    private static final String STR_BACKUP_DATABASE = "CALL SYSCS_UTIL.SYSCS_BACKUP_DATABASE(?)";
+    private static final String SQL_BACKUP_DATABASE = "CALL SYSCS_UTIL.SYSCS_BACKUP_DATABASE(?)";
     private static final String STR_RESTORE_DATABASE = "?;restoreFrom=?";
     private static final String STR_NEW_DATABASE_FROM_BACKUP = "?;createFrom=?";
 	private static final String SQL_CREATE_ACTIVITIES_TABLE =
@@ -39,8 +37,8 @@ public class Dao implements Closeable{
             "   DESCRIPTION VARCHAR(200)," +
             "   FOREIGN KEY (ID_ACTIVITY) REFERENCES APP.ACTIVITIES(ID_ACTIVITY)" +
             ")";
-    private Properties dbProperties;
-    private Connection dbConnection;
+    private static Properties dbProperties;
+    private static Connection dbConnection;
 
     private Dao() throws ClassNotFoundException, SQLException {
         setDBSystemDir();
@@ -64,7 +62,7 @@ public class Dao implements Closeable{
 	 * @throws SQLException If there was an error in the SQL expression employed.
 	 * @throws ClassNotFoundException If there was an error when loading the database driver.
 	 */
-    public Connection connect() throws SQLException, ClassNotFoundException {
+    public static Connection connect() throws SQLException, ClassNotFoundException {
         log.debug("Opening database connection...");
         try {
             Class.forName(dbProperties.getProperty("derby.driver"));
@@ -85,7 +83,7 @@ public class Dao implements Closeable{
 	/**
 	 * Closes the connection previously created with the <code>connect()</code> method.
 	 */
-    public void disconnect() {
+    public static void disconnect() {
         log.debug("Closing database connection...");
         try {
             if(!dbConnection.isClosed()) {
@@ -151,7 +149,7 @@ public class Dao implements Closeable{
      * Returns the database's connection URL.
      * @return The database's connection URL.
      */
-    private String getDatabaseUrl() {
+    private static String getDatabaseUrl() {
         return dbProperties.getProperty("derby.url") + getDatabaseLocation();
     }
 
@@ -159,7 +157,7 @@ public class Dao implements Closeable{
      * Returns the database's location on the file system.
      * @return The database's location on the file system.
      */
-    private String getDatabaseLocation() {
+    private static String getDatabaseLocation() {
         return DERBY_SYSTEM_HOME + File.separator + DB_NAME;
     }
 
@@ -187,13 +185,28 @@ public class Dao implements Closeable{
     	}
     }
 	
-	public Connection getConnection() {
+	public static Connection getConnection() {
 		return dbConnection;
 	}
 
 	@Override
 	public void close() throws IOException {
 		disconnect();
+	}
+
+	public static int executeBackup(String backupPath) throws SQLException, ClassNotFoundException {
+		connect();
+		try (PreparedStatement stmt = getConnection().prepareStatement(SQL_BACKUP_DATABASE)) {
+			stmt.setString(1, backupPath);
+			int executeUpdate = stmt.executeUpdate();
+			log.info("Database backed-up in {}", backupPath);
+			return executeUpdate;
+		} catch (SQLException ex) {
+			ErrorMessages.databaseBackupError("Dao.executeBackup()", ex, backupPath);
+		} finally {
+			disconnect();
+		}
+		return -1;
 	}
 
 }

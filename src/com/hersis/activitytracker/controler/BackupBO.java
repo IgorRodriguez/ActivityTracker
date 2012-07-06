@@ -1,7 +1,13 @@
 package com.hersis.activitytracker.controler;
 
+import com.hersis.activitytracker.model.Dao;
 import com.hersis.activitytracker.view.BackupConfigDialog;
 import com.hersis.activitytracker.view.BackupDialog;
+import java.io.File;
+import java.sql.SQLException;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 /**
  *
@@ -10,6 +16,7 @@ import com.hersis.activitytracker.view.BackupDialog;
 public class BackupBO {
 	private final BackupDialog backupDialog;
 	private final BackupConfigDialog backupConfigDialog;
+	private final DateFormat backupDateFormat = new SimpleDateFormat("yyyy-MM-dd_HH:mm:ss");
 
 	BackupBO(BackupDialog backupDialog, BackupConfigDialog backupConfigDialog) {
 		this.backupDialog = backupDialog;
@@ -27,6 +34,27 @@ public class BackupBO {
 	void showBackupConfigWindow() {
 		backupConfigDialog.loadBackupValues();
 		backupConfigDialog.setVisible(true);
+	}
+
+	int startBackup() {
+		int backupResult = -1;
+		String destinationRoot = Controller.getPropertie(Controller.BACKUP_PATH_PROPERTIE);
+		
+		if (destinationRoot != null && !"".equals(destinationRoot.trim())) {
+			String backupDate = backupDateFormat.format(new Date());
+			String path = destinationRoot + File.separatorChar + Controller.APPLICATION_NAME + "_" +
+					backupDate;
+			try {
+				backupResult = Dao.executeBackup(path);
+				Controller.setPropertie(Controller.LAST_BACKUP_DATE, backupDate);
+			} catch (SQLException ex) {
+				ErrorMessages.sqlExceptionError("startBackup()", ex);
+			} catch (ClassNotFoundException ex) {
+				ErrorMessages.classNotFoundError("startBackup()", ex);
+			}
+		}
+		
+		return backupResult;
 	}
 	
 }

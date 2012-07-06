@@ -1,5 +1,6 @@
 package com.hersis.activitytracker.controler;
 
+import com.hersis.activitytracker.view.AlertMessages;
 import com.hersis.activitytracker.Activity;
 import com.hersis.activitytracker.Time;
 import com.hersis.activitytracker.model.ActivityDao;
@@ -24,7 +25,6 @@ public class ActivityBO implements Observer {
 	private final ActivityListDialog activityListDialog;
 	private final ActivityDao activityDao = ActivityDao.getInstance();
 	private final TimeDao timeDao = TimeDao.getInstance();
-	private final AlertMessages alertMessages = new AlertMessages();
 	private final ErrorMessages errorMessages = new ErrorMessages();
 	private final Controller controller;
 
@@ -65,10 +65,10 @@ public class ActivityBO implements Observer {
 					int insertActivity = activityDao.insertActivity(conn, activity);
 					if (insertActivity > 0) saved = true;
 				} else {
-					alertMessages.activityNameExists(activityDialog, activityName);
+					AlertMessages.activityNameExists(activityDialog, activityName);
 				}
 			} else {
-				alertMessages.emptyActivityFields(activityDialog);
+				AlertMessages.emptyActivityFields(activityDialog);
 			}
 		} catch (SQLException ex) {
 			errorMessages.sqlExceptionError("insertActivity()", ex);
@@ -91,10 +91,10 @@ public class ActivityBO implements Observer {
 					int updateActivity = activityDao.updateActivity(conn, oldActivity, newActivity);
 					if (updateActivity > 0) saved = true;
 				} else {
-					alertMessages.activityNameExists(activityDialog, newActivity.getName());
+					AlertMessages.activityNameExists(activityDialog, newActivity.getName());
 				}
 			} else {
-				alertMessages.emptyActivityFields(activityDialog);
+				AlertMessages.emptyActivityFields(activityDialog);
 			}
 		} catch (SQLException ex) {
 			errorMessages.sqlExceptionError("updateActivity()", ex);
@@ -113,7 +113,7 @@ public class ActivityBO implements Observer {
 	void deleteActivity(Component dialogParent, Activity activity) {
 		//TODO delete all the dependant times in Times table.
 		if (activity != null) {
-			if (alertMessages.deleteActivityConfirmation(dialogParent, activity)) {
+			if (AlertMessages.deleteActivityConfirmation(dialogParent, activity)) {
 				try {
 					Connection conn = dao.connect();
 					for (Time t : timeDao.getTimesByActivity(conn, activity)) {
@@ -132,7 +132,7 @@ public class ActivityBO implements Observer {
 				}
 			}
 		} else {
-			alertMessages.noActivitySelectedInTableForDeleting(activityListDialog);
+			AlertMessages.noActivitySelectedInTableForDeleting(activityListDialog);
 		}
 	}
 
@@ -159,7 +159,7 @@ public class ActivityBO implements Observer {
 			activityDialog.editActivity(activity);
 			activityDialog.setVisible(true);
 		} else {
-			alertMessages.noActivitySelectedInTableForEditing(activityListDialog);
+			AlertMessages.noActivitySelectedInTableForEditing(activityListDialog);
 		}
 	}
 

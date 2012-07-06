@@ -1,5 +1,6 @@
 package com.hersis.activitytracker.controler;
 
+import com.hersis.activitytracker.view.AlertMessages;
 import com.hersis.activitytracker.Activity;
 import com.hersis.activitytracker.Time;
 import com.hersis.activitytracker.model.ActivityDao;
@@ -26,7 +27,6 @@ public class TimeBO implements Observer {
 	
 	private final TimeDialog timeDialog;
 	private final TimeListDialog timeListDialog;
-	private AlertMessages alertMessages = new AlertMessages();
 	private ErrorMessages errorMessages = new ErrorMessages();
 
 	TimeBO(TimeDialog timeDialog, TimeListDialog timeListDialog) throws ClassNotFoundException, SQLException {
@@ -126,15 +126,15 @@ public class TimeBO implements Observer {
 	
 	private void checkTimeFields(Time time) {
 		if (time.getIdActivity() < 0) {
-			alertMessages.emptyTimeField(timeDialog, AlertMessages.ACTIVITY_ID);
+			AlertMessages.emptyTimeField(timeDialog, AlertMessages.ACTIVITY_ID);
 		} else if (time.getStartTime() == null) {
-			alertMessages.emptyTimeField(timeDialog, AlertMessages.START_TIME);
+			AlertMessages.emptyTimeField(timeDialog, AlertMessages.START_TIME);
 		} else if (time.getEndTime() == null) {
-			alertMessages.emptyTimeField(timeDialog, AlertMessages.END_TIME);
+			AlertMessages.emptyTimeField(timeDialog, AlertMessages.END_TIME);
 		} else if (time.getDuration() < MINIMUM_TIME_DURATION) {
-			alertMessages.emptyTimeField(timeDialog, AlertMessages.DURATION);
+			AlertMessages.emptyTimeField(timeDialog, AlertMessages.DURATION);
 		} else {
-			alertMessages.emptyTimeField(timeDialog, AlertMessages.OTHER_PROBLEM);
+			AlertMessages.emptyTimeField(timeDialog, AlertMessages.OTHER_PROBLEM);
 		}
 	}
 
@@ -143,13 +143,13 @@ public class TimeBO implements Observer {
 			timeDialog.showEditTime(time);
 			timeDialog.setVisible(true);
 		} else {
-			alertMessages.noTimeSelectedInTableForEditing(timeDialog);
+			AlertMessages.noTimeSelectedInTableForEditing(timeDialog);
 		}
 	}
 
 	void deleteTime(Component dialogParent, Time time) {
 		if (time != null) {
-			if (alertMessages.deleteTimeConfirmation(dialogParent, time)) {
+			if (AlertMessages.deleteTimeConfirmation(dialogParent, time)) {
 				try {
 					dao.connect();
 					timeDao.deleteTime(dao.getConnection(), time);
@@ -165,7 +165,7 @@ public class TimeBO implements Observer {
 				}
 			}
 		} else {
-			alertMessages.noTimeSelectedInTableForDeleting(timeListDialog);
+			AlertMessages.noTimeSelectedInTableForDeleting(timeListDialog);
 		}
 	}
 

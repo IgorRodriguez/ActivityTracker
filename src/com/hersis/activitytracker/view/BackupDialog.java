@@ -4,7 +4,6 @@
  */
 package com.hersis.activitytracker.view;
 
-import com.hersis.activitytracker.BackupPeriod;
 import com.hersis.activitytracker.controler.Controller;
 
 /**
@@ -14,6 +13,8 @@ import com.hersis.activitytracker.controler.Controller;
 public class BackupDialog extends javax.swing.JDialog {
 	private final Controller controller;
 
+	//TODO Change icons of the window
+	
 	/**
 	 * Creates new form BackupDialog
 	 */
@@ -81,7 +82,7 @@ public class BackupDialog extends javax.swing.JDialog {
         gridBagConstraints.insets = new java.awt.Insets(7, 7, 7, 7);
         backupPanel.add(btnRestore, gridBagConstraints);
 
-        btnConfigure.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/hersis/activitytracker/images/button_cancel.png"))); // NOI18N
+        btnConfigure.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/hersis/activitytracker/images/configure.png"))); // NOI18N
         btnConfigure.setText("Configure...");
         btnConfigure.setPreferredSize(new java.awt.Dimension(250, 42));
         btnConfigure.addActionListener(new java.awt.event.ActionListener() {
@@ -145,7 +146,7 @@ public class BackupDialog extends javax.swing.JDialog {
 	}//GEN-LAST:event_btnRestoreActionPerformed
 
 	private void btnBackupNowActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBackupNowActionPerformed
-		// TODO add your handling code here:
+		controller.startBackup();
 	}//GEN-LAST:event_btnBackupNowActionPerformed
 
 	private void btnConfigureActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnConfigureActionPerformed
@@ -153,7 +154,7 @@ public class BackupDialog extends javax.swing.JDialog {
 	}//GEN-LAST:event_btnConfigureActionPerformed
 
 	private void btnCloseActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCloseActionPerformed
-		controller.closeBackup();
+		controller.closeBackupWindow();
 	}//GEN-LAST:event_btnCloseActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

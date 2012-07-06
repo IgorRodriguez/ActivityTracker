@@ -3,19 +3,18 @@ package com.hersis.activitytracker.controler;
 import ch.qos.logback.classic.Logger;
 import com.hersis.activitytracker.images.Icons;
 import com.hersis.activitytracker.model.Dao;
+import com.hersis.activitytracker.view.AlertMessages;
 import java.awt.Component;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.nio.file.Files;
 import java.sql.SQLException;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.util.Calendar;
 import java.util.Locale;
 import java.util.Properties;
-import java.util.logging.Level;
 import javax.swing.LookAndFeel;
 import javax.swing.UIManager;
 import javax.swing.UIManager.LookAndFeelInfo;
@@ -32,8 +31,7 @@ class ControllerBO {
 			"ActivityTracker.properties";
 	private static final Icons ICONS = new Icons();
 	private final ErrorMessages errorMessages = new ErrorMessages();
-	private final AlertMessages alertMessages = new AlertMessages();
-	private Properties appProperties = new Properties();
+	private static final Properties appProperties = new Properties();
 		
 	/**
 	 * Changes some things on the default LookAndFeel, such as alert message's icons.
@@ -68,7 +66,7 @@ class ControllerBO {
             appProperties.load(propFis);
             log.debug("Properties loaded successfully");
         } catch (IOException ioe) {
-			alertMessages.propertiesLoadIOException(ioe);
+			AlertMessages.propertiesLoadIOException(ioe);
         } 
     }
 	
@@ -87,19 +85,19 @@ class ControllerBO {
             appProperties.store(propFos, "Saved with date: ");
             log.debug("Properties saved successfully");
         } catch (IOException ioe) {
-			alertMessages.propertiesSaveIOException(ioe);
+			AlertMessages.propertiesSaveIOException(ioe);
         } 
     }
 	
-	String getPropertie(String key) {
+	static String getPropertie(String key) {
 		return appProperties.getProperty(key);
 	}
 	
-	void setPropertie(String key, String value) {
+	static void setPropertie(String key, String value) {
 		appProperties.setProperty(key, value);
 	}
 	
-	void removePropertie(String key) {
+	static void removePropertie(String key) {
 		appProperties.remove(key);
 	}
 	
@@ -149,7 +147,7 @@ class ControllerBO {
 			saveProperties();
             dao.exitDatabase();
         } catch (SQLException ex) {
-			exit = alertMessages.exitSQLException(mainParent, ex);
+			exit = AlertMessages.exitSQLException(mainParent, ex);
 			errorCode = ex.getErrorCode();
         } finally {
             // Exits if not cancelled by the user.
