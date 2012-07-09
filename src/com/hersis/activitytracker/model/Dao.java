@@ -2,9 +2,11 @@ package com.hersis.activitytracker.model;
 
 import ch.qos.logback.classic.Logger;
 import com.hersis.activitytracker.controler.ErrorMessages;
+import com.hersis.activitytracker.model.nio.DirUtils;
 import java.io.Closeable;
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Path;
 import java.sql.*;
 import java.util.Properties;
 import java.util.logging.Level;
@@ -210,29 +212,43 @@ public class Dao implements Closeable{
 		return -1;
 	}
 	
-	public static void restoreBackup(String backupSourcePath) throws SQLException, ClassNotFoundException {
-		String connectionString = getDatabaseUrl() + SQL_RESTORE_DATABASE + backupSourcePath;
-		
-		Class.forName(dbProperties.getProperty("derby.driver"));
-		dbConnection = DriverManager.getConnection(connectionString, dbProperties);
-		log.info("Database has been restored from {}", backupSourcePath);
-		
-//		disconnect();
-		
-//		public SeguimientoEstudiosDAO restaurarBackup(String origenBackup) throws SQLException {
-//        String urlRestaurar = getDatabaseUrl() + ";restoreFrom=" + origenBackup;
-//
-//        if (isConnected) {
-//            disconnect();
-//        }
-//        dbConnection = DriverManager.getConnection(urlRestaurar);
-//        logger.log(Level.WARNING, "Se ha restaurado un backup de la BD: {0}", origenBackup);
-//        isConnected = true;
-//        disconnect();
-//        //@todo Corregir error al conectar. Tal vez sea cuestion de tiempo.
-////        connect();
-//        return new SeguimientoEstudiosDAO();
-//    }
+	public static void restoreBackup(String backupSourcePath) throws IOException {
+		try {
+			exitDatabase();
+			Path sourcePath = new File(backupSourcePath + File.separatorChar + DB_NAME).toPath();
+			Path destinationPath = new File (getDatabaseUrl()).toPath();
+			
+			DirUtils.deleteIfExists(destinationPath);
+			DirUtils.copy(sourcePath, destinationPath);
+	//		String connectionString = getDatabaseUrl() + ";restoreFrom=" + backupSourcePath + File.separatorChar + DB_NAME + File.separatorChar + DB_NAME;
+	//		
+	//		DirUtils dirUtils = new DirUtils();
+	//		//Class.forName(dbProperties.getProperty("derby.driver"));
+	//		disconnect();
+	//		dbConnection = DriverManager.getConnection(connectionString, dbProperties);
+	//		dbConnection.commit();
+	//		log.info("Database has been restored from {}", backupSourcePath);
+	//		disconnect();
+			
+	//		disconnect();
+			
+	//		public SeguimientoEstudiosDAO restaurarBackup(String origenBackup) throws SQLException {
+	//        String urlRestaurar = getDatabaseUrl() + ";restoreFrom=" + origenBackup;
+	//
+	//        if (isConnected) {
+	//            disconnect();
+	//        }
+	//        dbConnection = DriverManager.getConnection(urlRestaurar);
+	//        logger.log(Level.WARNING, "Se ha restaurado un backup de la BD: {0}", origenBackup);
+	//        isConnected = true;
+	//        disconnect();
+	//        //@todo Corregir error al conectar. Tal vez sea cuestion de tiempo.
+	////        connect();
+	//    }
+	//    }
+		} catch (SQLException ex) {
+			java.util.logging.Logger.getLogger(Dao.class.getName()).log(Level.SEVERE, null, ex);
+		}
 	}
 
 }
