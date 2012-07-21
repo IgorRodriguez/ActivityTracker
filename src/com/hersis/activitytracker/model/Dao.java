@@ -3,20 +3,21 @@ package com.hersis.activitytracker.model;
 import ch.qos.logback.classic.Logger;
 import com.hersis.activitytracker.controler.ErrorMessages;
 import com.hersis.activitytracker.model.nio.DirUtils;
+import com.hersis.activitytracker.view.AlertMessages;
 import java.io.Closeable;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.sql.*;
+import java.util.Observable;
 import java.util.Properties;
-import java.util.logging.Level;
 import org.slf4j.LoggerFactory;
 
 /**
  *
  * @author Igor Rodriguez <igorrodriguezelvira@gmail.com>
  */
-public class Dao implements Closeable{
+public class Dao extends Observable implements Closeable{
 	private static Dao dao = null;
     private static final Logger log = (Logger) LoggerFactory.getLogger("model.Dao");
     private static final String DERBY_SYSTEM_HOME = System.getProperty("user.dir");
@@ -46,7 +47,7 @@ public class Dao implements Closeable{
     private Dao() throws ClassNotFoundException, SQLException {
         setDBSystemDir();
         createDbProperties();
-        if(!dbExists()) { // Commented for test purpouses only
+        if(!dbExists()) { 
             createDatabase();
         }
     }
@@ -66,17 +67,21 @@ public class Dao implements Closeable{
 	 * @throws ClassNotFoundException If there was an error when loading the database driver.
 	 */
     public static Connection connect() throws SQLException, ClassNotFoundException {
+		if (dbConnection != null && !dbConnection.isClosed()) return dbConnection;
         log.debug("Opening database connection...");
         try {
             Class.forName(dbProperties.getProperty("derby.driver"));
+			String st = dbProperties.getProperty("derby.driver");
+			String s = getDatabaseUrl();
             dbConnection = DriverManager.getConnection(getDatabaseUrl(), dbProperties);
         } catch (SQLException ex) {
-            log.error("No se pudo establecer conexion con la base de datos.\n" +
-                    "Mensaje: {}\nCodigo de error: {}", ex.getMessage(), ex.getErrorCode());
+            log.error("Couldn't connect to the database.\n" +
+                    "Message: {}\nError code: {}", ex.getMessage(), ex.getErrorCode());
+			ex.printStackTrace();
             throw ex;
         } catch (ClassNotFoundException e) {
-            log.error("No se pudo cargar el driver de la base de datos.\n" +
-                    "Mensaje: {}", e.getMessage());
+            log.error("Couldn't load database driver.\n" +
+                    "Message: {}", e.getMessage());
             throw e;
         }
         log.debug("Connection opened successfully.");
@@ -102,12 +107,25 @@ public class Dao implements Closeable{
     /**
      * Shut-downs the database.
      */
-    public static void exitDatabase() throws SQLException {
-//        if(dbConnection != null && !dbConnection.isClosed()) {
+    public static boolean exitDatabase() {
+		boolean exit = true;
+		int errorCode = -1;
+		
+        try {
             dbProperties.put("shutdown", "true");
             DriverManager.getConnection(dbProperties.getProperty("derby.url"), 
                     dbProperties);
-//        }
+        } catch (SQLException ex) {
+			exit = AlertMessages.exitSQLException(null, ex);
+			errorCode = ex.getErrorCode();
+        } finally {
+            // Exits if not cancelled by the user.
+            if (exit) {
+				log.info("Successfully disconnected from database: {}", errorCode);
+			}
+        }
+		dbProperties.remove("shutdown");
+		return exit;
     }
 
     private void createDbProperties() {
@@ -124,10 +142,10 @@ public class Dao implements Closeable{
             stmt.execute(SQL_CREATE_ACTIVITIES_TABLE);
             stmt.execute(SQL_CREATE_TIMES_TABLE);
         } catch (SQLException ex) {
-            log.error("Error al crear las tablas de la BD.");
+            log.error("Error while creating database tables");
             throw ex;
         }
-        log.info("Tablas creadas correctamente");
+        log.info("Database tables successfully created");
     }
 
 	/**
@@ -139,13 +157,13 @@ public class Dao implements Closeable{
         try (Connection conn = DriverManager.getConnection(getDatabaseUrl(), dbProperties)) {
             createTables(conn);
         } catch (SQLException ex) {
-            log.error("Error al crear la base de datos.\nMensaje: {}\n" +
-                    "Codigo de error: {}", ex.getMessage(), ex.getErrorCode());
+            log.error("Error while creating the database.\nMessage: {}\n" +
+                    "Error code: {}", ex.getMessage(), ex.getErrorCode());
             throw ex;
         } finally {
             dbProperties.remove("create");
         }
-        log.info("Base de datos creada con exito");
+        log.info("Database successfully created");
     }
     
     /**
@@ -212,23 +230,31 @@ public class Dao implements Closeable{
 		return -1;
 	}
 	
-	public static void restoreBackup(String backupSourcePath) throws IOException {
-		try {
-			exitDatabase();
-			Path sourcePath = new File(backupSourcePath + File.separatorChar + DB_NAME).toPath();
-			Path destinationPath = new File (getDatabaseUrl()).toPath();
-			
-			DirUtils.deleteIfExists(destinationPath);
-			DirUtils.copy(sourcePath, destinationPath);
-	//		String connectionString = getDatabaseUrl() + ";restoreFrom=" + backupSourcePath + File.separatorChar + DB_NAME + File.separatorChar + DB_NAME;
+	public void restoreBackup(String backupSourcePath) throws IOException, SQLException, ClassNotFoundException {
+////		exitDatabase(); // Try with disconnect();
+//		disconnect();
+//		Path sourcePath = new File(backupSourcePath + File.separatorChar + DB_NAME).toPath();
+//		Path destinationPath = new File (getDatabaseLocation()).toPath();
+//
+//		DirUtils.deleteIfExists(destinationPath);
+//		DirUtils.copy(sourcePath, destinationPath);
+////		dao = new Dao();
+//		connect();
+		// Notify to observers
+		
+		
+		disconnect();
+			String connectionString = getDatabaseUrl() + ";restoreFrom=" + backupSourcePath + File.separatorChar + DB_NAME;
 	//		
 	//		DirUtils dirUtils = new DirUtils();
-	//		//Class.forName(dbProperties.getProperty("derby.driver"));
+//			String s = dbProperties.getProperty("derby.driver");
+//			Class.forName("org.apache.derby.jdbc.EmbeddedDriver");
 	//		disconnect();
-	//		dbConnection = DriverManager.getConnection(connectionString, dbProperties);
-	//		dbConnection.commit();
-	//		log.info("Database has been restored from {}", backupSourcePath);
-	//		disconnect();
+			dbConnection = DriverManager.getConnection(connectionString);
+			dbConnection.commit();
+			log.info("Database has been restored from {}", backupSourcePath);
+			disconnect();
+			connect();
 			
 	//		disconnect();
 			
@@ -246,9 +272,12 @@ public class Dao implements Closeable{
 	////        connect();
 	//    }
 	//    }
-		} catch (SQLException ex) {
-			java.util.logging.Logger.getLogger(Dao.class.getName()).log(Level.SEVERE, null, ex);
-		}
+			
+			
+//			
+		setChanged();
+		notifyObservers();
+		System.out.println("Hello!");
 	}
 
 }

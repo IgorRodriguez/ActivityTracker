@@ -34,7 +34,8 @@ public class ErrorMessages {
 	public static void sqlExceptionError(String methodName, SQLException e) {
 		if (!"Derby system shutdown.".equals(e.getLocalizedMessage())) {
 			String message = "Error while executing SQL instruction in method '" + methodName + "': \n" + 
-					e.getLocalizedMessage() + " - " + e.getErrorCode();
+					e.getLocalizedMessage() + "\nError code: " + e.getErrorCode() + "\nSQLState: " +
+					e.getSQLState();
 			log.error(message);
 			JOptionPane.showMessageDialog(null, message, "Error", JOptionPane.ERROR_MESSAGE);
 		}
@@ -45,7 +46,7 @@ public class ErrorMessages {
 	}
 
 	public static void unsupportedLookAndFeelError(String methodName, UnsupportedLookAndFeelException e) {
-		String message = "Unable to load the class in method '" + methodName + "': \n" + e.getLocalizedMessage();
+		String message = "Unable to load the look and feel in method '" + methodName + "': \n" + e.getLocalizedMessage();
 		log.error(message);
 		JOptionPane.showMessageDialog(null, message, "Error", JOptionPane.ERROR_MESSAGE);
 	}
@@ -66,6 +67,15 @@ public class ErrorMessages {
 		log.error(logMessage);
 		
 		String message = "Unable to backup database in path '" + backupPath;
+		JOptionPane.showMessageDialog(null, message, "Error", JOptionPane.ERROR_MESSAGE);
+	}
+
+	static void restoreIOExceptionError(String methodName, IOException ex, String backupPath) {
+		String logMessage = "Unable to restore the database with method '" + methodName + "'\n" + 
+				"Path '" + backupPath + "'\nError: " + ex.getLocalizedMessage();
+		log.error(logMessage);
+		
+		String message = "Unable to restore the database from path '" + backupPath;
 		JOptionPane.showMessageDialog(null, message, "Error", JOptionPane.ERROR_MESSAGE);
 	}
 }

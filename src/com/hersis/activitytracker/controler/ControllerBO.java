@@ -9,7 +9,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.sql.SQLException;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.util.Calendar;
@@ -139,21 +138,12 @@ class ControllerBO {
 	 * Finalizes correctly the application and exits.
 	 */
 	public void exit(Dao dao, Component mainParent) {	
-		boolean exit = true;
-		int errorCode = -1;
+		boolean exit;
 		
-        try {
-			saveProperties();
-            Dao.exitDatabase();
-        } catch (SQLException ex) {
-			exit = AlertMessages.exitSQLException(mainParent, ex);
-			errorCode = ex.getErrorCode();
-        } finally {
-            // Exits if not cancelled by the user.
-            if (exit) {
-				log.info("Successfully disconnected from database: {}", errorCode);
-				System.exit(0);
-			}
-        }
+        saveProperties();
+        exit = Dao.exitDatabase();
+		if (exit) {
+			System.exit(0);
+		}
 	}
 }

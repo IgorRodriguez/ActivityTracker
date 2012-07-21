@@ -141,7 +141,7 @@ public abstract class AlertMessages {
 			int answer = JOptionPane.showConfirmDialog(mainParent, errorMessage, 
 					"¿Force and exit?", JOptionPane.OK_CANCEL_OPTION, JOptionPane.WARNING_MESSAGE);
 			if (answer == JOptionPane.CANCEL_OPTION) exit = false; 
-		}
+		} 
 		return exit;
 	}
 	

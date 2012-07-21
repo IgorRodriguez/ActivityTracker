@@ -29,7 +29,6 @@ public class TimerBO implements Observer {
 	private Dao dao;
 	private TimeDao timeDao = TimeDao.getInstance();
 	private ActivityDao activityDao = ActivityDao.getInstance();
-	private final ErrorMessages errorMessages = new ErrorMessages();
 	
 	private long totalTime = 0;     // Total of time in "play" status
     private long diffTime = 0;      // Time since the last time "play" was pressed.
@@ -53,6 +52,7 @@ public class TimerBO implements Observer {
 		
 		activityDao.addObserver(this);
 		timeDao.addObserver(this);
+		dao.addObserver(this);
 		
 		timerPanel.resetControls();
 		
@@ -135,13 +135,13 @@ public class TimerBO implements Observer {
 		if (startTime > 0 && totalTime >= TimeBO.MINIMUM_TIME_DURATION) {
 			try {
 				activity = timerPanel.getSelectedActivity();
-				Connection conn = dao.connect();
+				Connection conn = Dao.connect();
 				timeDao.insertTime(conn, new Time(activity.getIdActivity(), new Timestamp(startTime), 
 						new Timestamp(pauseTime), totalTime, ""));
 			} catch (SQLException | ClassNotFoundException ex) {
 				throw ex;
 			} finally {			
-				dao.disconnect();
+				Dao.disconnect();
 			}
 		}
 		startTime = -1;
@@ -165,20 +165,22 @@ public class TimerBO implements Observer {
 	void loadCmbActivities() {
 		try {
 			// Set the JComboBox values from the database in descendant order by date.
-			Connection conn = dao.connect();
+			Connection conn = Dao.connect();
 			timerPanel.loadCmbActivities(activityDao.orderActivitiesByTime(activityDao.getActivities(conn), 
 					timeDao.getDistinctActivityIdsByTime(conn)));
 		} catch (SQLException ex) {
-			errorMessages.sqlExceptionError("loadCmbActivities()", ex);
+			ErrorMessages.sqlExceptionError("loadCmbActivities()", ex);
 		} catch (ClassNotFoundException ex) {
-			errorMessages.classNotFoundError("loadCmbActivities()", ex);
+			ErrorMessages.classNotFoundError("loadCmbActivities()", ex);
 		} finally {
-			dao.disconnect();
+			Dao.disconnect();
 		}
 	}
 
 	@Override
 	public void update(Observable o, Object arg) {
-		loadCmbActivities();
+		if (o instanceof ActivityDao || o instanceof TimeDao || o instanceof Dao) {
+			loadCmbActivities();
+		}
 	}
 }

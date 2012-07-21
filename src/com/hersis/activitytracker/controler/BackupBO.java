@@ -6,14 +6,11 @@ import com.hersis.activitytracker.view.BackupDialog;
 import com.hersis.activitytracker.view.aux.BackupFileFilter;
 import java.io.File;
 import java.io.FileFilter;
+import java.io.IOException;
 import java.sql.SQLException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Date;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  *
@@ -75,8 +72,10 @@ public class BackupBO {
 	}
 
 	static void restoreBackup(String path) {
-		try {
-			Dao.restoreBackup(path);
+		try (Dao dao = Dao.getInstance()) {
+			dao.restoreBackup(path);
+		} catch (IOException ex) {
+			ErrorMessages.restoreIOExceptionError("BackupBo.restoreBackup()", ex, path);
 		} catch (SQLException ex) {
 			ErrorMessages.sqlExceptionError("BackupBo.restoreBackup()", ex);
 		} catch (ClassNotFoundException ex) {

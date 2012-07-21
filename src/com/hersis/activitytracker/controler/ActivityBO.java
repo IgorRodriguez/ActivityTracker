@@ -36,6 +36,8 @@ public class ActivityBO implements Observer {
 		this.activityListDialog = activityListDialog;
 		
 		activityDao.addObserver(this);
+		timeDao.addObserver(this);
+		dao.addObserver(this);
 	}
 
 	void saveActivity(Activity oldActivity, Activity newActivity) {
@@ -59,7 +61,7 @@ public class ActivityBO implements Observer {
 		boolean saved = false;
 		
 		try {
-			Connection conn = dao.connect();
+			Connection conn = Dao.connect();
 			if (!"".equals(activityName)) {
 				if (!activityDao.nameExists(conn, activityName)) {
 					int insertActivity = activityDao.insertActivity(conn, activity);
@@ -71,11 +73,11 @@ public class ActivityBO implements Observer {
 				AlertMessages.emptyActivityFields(activityDialog);
 			}
 		} catch (SQLException ex) {
-			errorMessages.sqlExceptionError("insertActivity()", ex);
+			ErrorMessages.sqlExceptionError("insertActivity()", ex);
 		} catch (ClassNotFoundException ex) {
-			errorMessages.classNotFoundError("insertActivity()", ex);
+			ErrorMessages.classNotFoundError("insertActivity()", ex);
 		} finally {
-			dao.disconnect();
+			Dao.disconnect();
 		}
 		return saved;
 	}
@@ -84,7 +86,7 @@ public class ActivityBO implements Observer {
 		boolean saved = false;
 		
 		try {
-			Connection conn = dao.connect();
+			Connection conn = Dao.connect();
 			if (!"".equals(newActivity.getName())) {
 				if (oldActivity.getName().equals(newActivity.getName()) ||
 						!activityDao.nameExists(conn, newActivity.getName())) {
@@ -97,11 +99,11 @@ public class ActivityBO implements Observer {
 				AlertMessages.emptyActivityFields(activityDialog);
 			}
 		} catch (SQLException ex) {
-			errorMessages.sqlExceptionError("updateActivity()", ex);
+			ErrorMessages.sqlExceptionError("updateActivity()", ex);
 		} catch (ClassNotFoundException ex) {
-			errorMessages.classNotFoundError("updateActivity()", ex);
+			ErrorMessages.classNotFoundError("updateActivity()", ex);
 		} finally {
-			dao.disconnect();
+			Dao.disconnect();
 		}
 		return saved;
 	}
@@ -115,7 +117,7 @@ public class ActivityBO implements Observer {
 		if (activity != null) {
 			if (AlertMessages.deleteActivityConfirmation(dialogParent, activity)) {
 				try {
-					Connection conn = dao.connect();
+					Connection conn = Dao.connect();
 					for (Time t : timeDao.getTimesByActivity(conn, activity)) {
 						timeDao.deleteTime(conn, t);
 					}
@@ -124,11 +126,11 @@ public class ActivityBO implements Observer {
 					activityListDialog.selectPreviousRow();
 					activityDialog.setVisible(false);
 				} catch (SQLException ex) {
-					errorMessages.sqlExceptionError("deleteActivity()", ex);
+					ErrorMessages.sqlExceptionError("deleteActivity()", ex);
 				} catch (ClassNotFoundException ex) {
-					errorMessages.classNotFoundError("deleteActivity()", ex);
+					ErrorMessages.classNotFoundError("deleteActivity()", ex);
 				} finally {
-					dao.disconnect();
+					Dao.disconnect();
 				}
 			}
 		} else {
@@ -167,14 +169,14 @@ public class ActivityBO implements Observer {
 		ArrayList<Activity> activities = null;
 		
 		try {
-			dao.connect();
-			activities = activityDao.getActivities(dao.getConnection());
+			Dao.connect();
+			activities = activityDao.getActivities(Dao.getConnection());
 		} catch (SQLException ex) {
-			errorMessages.sqlExceptionError("getActivities()", ex);
+			ErrorMessages.sqlExceptionError("getActivities()", ex);
 		} catch (ClassNotFoundException ex) {
-			errorMessages.classNotFoundError("getActivities()", ex);
+			ErrorMessages.classNotFoundError("getActivities()", ex);
 		} finally {
-			dao.disconnect();
+			Dao.disconnect();
 		}
 		
 		return activities;
@@ -182,7 +184,9 @@ public class ActivityBO implements Observer {
 
 	@Override
 	public void update(Observable o, Object arg) {
-		updateActivityTable();
+		if (o instanceof ActivityDao || o instanceof TimeDao || o instanceof Dao) {
+			updateActivityTable();
+		}
 	}
 	
 }
