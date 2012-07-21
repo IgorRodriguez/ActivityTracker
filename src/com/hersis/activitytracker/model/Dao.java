@@ -2,12 +2,10 @@ package com.hersis.activitytracker.model;
 
 import ch.qos.logback.classic.Logger;
 import com.hersis.activitytracker.controler.ErrorMessages;
-import com.hersis.activitytracker.model.nio.DirUtils;
 import com.hersis.activitytracker.view.AlertMessages;
 import java.io.Closeable;
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Path;
 import java.sql.*;
 import java.util.Observable;
 import java.util.Properties;
@@ -98,8 +96,8 @@ public class Dao extends Observable implements Closeable{
                 dbConnection.close();
             }
         } catch (SQLException e) {
-            log.info("No se pudo cerrar la conexion a la base de datos.\n" +
-                    "Codigo de error: {}", e.getErrorCode());
+            log.info("Couldn't close the database connection.\n" +
+                    "Error code: {}", e.getErrorCode());
         }
         log.debug("Connection closed successfully");
     }
@@ -215,6 +213,25 @@ public class Dao extends Observable implements Closeable{
 		disconnect();
 	}
 
+	/**
+     * Closes the database for restore.
+     */
+    public static void closeDatabaseForRestore() throws SQLException {
+		try {
+			String dbUrl = getDatabaseUrl();
+			dbProperties.put("shutdown", "true");
+			dbConnection = DriverManager.getConnection(dbUrl, dbProperties);
+		} catch (SQLException e) {
+			dbProperties.remove("shutdown");
+			int errorCode = e.getErrorCode();
+			System.out.println("SQLState = " + e.getSQLState());
+			if (errorCode != 45000 && !"08006".equals(e.getSQLState())) {
+				log.info("Database shutted-down");
+				throw e;
+			}
+		}
+    }
+	//TODO Important! Repair the connection problem while deleting activities after performing a backup.
 	public static int executeBackup(String backupPath) throws SQLException, ClassNotFoundException {
 		connect();
 		try (PreparedStatement stmt = getConnection().prepareStatement(SQL_BACKUP_DATABASE)) {
@@ -231,53 +248,17 @@ public class Dao extends Observable implements Closeable{
 	}
 	
 	public void restoreBackup(String backupSourcePath) throws IOException, SQLException, ClassNotFoundException {
-////		exitDatabase(); // Try with disconnect();
-//		disconnect();
-//		Path sourcePath = new File(backupSourcePath + File.separatorChar + DB_NAME).toPath();
-//		Path destinationPath = new File (getDatabaseLocation()).toPath();
-//
-//		DirUtils.deleteIfExists(destinationPath);
-//		DirUtils.copy(sourcePath, destinationPath);
-////		dao = new Dao();
-//		connect();
-		// Notify to observers
-		
-		
-		disconnect();
-			String connectionString = getDatabaseUrl() + ";restoreFrom=" + backupSourcePath + File.separatorChar + DB_NAME;
-	//		
-	//		DirUtils dirUtils = new DirUtils();
-//			String s = dbProperties.getProperty("derby.driver");
-//			Class.forName("org.apache.derby.jdbc.EmbeddedDriver");
-	//		disconnect();
-			dbConnection = DriverManager.getConnection(connectionString);
-			dbConnection.commit();
-			log.info("Database has been restored from {}", backupSourcePath);
-			disconnect();
-			connect();
+		closeDatabaseForRestore();
+		String connectionString = getDatabaseUrl() + ";restoreFrom=" + backupSourcePath + 
+				File.separatorChar + DB_NAME;
+
+		dbConnection = DriverManager.getConnection(connectionString);
+
+		log.info("Database has been restored from {}", backupSourcePath);
 			
-	//		disconnect();
-			
-	//		public SeguimientoEstudiosDAO restaurarBackup(String origenBackup) throws SQLException {
-	//        String urlRestaurar = getDatabaseUrl() + ";restoreFrom=" + origenBackup;
-	//
-	//        if (isConnected) {
-	//            disconnect();
-	//        }
-	//        dbConnection = DriverManager.getConnection(urlRestaurar);
-	//        logger.log(Level.WARNING, "Se ha restaurado un backup de la BD: {0}", origenBackup);
-	//        isConnected = true;
-	//        disconnect();
-	//        //@todo Corregir error al conectar. Tal vez sea cuestion de tiempo.
-	////        connect();
-	//    }
-	//    }
-			
-			
-//			
+		// Notify the Observers to allow the GUI update.
 		setChanged();
 		notifyObservers();
-		System.out.println("Hello!");
 	}
 
 }

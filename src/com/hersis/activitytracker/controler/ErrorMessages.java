@@ -32,7 +32,8 @@ public class ErrorMessages {
 	 * @param e The SQL exception.
 	 */
 	public static void sqlExceptionError(String methodName, SQLException e) {
-		if (!"Derby system shutdown.".equals(e.getLocalizedMessage())) {
+		int errorCode = e.getErrorCode();
+		if (!(errorCode != 50000 && "XJ015".equals(e.getSQLState()))) {
 			String message = "Error while executing SQL instruction in method '" + methodName + "': \n" + 
 					e.getLocalizedMessage() + "\nError code: " + e.getErrorCode() + "\nSQLState: " +
 					e.getSQLState();
