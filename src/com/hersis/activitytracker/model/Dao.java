@@ -18,11 +18,11 @@ import org.slf4j.LoggerFactory;
 public class Dao extends Observable implements Closeable{
 	private static Dao dao = null;
     private static final Logger log = (Logger) LoggerFactory.getLogger("model.Dao");
+    private static Properties dbProperties;
+    private static Connection dbConnection;
     private static final String DERBY_SYSTEM_HOME = System.getProperty("user.dir");
     private static final String DB_NAME = "db";
     private static final String SQL_BACKUP_DATABASE = "CALL SYSCS_UTIL.SYSCS_BACKUP_DATABASE(?)";
-    private static final String SQL_RESTORE_DATABASE = ";restoreFrom=";
-    private static final String STR_NEW_DATABASE_FROM_BACKUP = "?;createFrom=?";
 	private static final String SQL_CREATE_ACTIVITIES_TABLE =
             "CREATE TABLE APP.ACTIVITIES (" +
             "   ID_ACTIVITY INT NOT NULL GENERATED ALWAYS AS IDENTITY CONSTRAINT ID_ACTIVITY_PK PRIMARY KEY," +
@@ -39,8 +39,6 @@ public class Dao extends Observable implements Closeable{
             "   DESCRIPTION VARCHAR(200)," +
             "   FOREIGN KEY (ID_ACTIVITY) REFERENCES APP.ACTIVITIES(ID_ACTIVITY)" +
             ")";
-    private static Properties dbProperties;
-    private static Connection dbConnection;
 
     private Dao() throws ClassNotFoundException, SQLException {
         setDBSystemDir();
@@ -75,7 +73,6 @@ public class Dao extends Observable implements Closeable{
         } catch (SQLException ex) {
             log.error("Couldn't connect to the database.\n" +
                     "Message: {}\nError code: {}", ex.getMessage(), ex.getErrorCode());
-			ex.printStackTrace();
             throw ex;
         } catch (ClassNotFoundException e) {
             log.error("Couldn't load database driver.\n" +
@@ -103,27 +100,21 @@ public class Dao extends Observable implements Closeable{
     }
     
     /**
-     * Shut-downs the database.
+     * Shut-downs the database engine.
      */
-    public static boolean exitDatabase() {
-		boolean exit = true;
-		int errorCode = -1;
-		
+    public static void closeDatabaseEngine() throws SQLException {
         try {
             dbProperties.put("shutdown", "true");
             DriverManager.getConnection(dbProperties.getProperty("derby.url"), 
                     dbProperties);
         } catch (SQLException ex) {
-			exit = AlertMessages.exitSQLException(null, ex);
-			errorCode = ex.getErrorCode();
-        } finally {
-            // Exits if not cancelled by the user.
-            if (exit) {
-				log.info("Successfully disconnected from database: {}", errorCode);
-			}
-        }
-		dbProperties.remove("shutdown");
-		return exit;
+			dbProperties.remove("shutdown");
+			// At database engine shutdown, Derby throws error 50.000 and SQLState XJ015 to show 
+			// that the operation was successful.
+			int errorCode = ex.getErrorCode();
+			if (!(errorCode == 50000 && "XJ015".equals(ex.getSQLState()))) throw ex;
+			log.info("Successfully disconnected from the database engine: {}", errorCode);
+        } 
     }
 
     private void createDbProperties() {
@@ -214,21 +205,20 @@ public class Dao extends Observable implements Closeable{
 	}
 
 	/**
-     * Closes the database for restore.
+     * Closes the current database.
      */
-    public static void closeDatabaseForRestore() throws SQLException {
+    public static void closeDatabase() throws SQLException {
 		try {
 			String dbUrl = getDatabaseUrl();
 			dbProperties.put("shutdown", "true");
 			dbConnection = DriverManager.getConnection(dbUrl, dbProperties);
-		} catch (SQLException e) {
+		} catch (SQLException ex) {
 			dbProperties.remove("shutdown");
-			int errorCode = e.getErrorCode();
-			System.out.println("SQLState = " + e.getSQLState());
-			if (errorCode != 45000 && !"08006".equals(e.getSQLState())) {
-				log.info("Database shutted-down");
-				throw e;
-			}
+			// If the database is successfully shutted-down, Derby throws an SQLException with
+			// errorCode = 45.000 and SQLState = 080006.
+			int errorCode = ex.getErrorCode();
+			if (!(errorCode == 45000 && "08006".equals(ex.getSQLState()))) throw ex;
+			log.info("Database successfully shutted-down");
 		}
     }
 	//TODO Important! Repair the connection problem while deleting activities after performing a backup.
@@ -248,7 +238,7 @@ public class Dao extends Observable implements Closeable{
 	}
 	
 	public void restoreBackup(String backupSourcePath) throws IOException, SQLException, ClassNotFoundException {
-		closeDatabaseForRestore();
+		closeDatabase();
 		String connectionString = getDatabaseUrl() + ";restoreFrom=" + backupSourcePath + 
 				File.separatorChar + DB_NAME;
 

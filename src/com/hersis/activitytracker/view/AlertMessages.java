@@ -131,17 +131,14 @@ public abstract class AlertMessages {
 	}
 
 	public static boolean exitSQLException(Component mainParent, SQLException e) {
-		int errorCode = e.getErrorCode();
 		boolean exit = true;
-		// At shutdown, Derby throws error 50.000 and SQLState XJ015 to show 
-		// that the operation was successful.
-		if (errorCode != 50000 && "XJ015".equals(e.getSQLState())) {
-			String errorMessage = "The database isn't successfully closed.\n" +
-					"Do you like to force the closure of the application?";
-			int answer = JOptionPane.showConfirmDialog(mainParent, errorMessage, 
-					"¿Force and exit?", JOptionPane.OK_CANCEL_OPTION, JOptionPane.WARNING_MESSAGE);
-			if (answer == JOptionPane.CANCEL_OPTION) exit = false; 
-		} 
+		String errorMessage = "The database isn't correctly closed.\n" +
+				"Do you like to force the closure of the application?";
+		
+		int answer = JOptionPane.showConfirmDialog(mainParent, errorMessage, 
+				"¿Force and exit?", JOptionPane.OK_CANCEL_OPTION, JOptionPane.WARNING_MESSAGE);
+		if (answer == JOptionPane.CANCEL_OPTION || answer == JOptionPane.CLOSED_OPTION) exit = false; 
+		
 		return exit;
 	}
 	

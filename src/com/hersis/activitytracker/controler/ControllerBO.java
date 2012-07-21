@@ -9,11 +9,13 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.sql.SQLException;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.util.Calendar;
 import java.util.Locale;
 import java.util.Properties;
+import java.util.logging.Level;
 import javax.swing.LookAndFeel;
 import javax.swing.UIManager;
 import javax.swing.UIManager.LookAndFeelInfo;
@@ -138,12 +140,17 @@ class ControllerBO {
 	 * Finalizes correctly the application and exits.
 	 */
 	public void exit(Dao dao, Component mainParent) {	
-		boolean exit;
+		boolean exit = true;
 		
         saveProperties();
-        exit = Dao.exitDatabase();
-		if (exit) {
-			System.exit(0);
+		try {
+			Dao.closeDatabaseEngine();
+		} catch (SQLException ex) {
+			exit = AlertMessages.exitSQLException(mainParent, ex);
+		} finally {
+			if (exit) {
+				System.exit(0);
+			}
 		}
 	}
 }
