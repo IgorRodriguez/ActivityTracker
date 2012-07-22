@@ -47,15 +47,13 @@ public class TimeBO implements Observer {
 		ArrayList<Activity> activities = null;
 		try {
 			// Returns the JComboBox values from the database in descendant order by date.
-			Connection conn = Dao.connect();
+			Connection conn = Dao.getConnection();
 			activities = activityDao.orderActivitiesByTime(activityDao.getActivities(conn), 
 					timeDao.getDistinctActivityIdsByTime(conn));
 		} catch (SQLException ex) {
 			ErrorMessages.sqlExceptionError("getActivities()", ex);
 		} catch (ClassNotFoundException ex) {
 			ErrorMessages.classNotFoundError("getActivities()", ex);
-		} finally {
-			Dao.disconnect();
 		}
 		return activities;
 	}
@@ -84,7 +82,7 @@ public class TimeBO implements Observer {
 		boolean saved = false;
 		
 		try {
-			Connection conn = Dao.connect();
+			Connection conn = Dao.getConnection();
 			// Check that the fields are not null and that the duration is greater than 1 minute.
 			if (newTime.isFullFilled() && newTime.getDuration() >= MINIMUM_TIME_DURATION) {
 				int insertTime = timeDao.insertTime(conn, newTime);
@@ -96,8 +94,6 @@ public class TimeBO implements Observer {
 			ErrorMessages.sqlExceptionError("insertTime()", ex);
 		} catch (ClassNotFoundException ex) {
 			ErrorMessages.classNotFoundError("insertTime()", ex);
-		} finally {
-			Dao.disconnect();
 		}
 		return saved;
 	}
@@ -106,7 +102,7 @@ public class TimeBO implements Observer {
 		boolean saved = false;
 		
 		try {
-			Connection conn = Dao.connect();
+			Connection conn = Dao.getConnection();
 			// Check that the fields are not null and that the duration is greater than 1 minute.
 			if (newTime.isFullFilled() && newTime.getDuration() >= MINIMUM_TIME_DURATION) {
 				int updateTime = timeDao.updateTime(conn, oldTime, newTime);
@@ -118,8 +114,6 @@ public class TimeBO implements Observer {
 			ErrorMessages.sqlExceptionError("updateTime()", ex);
 		} catch (ClassNotFoundException ex) {
 			ErrorMessages.classNotFoundError("updateTime()", ex);
-		} finally {
-			Dao.disconnect();
 		}
 		return saved;
 	}
@@ -151,7 +145,6 @@ public class TimeBO implements Observer {
 		if (time != null) {
 			if (AlertMessages.deleteTimeConfirmation(dialogParent, time)) {
 				try {
-					Dao.connect();
 					timeDao.deleteTime(Dao.getConnection(), time);
 					timeDialog.setTime(null);
 					timeListDialog.selectPreviousRow();
@@ -160,8 +153,6 @@ public class TimeBO implements Observer {
 					ErrorMessages.sqlExceptionError("deleteTime()", ex);
 				} catch (ClassNotFoundException ex) {
 					ErrorMessages.classNotFoundError("deleteTime()", ex);
-				} finally {
-					Dao.disconnect();
 				}
 			}
 		} else {
@@ -181,14 +172,11 @@ public class TimeBO implements Observer {
 		ArrayList<Time> times = null;
 		
 		try {
-			Dao.connect();
 			times = timeDao.getTimes(Dao.getConnection());
 		} catch (SQLException ex) {
 			ErrorMessages.sqlExceptionError("getTimes()", ex);
 		} catch (ClassNotFoundException ex) {
 			ErrorMessages.classNotFoundError("getTimes()", ex);
-		} finally {
-			Dao.disconnect();
 		}
 		
 		return times;

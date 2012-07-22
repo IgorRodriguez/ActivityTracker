@@ -21,6 +21,16 @@ public abstract class AlertMessages {
 	public static final int END_TIME = 2;
 	public static final int DURATION = 3;
 
+	/***********************************************************************************************
+	 * Backup alerts
+	 **********************************************************************************************/
+	
+	static void noBackupSelected(Component dialogParent) {
+		String message = "There isn't any backup selected";
+		String title = "Alert";
+		JOptionPane.showMessageDialog(dialogParent, message, title, JOptionPane.WARNING_MESSAGE);
+	}
+
 	public static void backupPathNull(Component dialogParent) {
 		String message = "Select a valid backup directory";
 		String title = "Alert";
@@ -32,6 +42,10 @@ public abstract class AlertMessages {
 		String title = "Alert";
 		JOptionPane.showMessageDialog(dialogParent, message, title, JOptionPane.WARNING_MESSAGE);
 	}
+	
+	/***********************************************************************************************
+	 * Activity alerts
+	 **********************************************************************************************/
 
 	public static void emptyActivityFields(Component dialogParent) {
 		String message = "The name of the activity cannot be empty";
@@ -69,6 +83,10 @@ public abstract class AlertMessages {
 		return delete;
 	}
 
+	/***********************************************************************************************
+	 * Time alerts
+	 **********************************************************************************************/
+	
 	public static void emptyTimeField(Component dialogParent, int problem) {
 		String message;
 		
@@ -115,6 +133,10 @@ public abstract class AlertMessages {
 		JOptionPane.showMessageDialog(dialogParent, message, title, JOptionPane.WARNING_MESSAGE);
 	}
 
+	/***********************************************************************************************
+	 * Properties alerts
+	 **********************************************************************************************/
+	
 	public static void propertiesLoadIOException(IOException e) {
 		String message = "Unable to load the previous configuration of the application.\n" +
 				"Default values will be loaded.";
@@ -129,6 +151,10 @@ public abstract class AlertMessages {
                             JOptionPane.WARNING_MESSAGE);
             log.info(message + "\nMessage: {}", e.getLocalizedMessage());
 	}
+	
+	/***********************************************************************************************
+	 * Other alerts
+	 **********************************************************************************************/
 
 	public static boolean exitSQLException(Component mainParent, SQLException e) {
 		boolean exit = true;

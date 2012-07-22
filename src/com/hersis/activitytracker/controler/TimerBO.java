@@ -135,13 +135,11 @@ public class TimerBO implements Observer {
 		if (startTime > 0 && totalTime >= TimeBO.MINIMUM_TIME_DURATION) {
 			try {
 				activity = timerPanel.getSelectedActivity();
-				Connection conn = Dao.connect();
+				Connection conn = Dao.getConnection();
 				timeDao.insertTime(conn, new Time(activity.getIdActivity(), new Timestamp(startTime), 
 						new Timestamp(pauseTime), totalTime, ""));
 			} catch (SQLException | ClassNotFoundException ex) {
 				throw ex;
-			} finally {			
-				Dao.disconnect();
 			}
 		}
 		startTime = -1;
@@ -165,15 +163,13 @@ public class TimerBO implements Observer {
 	void loadCmbActivities() {
 		try {
 			// Set the JComboBox values from the database in descendant order by date.
-			Connection conn = Dao.connect();
+			Connection conn = Dao.getConnection();
 			timerPanel.loadCmbActivities(activityDao.orderActivitiesByTime(activityDao.getActivities(conn), 
 					timeDao.getDistinctActivityIdsByTime(conn)));
 		} catch (SQLException ex) {
 			ErrorMessages.sqlExceptionError("loadCmbActivities()", ex);
 		} catch (ClassNotFoundException ex) {
 			ErrorMessages.classNotFoundError("loadCmbActivities()", ex);
-		} finally {
-			Dao.disconnect();
 		}
 	}
 

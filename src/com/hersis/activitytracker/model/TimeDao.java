@@ -154,12 +154,12 @@ public class TimeDao extends Observable {
 		return affectedRows;
 	}
 	
-	public int deleteTime(Connection conn, Time time) throws SQLException {
+	public int deleteTime(Connection conn, Time time) throws SQLException, ClassNotFoundException {
 		final String sql = "DELETE FROM APP.TIMES " +
 							"WHERE ID_TIME = ?";
 		int affectedRows = -1;
 				
-		try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+		try (PreparedStatement stmt = conn.prepareStatement(sql)) {			
 			stmt.setInt(1, time.getIdTime());
 			
 			affectedRows = stmt.executeUpdate();
@@ -172,7 +172,7 @@ public class TimeDao extends Observable {
             log.error("Unable to delete time from the database.\nMessage: {}\nError code: {}", 
 					ex.getMessage(), ex.getErrorCode());
             throw ex;
-        } 
+        }
 		return affectedRows;
 	}
 }

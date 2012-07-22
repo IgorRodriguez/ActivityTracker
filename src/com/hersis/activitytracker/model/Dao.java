@@ -2,7 +2,6 @@ package com.hersis.activitytracker.model;
 
 import ch.qos.logback.classic.Logger;
 import com.hersis.activitytracker.controler.ErrorMessages;
-import com.hersis.activitytracker.view.AlertMessages;
 import java.io.Closeable;
 import java.io.File;
 import java.io.IOException;
@@ -56,13 +55,13 @@ public class Dao extends Observable implements Closeable{
 	}
 
 	/**
-	 * Creates a connection to the database. It's needed to close it with the <code>disconnect()</code> method when 
-	 * finished working with the connection.
+	 * Creates a connection to the database. It's needed to be closed with the <code>disconnect()</code> 
+	 * method when finished working with the connection.
 	 * @return An opened connection to the database.
 	 * @throws SQLException If there was an error in the SQL expression employed.
 	 * @throws ClassNotFoundException If there was an error when loading the database driver.
 	 */
-    public static Connection connect() throws SQLException, ClassNotFoundException {
+    private static Connection connect() throws SQLException, ClassNotFoundException {
 		if (dbConnection != null && !dbConnection.isClosed()) return dbConnection;
         log.debug("Opening database connection...");
         try {
@@ -86,7 +85,7 @@ public class Dao extends Observable implements Closeable{
 	/**
 	 * Closes the connection previously created with the <code>connect()</code> method.
 	 */
-    public static void disconnect() {
+    private static void disconnect() {
         log.debug("Closing database connection...");
         try {
             if(!dbConnection.isClosed()) {
@@ -195,8 +194,9 @@ public class Dao extends Observable implements Closeable{
     	}
     }
 	
-	public static Connection getConnection() {
-		return dbConnection;
+	public static Connection getConnection() throws SQLException, ClassNotFoundException {
+		if (dbConnection == null || dbConnection.isClosed()) return connect();
+		else return dbConnection;
 	}
 
 	@Override
@@ -223,7 +223,6 @@ public class Dao extends Observable implements Closeable{
     }
 	//TODO Important! Repair the connection problem while deleting activities after performing a backup.
 	public static int executeBackup(String backupPath) throws SQLException, ClassNotFoundException {
-		connect();
 		try (PreparedStatement stmt = getConnection().prepareStatement(SQL_BACKUP_DATABASE)) {
 			stmt.setString(1, backupPath);
 			int executeUpdate = stmt.executeUpdate();
@@ -231,13 +230,11 @@ public class Dao extends Observable implements Closeable{
 			return executeUpdate;
 		} catch (SQLException ex) {
 			ErrorMessages.databaseBackupError("Dao.executeBackup()", ex, backupPath);
-		} finally {
-			disconnect();
 		}
 		return -1;
 	}
 	
-	public void restoreBackup(String backupSourcePath) throws IOException, SQLException, ClassNotFoundException {
+	public void restoreBackup(String backupSourcePath) throws SQLException {
 		closeDatabase();
 		String connectionString = getDatabaseUrl() + ";restoreFrom=" + backupSourcePath + 
 				File.separatorChar + DB_NAME;

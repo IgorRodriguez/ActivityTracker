@@ -1,6 +1,5 @@
 package com.hersis.activitytracker.controler;
 
-import com.hersis.activitytracker.view.AlertMessages;
 import com.hersis.activitytracker.Activity;
 import com.hersis.activitytracker.Time;
 import com.hersis.activitytracker.model.ActivityDao;
@@ -8,6 +7,7 @@ import com.hersis.activitytracker.model.Dao;
 import com.hersis.activitytracker.model.TimeDao;
 import com.hersis.activitytracker.view.ActivityDialog;
 import com.hersis.activitytracker.view.ActivityListDialog;
+import com.hersis.activitytracker.view.AlertMessages;
 import java.awt.Component;
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -61,7 +61,7 @@ public class ActivityBO implements Observer {
 		boolean saved = false;
 		
 		try {
-			Connection conn = Dao.connect();
+			Connection conn = Dao.getConnection();
 			if (!"".equals(activityName)) {
 				if (!activityDao.nameExists(conn, activityName)) {
 					int insertActivity = activityDao.insertActivity(conn, activity);
@@ -76,8 +76,6 @@ public class ActivityBO implements Observer {
 			ErrorMessages.sqlExceptionError("insertActivity()", ex);
 		} catch (ClassNotFoundException ex) {
 			ErrorMessages.classNotFoundError("insertActivity()", ex);
-		} finally {
-			Dao.disconnect();
 		}
 		return saved;
 	}
@@ -86,7 +84,7 @@ public class ActivityBO implements Observer {
 		boolean saved = false;
 		
 		try {
-			Connection conn = Dao.connect();
+			Connection conn = Dao.getConnection();
 			if (!"".equals(newActivity.getName())) {
 				if (oldActivity.getName().equals(newActivity.getName()) ||
 						!activityDao.nameExists(conn, newActivity.getName())) {
@@ -102,8 +100,6 @@ public class ActivityBO implements Observer {
 			ErrorMessages.sqlExceptionError("updateActivity()", ex);
 		} catch (ClassNotFoundException ex) {
 			ErrorMessages.classNotFoundError("updateActivity()", ex);
-		} finally {
-			Dao.disconnect();
 		}
 		return saved;
 	}
@@ -113,11 +109,10 @@ public class ActivityBO implements Observer {
 	}
 
 	void deleteActivity(Component dialogParent, Activity activity) {
-		//TODO delete all the dependant times in Times table.
 		if (activity != null) {
 			if (AlertMessages.deleteActivityConfirmation(dialogParent, activity)) {
 				try {
-					Connection conn = Dao.connect();
+					Connection conn = Dao.getConnection();
 					for (Time t : timeDao.getTimesByActivity(conn, activity)) {
 						timeDao.deleteTime(conn, t);
 					}
@@ -129,8 +124,6 @@ public class ActivityBO implements Observer {
 					ErrorMessages.sqlExceptionError("deleteActivity()", ex);
 				} catch (ClassNotFoundException ex) {
 					ErrorMessages.classNotFoundError("deleteActivity()", ex);
-				} finally {
-					Dao.disconnect();
 				}
 			}
 		} else {
@@ -169,14 +162,11 @@ public class ActivityBO implements Observer {
 		ArrayList<Activity> activities = null;
 		
 		try {
-			Dao.connect();
 			activities = activityDao.getActivities(Dao.getConnection());
 		} catch (SQLException ex) {
 			ErrorMessages.sqlExceptionError("getActivities()", ex);
 		} catch (ClassNotFoundException ex) {
 			ErrorMessages.classNotFoundError("getActivities()", ex);
-		} finally {
-			Dao.disconnect();
 		}
 		
 		return activities;

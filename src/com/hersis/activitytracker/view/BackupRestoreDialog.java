@@ -8,7 +8,6 @@ import javax.swing.JList;
 import javax.swing.ListCellRenderer;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
-import javax.swing.plaf.basic.BasicComboBoxRenderer;
 
 /**
  *
@@ -68,7 +67,8 @@ public class BackupRestoreDialog extends javax.swing.JDialog {
 	}
 	
 	void loadBackupValues() {
-		setBackupPath();
+		if ("".equals(backupPath)) setBackupPath();
+		else txtPath.setText(backupPath);
 	}
 	
 	private void setBackupPath() {
@@ -245,15 +245,19 @@ public class BackupRestoreDialog extends javax.swing.JDialog {
 		if (cmbBackupSelection.getSelectedIndex() != -1) {
 			File backupFile = (File) cmbBackupSelection.getSelectedItem();
 			Controller.restoreBackup(backupFile.getPath());
+			this.setVisible(false);
+		} else {
+			AlertMessages.noBackupSelected(this);
 		}
-		this.setVisible(false);
 	}//GEN-LAST:event_btnAcceptActionPerformed
 
 	private void btnFindPathActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnFindPathActionPerformed
 		Common.setSelectedFile(txtPath.getText().trim());
 		int selected = Common.showDirectoryChooser(this, "Select");
 		if (selected == Common.APPROVE_OPTION) {
-			txtPath.setText(Common.getSelectedFile().getPath());
+			String path = Common.getSelectedFile().getPath();
+			txtPath.setText(path);
+			backupPath = path;
 		}
 	}//GEN-LAST:event_btnFindPathActionPerformed
 

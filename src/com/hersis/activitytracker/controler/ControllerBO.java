@@ -15,7 +15,6 @@ import java.text.DecimalFormatSymbols;
 import java.util.Calendar;
 import java.util.Locale;
 import java.util.Properties;
-import java.util.logging.Level;
 import javax.swing.LookAndFeel;
 import javax.swing.UIManager;
 import javax.swing.UIManager.LookAndFeelInfo;
