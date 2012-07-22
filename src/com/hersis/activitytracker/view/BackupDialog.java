@@ -44,9 +44,9 @@ public class BackupDialog extends javax.swing.JDialog {
 
         backupPanel.setLayout(new java.awt.GridBagLayout());
 
-        btnBackupNow.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/hersis/activitytracker/images/button_cancel.png"))); // NOI18N
+        btnBackupNow.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/hersis/activitytracker/images/backup_64.png"))); // NOI18N
         btnBackupNow.setText("Backup now");
-        btnBackupNow.setPreferredSize(new java.awt.Dimension(250, 42));
+        btnBackupNow.setPreferredSize(new java.awt.Dimension(250, 60));
         btnBackupNow.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnBackupNowActionPerformed(evt);
@@ -62,9 +62,9 @@ public class BackupDialog extends javax.swing.JDialog {
         gridBagConstraints.insets = new java.awt.Insets(7, 7, 7, 7);
         backupPanel.add(btnBackupNow, gridBagConstraints);
 
-        btnRestore.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/hersis/activitytracker/images/button_cancel.png"))); // NOI18N
+        btnRestore.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/hersis/activitytracker/images/backup_restore_64.png"))); // NOI18N
         btnRestore.setText("Restore");
-        btnRestore.setPreferredSize(new java.awt.Dimension(250, 42));
+        btnRestore.setPreferredSize(new java.awt.Dimension(250, 60));
         btnRestore.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnRestoreActionPerformed(evt);
