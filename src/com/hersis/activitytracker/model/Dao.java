@@ -47,6 +47,12 @@ public class Dao extends Observable implements Closeable{
         }
     }
 	
+	/**
+	 * Returns a references to a Dao instance.
+	 * @return A non-null Dao reference.
+	 * @throws ClassNotFoundException If there is a problem while loading the database driver.
+	 * @throws SQLException If there is any problem while accessing the database.
+	 */
 	public static Dao getInstance() throws ClassNotFoundException, SQLException {
 		if (dao == null) {
 			dao = new Dao();
@@ -66,17 +72,15 @@ public class Dao extends Observable implements Closeable{
         log.debug("Opening database connection...");
         try {
             Class.forName(dbProperties.getProperty("derby.driver"));
-			String st = dbProperties.getProperty("derby.driver");
-			String s = getDatabaseUrl();
             dbConnection = DriverManager.getConnection(getDatabaseUrl(), dbProperties);
         } catch (SQLException ex) {
             log.error("Couldn't connect to the database.\n" +
                     "Message: {}\nError code: {}", ex.getMessage(), ex.getErrorCode());
             throw ex;
-        } catch (ClassNotFoundException e) {
+        } catch (ClassNotFoundException ex) {
             log.error("Couldn't load database driver.\n" +
-                    "Message: {}", e.getMessage());
-            throw e;
+                    "Message: {}", ex.getMessage());
+            throw ex;
         }
         log.debug("Connection opened successfully.");
         return dbConnection;
@@ -86,14 +90,12 @@ public class Dao extends Observable implements Closeable{
 	 * Closes the connection previously created with the <code>connect()</code> method.
 	 */
     private static void disconnect() {
-        log.debug("Closing database connection...");
         try {
             if(!dbConnection.isClosed()) {
                 dbConnection.close();
             }
-        } catch (SQLException e) {
-            log.info("Couldn't close the database connection.\n" +
-                    "Error code: {}", e.getErrorCode());
+        } catch (SQLException ex) {
+            log.info("Couldn't close the database connection.\nError code: {}", ex.getErrorCode());
         }
         log.debug("Connection closed successfully");
     }
@@ -116,6 +118,9 @@ public class Dao extends Observable implements Closeable{
         } 
     }
 
+	/**
+	 * Initializes the Properties variable for the database with all needed values.
+	 */
     private void createDbProperties() {
         dbProperties = new Properties();
         dbProperties.put("user", "admin");
@@ -125,6 +130,11 @@ public class Dao extends Observable implements Closeable{
         dbProperties.put("db.schema", "APP");
     }
 
+	/**
+	 * Creates the tables of the database.
+	 * @param conn An open connection to the database.
+	 * @throws SQLException If there is any problem when accessing the database.
+	 */
     private void createTables(Connection conn) throws SQLException {
         try (Statement stmt = conn.createStatement()) {
             stmt.execute(SQL_CREATE_ACTIVITIES_TABLE);
@@ -184,7 +194,7 @@ public class Dao extends Observable implements Closeable{
     }
 	
     /**
-     * If doesn't exist, creates the database directory.
+     * If doesn't exists, creates the database directory.
      */
     private void setDBSystemDir() {
     	File derbyHomeDir = new File(DERBY_SYSTEM_HOME);
@@ -194,11 +204,21 @@ public class Dao extends Observable implements Closeable{
     	}
     }
 	
+	/**
+	 * Returns an open connection to the database.
+	 * @return An open connection to the database.
+	 * @throws SQLException If there is any problem when accessing the database.
+	 * @throws ClassNotFoundException If there is any problem when loading the database driver.
+	 */
 	public static Connection getConnection() throws SQLException, ClassNotFoundException {
 		if (dbConnection == null || dbConnection.isClosed()) return connect();
 		else return dbConnection;
 	}
 
+	/**
+	 * Closes the database connection.
+	 * @throws IOException 
+	 */
 	@Override
 	public void close() throws IOException {
 		disconnect();
@@ -221,7 +241,14 @@ public class Dao extends Observable implements Closeable{
 			log.info("Database successfully shutted-down");
 		}
     }
-	//TODO Important! Repair the connection problem while deleting activities after performing a backup.
+
+	/**
+	 * Creates a backup of the current database in the specified directory.
+	 * @param backupPath A valid path where to save the backed-up database.
+	 * @return -1 if the backup hasn't been successfully performed.
+	 * @throws SQLException If there is a problem when accessing the database.
+	 * @throws ClassNotFoundException If there is a problem while loading the database driver.
+	 */
 	public static int executeBackup(String backupPath) throws SQLException, ClassNotFoundException {
 		try (PreparedStatement stmt = getConnection().prepareStatement(SQL_BACKUP_DATABASE)) {
 			stmt.setString(1, backupPath);
@@ -234,18 +261,28 @@ public class Dao extends Observable implements Closeable{
 		return -1;
 	}
 	
+	/**
+	 * Replaces the current database with the specified database backup.
+	 * @param backupSourcePath A valid database backup path to restore from.
+	 * @throws SQLException If there was any problem when accessing the database.
+	 */
 	public void restoreBackup(String backupSourcePath) throws SQLException {
-		closeDatabase();
-		String connectionString = getDatabaseUrl() + ";restoreFrom=" + backupSourcePath + 
-				File.separatorChar + DB_NAME;
+		try {
+			closeDatabase();
+			String connectionString = getDatabaseUrl() + ";restoreFrom=" + backupSourcePath + 
+					File.separatorChar + DB_NAME;
 
-		dbConnection = DriverManager.getConnection(connectionString);
+			dbConnection = DriverManager.getConnection(connectionString);
 
-		log.info("Database has been restored from {}", backupSourcePath);
-			
-		// Notify the Observers to allow the GUI update.
-		setChanged();
-		notifyObservers();
+			log.info("Database has been restored from {}", backupSourcePath);
+				
+			// Notify the Observers to allow the GUI update.
+			setChanged();
+			notifyObservers();
+		} catch (SQLException ex) {
+			ErrorMessages.databaseRestoreError("Dao.restoreBackup()", ex, backupSourcePath);
+			throw ex;
+		}
 	}
 
 }

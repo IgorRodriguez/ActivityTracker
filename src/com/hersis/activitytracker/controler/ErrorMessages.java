@@ -64,7 +64,7 @@ public class ErrorMessages {
 		
 	public static void databaseBackupError(String methodName, SQLException ex, String backupPath) {
 		String logMessage = "Unable to backup database with method '" + methodName + "'\n" + 
-				"Path '" + backupPath + "'\n Error: " + ex.getLocalizedMessage();
+				"Path '" + backupPath + "'\nError: " + ex.getLocalizedMessage();
 		log.error(logMessage);
 		
 		String message = "Unable to backup database in path '" + backupPath;
@@ -77,6 +77,15 @@ public class ErrorMessages {
 		log.error(logMessage);
 		
 		String message = "Unable to restore the database from path '" + backupPath;
+		JOptionPane.showMessageDialog(null, message, "Error", JOptionPane.ERROR_MESSAGE);
+	}
+
+	public static void databaseRestoreError(String methodName, SQLException ex, String backupPath) {
+		String logMessage = "Unable to restore database with method '" + methodName + "'\n" + 
+				"Database backup path '" + backupPath + "'\nError: " + ex.getLocalizedMessage();
+		log.error(logMessage);
+		
+		String message = "Unable to restore database from path '" + backupPath;
 		JOptionPane.showMessageDialog(null, message, "Error", JOptionPane.ERROR_MESSAGE);
 	}
 }
