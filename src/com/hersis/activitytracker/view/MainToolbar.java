@@ -38,7 +38,8 @@ public class MainToolbar extends javax.swing.JPanel {
         mainToolbar.setFloatable(false);
         mainToolbar.setRollover(true);
 
-        btnNewActivity.setText("Nueva act");
+        btnNewActivity.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/hersis/activitytracker/images/new_activity_64.png"))); // NOI18N
+        btnNewActivity.setToolTipText("New activity");
         btnNewActivity.setFocusable(false);
         btnNewActivity.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         btnNewActivity.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
@@ -49,7 +50,8 @@ public class MainToolbar extends javax.swing.JPanel {
         });
         mainToolbar.add(btnNewActivity);
 
-        btnNewTime.setText("Nuevo tiempo");
+        btnNewTime.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/hersis/activitytracker/images/new_time_64.png"))); // NOI18N
+        btnNewTime.setToolTipText("New time");
         btnNewTime.setFocusable(false);
         btnNewTime.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         btnNewTime.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
@@ -60,7 +62,8 @@ public class MainToolbar extends javax.swing.JPanel {
         });
         mainToolbar.add(btnNewTime);
 
-        btnViewActivities.setText("Ver act");
+        btnViewActivities.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/hersis/activitytracker/images/edit_activity_64.png"))); // NOI18N
+        btnViewActivities.setToolTipText("Edit activities");
         btnViewActivities.setFocusable(false);
         btnViewActivities.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         btnViewActivities.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
@@ -71,7 +74,8 @@ public class MainToolbar extends javax.swing.JPanel {
         });
         mainToolbar.add(btnViewActivities);
 
-        btnViewTimes.setText("Ver tiempo");
+        btnViewTimes.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/hersis/activitytracker/images/edit_time_64.png"))); // NOI18N
+        btnViewTimes.setToolTipText("Edit times");
         btnViewTimes.setFocusable(false);
         btnViewTimes.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         btnViewTimes.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
@@ -82,7 +86,8 @@ public class MainToolbar extends javax.swing.JPanel {
         });
         mainToolbar.add(btnViewTimes);
 
-        btnBackup.setText("Backup");
+        btnBackup.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/hersis/activitytracker/images/safe_64.png"))); // NOI18N
+        btnBackup.setToolTipText("Backup");
         btnBackup.setFocusable(false);
         btnBackup.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         btnBackup.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
@@ -93,7 +98,9 @@ public class MainToolbar extends javax.swing.JPanel {
         });
         mainToolbar.add(btnBackup);
 
+        btnOptions.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/hersis/activitytracker/images/button_cancel.png"))); // NOI18N
         btnOptions.setText("Opciones");
+        btnOptions.setToolTipText("Options");
         btnOptions.setFocusable(false);
         btnOptions.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         btnOptions.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);

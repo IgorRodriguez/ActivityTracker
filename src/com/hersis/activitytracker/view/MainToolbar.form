@@ -11,7 +11,7 @@
     <AuxValue name="FormSettings_listenerGenerationStyle" type="java.lang.Integer" value="0"/>
     <AuxValue name="FormSettings_variablesLocal" type="java.lang.Boolean" value="false"/>
     <AuxValue name="FormSettings_variablesModifier" type="java.lang.Integer" value="2"/>
-    <AuxValue name="designerSize" type="java.awt.Dimension" value="-84,-19,0,5,115,114,0,18,106,97,118,97,46,97,119,116,46,68,105,109,101,110,115,105,111,110,65,-114,-39,-41,-84,95,68,20,2,0,2,73,0,6,104,101,105,103,104,116,73,0,5,119,105,100,116,104,120,112,0,0,0,36,0,0,1,-4"/>
+    <AuxValue name="designerSize" type="java.awt.Dimension" value="-84,-19,0,5,115,114,0,18,106,97,118,97,46,97,119,116,46,68,105,109,101,110,115,105,111,110,65,-114,-39,-41,-84,95,68,20,2,0,2,73,0,6,104,101,105,103,104,116,73,0,5,119,105,100,116,104,120,112,0,0,0,112,0,0,2,17"/>
   </AuxValues>
 
   <Layout class="org.netbeans.modules.form.compat2.layouts.DesignBorderLayout"/>
@@ -31,7 +31,10 @@
       <SubComponents>
         <Component class="javax.swing.JButton" name="btnNewActivity">
           <Properties>
-            <Property name="text" type="java.lang.String" value="Nueva act"/>
+            <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
+              <Image iconType="3" name="/com/hersis/activitytracker/images/new_activity_64.png"/>
+            </Property>
+            <Property name="toolTipText" type="java.lang.String" value="New activity"/>
             <Property name="focusable" type="boolean" value="false"/>
             <Property name="horizontalTextPosition" type="int" value="0"/>
             <Property name="verticalTextPosition" type="int" value="3"/>
@@ -42,7 +45,10 @@
         </Component>
         <Component class="javax.swing.JButton" name="btnNewTime">
           <Properties>
-            <Property name="text" type="java.lang.String" value="Nuevo tiempo"/>
+            <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
+              <Image iconType="3" name="/com/hersis/activitytracker/images/new_time_64.png"/>
+            </Property>
+            <Property name="toolTipText" type="java.lang.String" value="New time"/>
             <Property name="focusable" type="boolean" value="false"/>
             <Property name="horizontalTextPosition" type="int" value="0"/>
             <Property name="verticalTextPosition" type="int" value="3"/>
@@ -53,7 +59,10 @@
         </Component>
         <Component class="javax.swing.JButton" name="btnViewActivities">
           <Properties>
-            <Property name="text" type="java.lang.String" value="Ver act"/>
+            <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
+              <Image iconType="3" name="/com/hersis/activitytracker/images/edit_activity_64.png"/>
+            </Property>
+            <Property name="toolTipText" type="java.lang.String" value="Edit activities"/>
             <Property name="focusable" type="boolean" value="false"/>
             <Property name="horizontalTextPosition" type="int" value="0"/>
             <Property name="verticalTextPosition" type="int" value="3"/>
@@ -64,7 +73,10 @@
         </Component>
         <Component class="javax.swing.JButton" name="btnViewTimes">
           <Properties>
-            <Property name="text" type="java.lang.String" value="Ver tiempo"/>
+            <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
+              <Image iconType="3" name="/com/hersis/activitytracker/images/edit_time_64.png"/>
+            </Property>
+            <Property name="toolTipText" type="java.lang.String" value="Edit times"/>
             <Property name="focusable" type="boolean" value="false"/>
             <Property name="horizontalTextPosition" type="int" value="0"/>
             <Property name="verticalTextPosition" type="int" value="3"/>
@@ -75,7 +87,10 @@
         </Component>
         <Component class="javax.swing.JButton" name="btnBackup">
           <Properties>
-            <Property name="text" type="java.lang.String" value="Backup"/>
+            <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
+              <Image iconType="3" name="/com/hersis/activitytracker/images/safe_64.png"/>
+            </Property>
+            <Property name="toolTipText" type="java.lang.String" value="Backup"/>
             <Property name="focusable" type="boolean" value="false"/>
             <Property name="horizontalTextPosition" type="int" value="0"/>
             <Property name="verticalTextPosition" type="int" value="3"/>
@@ -86,7 +101,11 @@
         </Component>
         <Component class="javax.swing.JButton" name="btnOptions">
           <Properties>
+            <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
+              <Image iconType="3" name="/com/hersis/activitytracker/images/button_cancel.png"/>
+            </Property>
             <Property name="text" type="java.lang.String" value="Opciones"/>
+            <Property name="toolTipText" type="java.lang.String" value="Options"/>
             <Property name="focusable" type="boolean" value="false"/>
             <Property name="horizontalTextPosition" type="int" value="0"/>
             <Property name="verticalTextPosition" type="int" value="3"/>
