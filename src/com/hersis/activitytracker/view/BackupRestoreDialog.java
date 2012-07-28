@@ -245,7 +245,7 @@ public class BackupRestoreDialog extends javax.swing.JDialog {
 	private void btnAcceptActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAcceptActionPerformed
 		if (cmbBackupSelection.getSelectedIndex() != -1) {
 			File backupFile = (File) cmbBackupSelection.getSelectedItem();
-			Controller.restoreBackup(backupFile.getPath());
+			Controller.restoreBackup(this, backupFile.getPath());
 			this.setVisible(false);
 		} else {
 			AlertMessages.noBackupSelected(this);

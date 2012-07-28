@@ -267,15 +267,15 @@ public class Controller {
 		backupBo.showBackupConfigWindow();
 	}
 	
-	public void startBackup() {
-		backupBo.startBackup();
+	public void startBackup(Component parentWindow) {
+		backupBo.startBackup(parentWindow);
 	}
 	
 	public static File[] getAvailableBackups(File filePath) {
 		return BackupBO.getAvailableBackups(filePath);
 	}
 
-	public static void restoreBackup(String path) {
-		BackupBO.restoreBackup(path);
+	public static void restoreBackup(Component parentWindow, String path) {
+		BackupBO.restoreBackup(parentWindow,path);
 	}
 }

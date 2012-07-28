@@ -42,6 +42,9 @@ public class ProgressBarPanel extends javax.swing.JPanel {
         lblPanelTitle = new javax.swing.JLabel();
         lblWaitMessage = new javax.swing.JLabel();
 
+        setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+        setInheritsPopupMenu(true);
+        setPreferredSize(new java.awt.Dimension(300, 85));
         setLayout(new java.awt.GridBagLayout());
 
         progressBar.setIndeterminate(true);
@@ -55,7 +58,7 @@ public class ProgressBarPanel extends javax.swing.JPanel {
 
         lblPanelTitle.setFont(new java.awt.Font("Dialog", 1, 18)); // NOI18N
         lblPanelTitle.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        lblPanelTitle.setText("Performing the application's backup");
+        lblPanelTitle.setText("Performing operation...");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 0;

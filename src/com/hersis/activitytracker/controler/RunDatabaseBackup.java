@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package com.hersis.activitytracker.controler;
 
 import com.hersis.activitytracker.ApplicationProperties;
@@ -39,9 +35,9 @@ public class RunDatabaseBackup extends SwingWorker<Void, Void> {
 			Dao.executeBackup(path);
 			Controller.setPropertie(ApplicationProperties.LAST_BACKUP_DATE, backupDate);
 		} catch (SQLException ex) {
-			ErrorMessages.sqlExceptionError("startBackup()", ex);
+			ErrorMessages.sqlExceptionError("RunDatabaseBackup.doInBackground()", ex);
 		} catch (ClassNotFoundException ex) {
-			ErrorMessages.classNotFoundError("startBackup()", ex);
+			ErrorMessages.classNotFoundError("RunDatabaseBackup.doInBackground()", ex);
 		}
 		
 		return null;
@@ -50,6 +46,5 @@ public class RunDatabaseBackup extends SwingWorker<Void, Void> {
 	@Override
 	protected void done () {
 		progressBarDialog.setVisible(false);
-	}
-	
+	}	
 }

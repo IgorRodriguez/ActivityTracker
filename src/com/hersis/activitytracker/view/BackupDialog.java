@@ -9,8 +9,6 @@ import com.hersis.activitytracker.controler.Controller;
 public class BackupDialog extends javax.swing.JDialog {
 	private final Controller controller;
 	private final BackupRestoreDialog backupRestoreDialog;
-
-	//TODO Change icons of the window
 	
 	/**
 	 * Creates new form BackupDialog
@@ -144,14 +142,13 @@ public class BackupDialog extends javax.swing.JDialog {
     }// </editor-fold>//GEN-END:initComponents
 
 	private void btnRestoreActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRestoreActionPerformed
-		String message = "The current database will be overwriten with ";
 		backupRestoreDialog.loadBackupValues();
 		backupRestoreDialog.setLocationRelativeTo(this);
 		backupRestoreDialog.setVisible(true);
 	}//GEN-LAST:event_btnRestoreActionPerformed
 
 	private void btnBackupNowActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBackupNowActionPerformed
-		controller.startBackup();
+		controller.startBackup(this);
 	}//GEN-LAST:event_btnBackupNowActionPerformed
 
 	private void btnConfigureActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnConfigureActionPerformed

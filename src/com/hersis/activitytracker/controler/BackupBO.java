@@ -2,32 +2,25 @@ package com.hersis.activitytracker.controler;
 
 import com.hersis.activitytracker.ApplicationProperties;
 import com.hersis.activitytracker.BackupPeriod;
-import com.hersis.activitytracker.model.Dao;
 import com.hersis.activitytracker.view.AlertMessages;
 import com.hersis.activitytracker.view.BackupConfigDialog;
 import com.hersis.activitytracker.view.BackupDialog;
 import com.hersis.activitytracker.view.ProgressBarDialog;
 import com.hersis.activitytracker.view.aux.BackupFileFilter;
-import com.hersis.activitytracker.view.aux.ProgressBarPanel;
-import java.awt.BorderLayout;
 import java.awt.Component;
 import java.io.File;
 import java.io.FileFilter;
-import java.io.IOException;
-import java.sql.SQLException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import javax.swing.*;
 
 /**
  *
  * @author Igor Rodriguez <igorrodriguezelvira@gmail.com>
  */
-public class BackupBO extends SwingWorker<Object, Object> {
+public class BackupBO {
 	private final BackupDialog backupDialog;
 	private final BackupConfigDialog backupConfigDialog;
 	private final DateFormat backupDateFormat = new SimpleDateFormat("yyyy-MM-dd_HH:mm:ss");
@@ -38,9 +31,15 @@ public class BackupBO extends SwingWorker<Object, Object> {
 	BackupBO(BackupDialog backupDialog, BackupConfigDialog backupConfigDialog) {
 		this.backupDialog = backupDialog;
 		this.backupConfigDialog = backupConfigDialog;
-		if (mustPerformBackup()) startBackup();
+		if (mustPerformBackup()) startBackup(Controller.getMainFrame());
 	}
 	
+	/**
+	 * Indicates if the time since the last performed backup is greater than the actual backup 
+	 * period indicated and, so, the backup must be executed.
+	 * @return True if the last backup was performed before the time expressed in the current backup 
+	 * period.
+	 */
 	private boolean mustPerformBackup() {
 		long lastBackupDate = getLastBackupDate().getTimeInMillis();
 		long now = Calendar.getInstance().getTimeInMillis();
@@ -62,9 +61,12 @@ public class BackupBO extends SwingWorker<Object, Object> {
 		return false;
 	}
 	
+	/**
+	 * Returns the date in which the backup was performed last time.
+	 * @return The date of the last performed backup.
+	 */
 	private Calendar getLastBackupDate() {
 		Calendar backupDate = null;
-		
 		String dateString = Controller.getPropertie(ApplicationProperties.LAST_BACKUP_DATE);
 		
 		if (dateString != null && !"".equals(dateString)) {	
@@ -85,6 +87,10 @@ public class BackupBO extends SwingWorker<Object, Object> {
 		return backupDate;
 	}
 	
+	/**
+	 * Returns the current backup period of the application.
+	 * @return The actual backup period.
+	 */
 	private BackupPeriod getBackupPeriod() {
 		BackupPeriod backupPeriod = null;
 		String backupPeriodString = Controller.getPropertie(ApplicationProperties.BACKUP_PERIOD);
@@ -120,66 +126,31 @@ public class BackupBO extends SwingWorker<Object, Object> {
 		backupConfigDialog.setVisible(true);
 	}
 
-	final int startBackup() {
-		//TODO remove return value
-		int backupResult = -1;
+	/**
+	 * Starts the backup of the application to the path specified in the application's properties.
+	 * @param parentWindow The parent window for the progress dialog that will be displayed.
+	 */
+	final void startBackup(Component parentWindow) {
 		final String destinationRoot = Controller.getPropertie(ApplicationProperties.BACKUP_PATH);
 		
 		if (destinationRoot != null && !"".equals(destinationRoot.trim())) {
-			JDialog backupProgressDialog = new JDialog(Controller.getMainFrame(), true);
+			ProgressBarDialog backupProgressDialog = ProgressBarDialog.getInstance(parentWindow);
 			RunDatabaseBackup runBackup = new RunDatabaseBackup(backupProgressDialog, 
 					destinationRoot, backupDateFormat, BACKUP_FORMAT_STRING);
 			runBackup.execute();
 			
-			
-			ProgressBarPanel progressBarPanel = new ProgressBarPanel();
-			progressBarPanel.setTaskTitle("Backing up application...");
-			backupProgressDialog.add(BorderLayout.CENTER, progressBarPanel);
-			backupProgressDialog.setUndecorated(true);
-			backupProgressDialog.pack();
-			backupProgressDialog.setLocationRelativeTo(null);
-			backupProgressDialog.setVisible(true);
+			backupProgressDialog.setTaskTitle("Backing up application...");
+			backupProgressDialog.setVisible(true);	// No need to set invisible, RunDatabaseBackup will do it.
 		} else {
 			AlertMessages.backupPathNull();
 		}
-		
-		
-		return backupResult;
-	}
-	
-	private int runBackup(String destinationRoot) {
-		int backupResult = -1;
-		String backupDate = backupDateFormat.format(new Date());
-		String path = destinationRoot + File.separatorChar + BACKUP_FORMAT_STRING +
-				backupDate;
-
-		// Show a progress bar of the task.
-		
-//		Thread progressThread = new Thread() {
-//			@Override
-//			public void run() {
-//				backupProgressDialog.setTaskTitle("Backing up application...");
-//				backupProgressDialog.setVisible(true);
-//				backupProgressDialog.repaint();
-//			}
-//		};
-//		progressThread.start();
-
-		try {
-			backupResult = Dao.executeBackup(path);
-			Controller.setPropertie(ApplicationProperties.LAST_BACKUP_DATE, backupDate);
-		} catch (SQLException ex) {
-			ErrorMessages.sqlExceptionError("startBackup()", ex);
-		} catch (ClassNotFoundException ex) {
-			ErrorMessages.classNotFoundError("startBackup()", ex);
-		}
-
-//		if (!progressThread.isAlive()) progressThread.interrupt();
-		
-		//AlertMessages.backupSuccessful(path);
-		return backupResult;
 	}
 
+	/**
+	 * Returns all the available backups in the specified path that match with the application's filter.
+	 * @param filePath The path in which to find the backups.
+	 * @return An array of File containing all the available backups in the path.
+	 */
 	static File[] getAvailableBackups(File filePath) {
 		FileFilter fileFilter = new BackupFileFilter();
 		File [] fileList = null;
@@ -190,21 +161,17 @@ public class BackupBO extends SwingWorker<Object, Object> {
 		return fileList;
 	}
 
-	static void restoreBackup(String path) {
-		try (Dao dao = Dao.getInstance()) {
-			dao.restoreBackup(path);
-		} catch (IOException ex) {
-			ErrorMessages.restoreIOExceptionError("BackupBo.restoreBackup()", ex, path);
-		} catch (SQLException ex) {
-			ErrorMessages.sqlExceptionError("BackupBo.restoreBackup()", ex);
-		} catch (ClassNotFoundException ex) {
-			ErrorMessages.classNotFoundError("BackupBo.restoreBackup()", ex);
-		}
-	}
+	/**
+	 * Starts the restoration of the backup specified in <code>path</code>.
+	 * @param parentWindow The parent window for the progress dialog that will be displayed.
+	 * @param path The path from which to get the database backup.
+	 */
+	static void restoreBackup(Component parentWindow, String path) {
+		ProgressBarDialog backupProgressDialog = ProgressBarDialog.getInstance(parentWindow);
+		RunDatabaseRestore runRestore = new RunDatabaseRestore(backupProgressDialog, path);
+		runRestore.execute();
 
-	@Override
-	protected Object doInBackground() throws Exception {
-		throw new UnsupportedOperationException("Not supported yet.");
+		backupProgressDialog.setTaskTitle("Restoring application...");
+		backupProgressDialog.setVisible(true);	// No need to set invisible, RunDatabaseRestore will do it.
 	}
-	
 }

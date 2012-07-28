@@ -1,38 +1,80 @@
 package com.hersis.activitytracker.view;
 
+import com.hersis.activitytracker.view.aux.ProgressBarPanel;
+import java.awt.BorderLayout;
+import java.awt.Component;
+import java.awt.Frame;
+import javax.swing.JDialog;
+
 /**
  *
  * @author Igor Rodriguez <igorrodriguezelvira@gmail.com>
  */
 public class ProgressBarDialog extends javax.swing.JDialog {
-	
+	private ProgressBarPanel progressBarPanel;
+	private Component parent;
 	/**
-	 * Creates new modal form ProgressBarDialog
+	 * Creates new modal form ProgressBarDialog. After creating an instance, it won't be a progress
+	 * bar until accessing setTaskTitle, getTaskTitle, setWaitMessage or getWaitMessage methods.
+	 * 
+	 * @param parent A Frame that is the parent of this JDialog.
 	 */
-	public ProgressBarDialog(java.awt.Frame parent) {
+	private ProgressBarDialog(java.awt.Frame parent) {
 		super(parent, true);
-		initComponents();
-		this.setLocationRelativeTo(parent);
+		init(parent);
 	}
 	
-//	public void callInit() {
-//		initComponents();
-//	}
+	/**
+	 * 
+	 * Creates new modal form ProgressBarDialog. After creating an instance, it won't be a progress
+	 * bar until accessing setTaskTitle, getTaskTitle, setWaitMessage or getWaitMessage methods.
+	 *
+	 * @param parent A JDialog that is the parent of this one. 
+	 */
+	private ProgressBarDialog(JDialog parent) {
+		super(parent, true);
+		init(parent);
+	}
+	
+	/**
+	 * Init method for all the constructors.
+	 * @param parent The parent of this JDialog class.
+	 */
+	private void init(Component parent) {
+		this.parent = parent;
+		initComponents();
+	}
+	
+	public static ProgressBarDialog getInstance(Component parent) {
+		if (parent instanceof Frame) return new ProgressBarDialog((Frame) parent);
+		else if (parent instanceof JDialog) return new ProgressBarDialog((JDialog) parent);
+		else return null;
+	}
+	
+	private ProgressBarPanel getProgressBarPanel() {
+		if (progressBarPanel == null) {
+			progressBarPanel = new ProgressBarPanel();
+			this.add(BorderLayout.CENTER, progressBarPanel);
+			this.pack();
+			this.setLocationRelativeTo(parent);
+		}
+		return progressBarPanel;
+	}
 
 	public void setTaskTitle(String title) {
-		progressBarPanel.setTaskTitle(title);
+		getProgressBarPanel().setTaskTitle(title);
 	}
 	
 	public String getTaskTitle() {
-		return progressBarPanel.getTaskTitle();
+		return getProgressBarPanel().getTaskTitle();
 	}
 	
 	public void setWaitMessage(String message) {
-		progressBarPanel.setWaitMessage(message);
+		getProgressBarPanel().setWaitMessage(message);
 	}
 	
 	public String getWaitMessage() {
-		return progressBarPanel.getWaitMessage();
+		return getProgressBarPanel().getWaitMessage();
 	}
 	
 	/**
@@ -43,17 +85,16 @@ public class ProgressBarDialog extends javax.swing.JDialog {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        progressBarPanel = new com.hersis.activitytracker.view.aux.ProgressBarPanel();
-
-        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+        setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
+        setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
+        setResizable(false);
+        setUndecorated(true);
         getContentPane().setLayout(new java.awt.BorderLayout(7, 7));
-        getContentPane().add(progressBarPanel, java.awt.BorderLayout.CENTER);
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
 	
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private com.hersis.activitytracker.view.aux.ProgressBarPanel progressBarPanel;
     // End of variables declaration//GEN-END:variables
 }
