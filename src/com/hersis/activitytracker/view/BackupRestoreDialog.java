@@ -1,5 +1,6 @@
 package com.hersis.activitytracker.view;
 
+import com.hersis.activitytracker.ApplicationProperties;
 import com.hersis.activitytracker.controler.Controller;
 import java.awt.Component;
 import java.io.File;
@@ -72,7 +73,7 @@ public class BackupRestoreDialog extends javax.swing.JDialog {
 	}
 	
 	private void setBackupPath() {
-		String propertie = Controller.getPropertie(Controller.BACKUP_PATH_PROPERTIE);
+		String propertie = Controller.getPropertie(ApplicationProperties.BACKUP_PATH);
 		if (propertie != null) {
 			txtPath.setText(propertie);
 		} else {
@@ -252,10 +253,10 @@ public class BackupRestoreDialog extends javax.swing.JDialog {
 	}//GEN-LAST:event_btnAcceptActionPerformed
 
 	private void btnFindPathActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnFindPathActionPerformed
-		Common.setSelectedFile(txtPath.getText().trim());
-		int selected = Common.showDirectoryChooser(this, "Select");
-		if (selected == Common.APPROVE_OPTION) {
-			String path = Common.getSelectedFile().getPath();
+		SharedFileChooser.setSelectedFile(txtPath.getText().trim());
+		int selected = SharedFileChooser.showDirectoryChooser(this, "Select");
+		if (selected == SharedFileChooser.APPROVE_OPTION) {
+			String path = SharedFileChooser.getSelectedFile().getPath();
 			txtPath.setText(path);
 			backupPath = path;
 		}

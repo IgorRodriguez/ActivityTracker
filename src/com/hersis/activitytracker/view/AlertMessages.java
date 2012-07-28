@@ -31,7 +31,19 @@ public abstract class AlertMessages {
 		JOptionPane.showMessageDialog(dialogParent, message, title, JOptionPane.WARNING_MESSAGE);
 	}
 
-	public static void backupPathNull(Component dialogParent) {
+	public static void backupPathNull() {
+		String message = "Select a valid backup directory in the backup settings window";
+		String title = "Alert";
+		JOptionPane.showMessageDialog(null, message, title, JOptionPane.WARNING_MESSAGE);
+	}
+
+	public static void backupSuccessful(String backupPath) {
+		String message = "The backup is done successfully in " + backupPath;
+		String title = "Info";
+		JOptionPane.showMessageDialog(null, message, title, JOptionPane.INFORMATION_MESSAGE);
+	}
+
+	public static void backupPathNullWhileConfiguring(Component dialogParent) {
 		String message = "Select a valid backup directory";
 		String title = "Alert";
 		JOptionPane.showMessageDialog(dialogParent, message, title, JOptionPane.WARNING_MESSAGE);
@@ -41,6 +53,15 @@ public abstract class AlertMessages {
 		String message = "Select a backup period";
 		String title = "Alert";
 		JOptionPane.showMessageDialog(dialogParent, message, title, JOptionPane.WARNING_MESSAGE);
+	}
+	
+	public static void backupPeriodIllegalArgumentException(String methodName, String backupPeriodValue) {
+		String message = "The backup period value '" + backupPeriodValue + "' saved in the " + 
+				"applications properties file, loaded by method '" + methodName + "', is not a " +
+				"valid one.\nDefault value will be restored.\n";
+		log.error(message);
+		
+		JOptionPane.showMessageDialog(null, message, "Alert", JOptionPane.WARNING_MESSAGE);
 	}
 	
 	/***********************************************************************************************

@@ -9,7 +9,7 @@ import javax.swing.filechooser.FileFilter;
  *
  * @author Igor Rodriguez <igorrodriguezelvira@gmail.com>
  */
-class Common {
+class SharedFileChooser {
 	private static final JFileChooser fileChooser = new JFileChooser();
 	/**
 	 * Indicates that the accept button of the file chooser has been pressed.

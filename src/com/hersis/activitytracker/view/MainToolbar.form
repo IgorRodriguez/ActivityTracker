@@ -102,9 +102,8 @@
         <Component class="javax.swing.JButton" name="btnOptions">
           <Properties>
             <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-              <Image iconType="3" name="/com/hersis/activitytracker/images/button_cancel.png"/>
+              <Image iconType="3" name="/com/hersis/activitytracker/images/run.png"/>
             </Property>
-            <Property name="text" type="java.lang.String" value="Opciones"/>
             <Property name="toolTipText" type="java.lang.String" value="Options"/>
             <Property name="focusable" type="boolean" value="false"/>
             <Property name="horizontalTextPosition" type="int" value="0"/>

@@ -1,5 +1,6 @@
 package com.hersis.activitytracker.controler;
 
+import com.hersis.activitytracker.ApplicationProperties;
 import ch.qos.logback.classic.Logger;
 import com.hersis.activitytracker.images.Icons;
 import com.hersis.activitytracker.model.Dao;
@@ -88,16 +89,16 @@ class ControllerBO {
         } 
     }
 	
-	static String getPropertie(String key) {
-		return appProperties.getProperty(key);
+	static String getPropertie(ApplicationProperties key) {
+		return appProperties.getProperty(key.toString());
 	}
 	
-	static void setPropertie(String key, String value) {
-		appProperties.setProperty(key, value);
+	static void setPropertie(ApplicationProperties key, String value) {
+		appProperties.setProperty(key.toString(), value);
 	}
 	
-	static void removePropertie(String key) {
-		appProperties.remove(key);
+	static void removePropertie(ApplicationProperties key) {
+		appProperties.remove(key.toString());
 	}
 	
 	

@@ -1,5 +1,6 @@
 package com.hersis.activitytracker.controler;
 
+import com.hersis.activitytracker.ApplicationProperties;
 import ch.qos.logback.classic.Logger;
 import com.hersis.activitytracker.Activity;
 import com.hersis.activitytracker.Time;
@@ -38,11 +39,7 @@ public class Controller {
 	private ActivityBO activityBo;
 	private TimeBO timeBo;
 	private BackupBO backupBo;
-	private final ErrorMessages errorMessages = new ErrorMessages();
 	
-	public static final String BACKUP_PERIOD_PROPERTIE = "backupPeriod";
-	public static final String BACKUP_PATH_PROPERTIE = "backupPath";
-	public static final String LAST_BACKUP_DATE = "lastBackupDate";
 	public static final String APPLICATION_NAME = "ActivityTrackerV2";
 		
 	public Controller() {
@@ -114,15 +111,15 @@ public class Controller {
 		timeBo.loadCmbActivities();
 	}
 	
-	public static String getPropertie(String key) {
+	public static String getPropertie(ApplicationProperties key) {
 		return ControllerBO.getPropertie(key);
 	}
 	
-	public static void setPropertie(String key, String value) {
+	public static void setPropertie(ApplicationProperties key, String value) {
 		ControllerBO.setPropertie(key, value);
 	}
 	
-	public void removePropertie(String key) {
+	public void removePropertie(ApplicationProperties key) {
 		ControllerBO.removePropertie(key);
 	}
 	

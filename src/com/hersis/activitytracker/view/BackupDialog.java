@@ -46,6 +46,7 @@ public class BackupDialog extends javax.swing.JDialog {
 
         btnBackupNow.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/hersis/activitytracker/images/backup_64.png"))); // NOI18N
         btnBackupNow.setText("Backup now");
+        btnBackupNow.setToolTipText("Backup now");
         btnBackupNow.setPreferredSize(new java.awt.Dimension(250, 60));
         btnBackupNow.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -64,6 +65,7 @@ public class BackupDialog extends javax.swing.JDialog {
 
         btnRestore.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/hersis/activitytracker/images/backup_restore_64.png"))); // NOI18N
         btnRestore.setText("Restore");
+        btnRestore.setToolTipText("Restore backup");
         btnRestore.setPreferredSize(new java.awt.Dimension(250, 60));
         btnRestore.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -81,7 +83,8 @@ public class BackupDialog extends javax.swing.JDialog {
         backupPanel.add(btnRestore, gridBagConstraints);
 
         btnConfigure.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/hersis/activitytracker/images/configure.png"))); // NOI18N
-        btnConfigure.setText("Configure...");
+        btnConfigure.setText("Backup settings...");
+        btnConfigure.setToolTipText("Backup settings");
         btnConfigure.setPreferredSize(new java.awt.Dimension(250, 42));
         btnConfigure.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -110,6 +113,7 @@ public class BackupDialog extends javax.swing.JDialog {
 
         btnClose.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/hersis/activitytracker/images/button_cancel.png"))); // NOI18N
         btnClose.setText("Close");
+        btnClose.setToolTipText("");
         btnClose.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnCloseActionPerformed(evt);

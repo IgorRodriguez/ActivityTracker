@@ -98,8 +98,7 @@ public class MainToolbar extends javax.swing.JPanel {
         });
         mainToolbar.add(btnBackup);
 
-        btnOptions.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/hersis/activitytracker/images/button_cancel.png"))); // NOI18N
-        btnOptions.setText("Opciones");
+        btnOptions.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/hersis/activitytracker/images/run.png"))); // NOI18N
         btnOptions.setToolTipText("Options");
         btnOptions.setFocusable(false);
         btnOptions.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
