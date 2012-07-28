@@ -6,7 +6,11 @@ import com.hersis.activitytracker.model.Dao;
 import com.hersis.activitytracker.view.AlertMessages;
 import com.hersis.activitytracker.view.BackupConfigDialog;
 import com.hersis.activitytracker.view.BackupDialog;
+import com.hersis.activitytracker.view.ProgressBarDialog;
 import com.hersis.activitytracker.view.aux.BackupFileFilter;
+import com.hersis.activitytracker.view.aux.ProgressBarPanel;
+import java.awt.BorderLayout;
+import java.awt.Component;
 import java.io.File;
 import java.io.FileFilter;
 import java.io.IOException;
@@ -17,12 +21,13 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import javax.swing.*;
 
 /**
  *
  * @author Igor Rodriguez <igorrodriguezelvira@gmail.com>
  */
-public class BackupBO {
+public class BackupBO extends SwingWorker<Object, Object> {
 	private final BackupDialog backupDialog;
 	private final BackupConfigDialog backupConfigDialog;
 	private final DateFormat backupDateFormat = new SimpleDateFormat("yyyy-MM-dd_HH:mm:ss");
@@ -116,28 +121,62 @@ public class BackupBO {
 	}
 
 	final int startBackup() {
+		//TODO remove return value
 		int backupResult = -1;
-		String destinationRoot = Controller.getPropertie(ApplicationProperties.BACKUP_PATH);
+		final String destinationRoot = Controller.getPropertie(ApplicationProperties.BACKUP_PATH);
 		
 		if (destinationRoot != null && !"".equals(destinationRoot.trim())) {
-			String backupDate = backupDateFormat.format(new Date());
-			String path = destinationRoot + File.separatorChar + BACKUP_FORMAT_STRING +
-					backupDate;
-			try {
-				backupResult = Dao.executeBackup(path);
-				Controller.setPropertie(ApplicationProperties.LAST_BACKUP_DATE, backupDate);
-			} catch (SQLException ex) {
-				ErrorMessages.sqlExceptionError("startBackup()", ex);
-			} catch (ClassNotFoundException ex) {
-				ErrorMessages.classNotFoundError("startBackup()", ex);
-			}
+			JDialog backupProgressDialog = new JDialog(Controller.getMainFrame(), true);
+			RunDatabaseBackup runBackup = new RunDatabaseBackup(backupProgressDialog, 
+					destinationRoot, backupDateFormat, BACKUP_FORMAT_STRING);
+			runBackup.execute();
 			
-			AlertMessages.backupSuccessful(path);
+			
+			ProgressBarPanel progressBarPanel = new ProgressBarPanel();
+			progressBarPanel.setTaskTitle("Backing up application...");
+			backupProgressDialog.add(BorderLayout.CENTER, progressBarPanel);
+			backupProgressDialog.setUndecorated(true);
+			backupProgressDialog.pack();
+			backupProgressDialog.setLocationRelativeTo(null);
+			backupProgressDialog.setVisible(true);
 		} else {
 			AlertMessages.backupPathNull();
 		}
 		
 		
+		return backupResult;
+	}
+	
+	private int runBackup(String destinationRoot) {
+		int backupResult = -1;
+		String backupDate = backupDateFormat.format(new Date());
+		String path = destinationRoot + File.separatorChar + BACKUP_FORMAT_STRING +
+				backupDate;
+
+		// Show a progress bar of the task.
+		
+//		Thread progressThread = new Thread() {
+//			@Override
+//			public void run() {
+//				backupProgressDialog.setTaskTitle("Backing up application...");
+//				backupProgressDialog.setVisible(true);
+//				backupProgressDialog.repaint();
+//			}
+//		};
+//		progressThread.start();
+
+		try {
+			backupResult = Dao.executeBackup(path);
+			Controller.setPropertie(ApplicationProperties.LAST_BACKUP_DATE, backupDate);
+		} catch (SQLException ex) {
+			ErrorMessages.sqlExceptionError("startBackup()", ex);
+		} catch (ClassNotFoundException ex) {
+			ErrorMessages.classNotFoundError("startBackup()", ex);
+		}
+
+//		if (!progressThread.isAlive()) progressThread.interrupt();
+		
+		//AlertMessages.backupSuccessful(path);
 		return backupResult;
 	}
 
@@ -161,6 +200,11 @@ public class BackupBO {
 		} catch (ClassNotFoundException ex) {
 			ErrorMessages.classNotFoundError("BackupBo.restoreBackup()", ex);
 		}
+	}
+
+	@Override
+	protected Object doInBackground() throws Exception {
+		throw new UnsupportedOperationException("Not supported yet.");
 	}
 	
 }

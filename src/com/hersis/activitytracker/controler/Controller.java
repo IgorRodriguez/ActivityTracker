@@ -12,6 +12,7 @@ import java.io.File;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Calendar;
+import javax.swing.JFrame;
 import javax.swing.WindowConstants;
 import org.slf4j.LoggerFactory;
 
@@ -24,7 +25,7 @@ public class Controller {
 	private static Controller controller;
 	private static Dao dao;
 
-	private MainForm mainForm;
+	private static MainForm mainForm;
 	private MainToolbar mainToolbar;
 	private TimerPanel timerPanel;
 	private ActivityDialog activityDialog;
@@ -128,6 +129,10 @@ public class Controller {
 	 */
 	public void exit() {
 		controllerBo.exit(dao, mainForm);
+	}
+	
+	public static JFrame getMainFrame() {
+		return mainForm;
 	}
 
 	/**
