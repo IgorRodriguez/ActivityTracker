@@ -13,6 +13,8 @@ import java.io.FileFilter;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Observable;
+import java.util.Observer;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -20,17 +22,18 @@ import java.util.regex.Pattern;
  *
  * @author Igor Rodriguez <igorrodriguezelvira@gmail.com>
  */
-public class BackupBO {
+public class BackupBO implements Observer {
 	private final BackupDialog backupDialog;
 	private final BackupConfigDialog backupConfigDialog;
 	private final DateFormat backupDateFormat = new SimpleDateFormat("yyyy-MM-dd_HH:mm:ss");
-	private final Pattern backupDatePattern = 
+	private static final Pattern BACKUP_DATE_PATTERN = 
 			Pattern.compile("(\\d{4})-(\\d{2})-(\\d{2})_(\\d{2}):(\\d{2}):(\\d{2})");
 	public static final String BACKUP_FORMAT_STRING = Controller.APPLICATION_NAME + "_";
 
 	BackupBO(BackupDialog backupDialog, BackupConfigDialog backupConfigDialog) {
 		this.backupDialog = backupDialog;
 		this.backupConfigDialog = backupConfigDialog;
+		Controller.addPropertiesObserver(this);
 		if (mustPerformBackup()) startBackup(Controller.getMainFrame());
 	}
 	
@@ -45,14 +48,21 @@ public class BackupBO {
 		long now = Calendar.getInstance().getTimeInMillis();
 		BackupPeriod backupPeriod = getBackupPeriod();
 		
+		System.out.println("lastBackupDate = " + backupDateFormat.format(getLastBackupDate().getTime()));
+		System.out.println("now = " + backupDateFormat.format(Calendar.getInstance().getTime()));
 		if (BackupPeriod.ALWAYS.equals(backupPeriod)) {
 			return true;
 		} else if (!BackupPeriod.DISABLED.equals((backupPeriod))) {
 			long millisecondsSinceBackup = now - lastBackupDate;
-
+			//TODO Check why Montly backup doesn't execute.
 			if (millisecondsSinceBackup > 0) {
 				int months = (int) millisecondsSinceBackup / (30 * 24 * 60 * 60 * 1000);
-				int days = (int) (millisecondsSinceBackup % months) / (24 * 60 * 60 * 1000);
+				int days;
+				if (months != 0) {
+					days = (int) (millisecondsSinceBackup % months) / (24 * 60 * 60 * 1000);
+				} else {
+					days = (int) millisecondsSinceBackup / (24 * 60 * 60 * 1000);
+				}
 				if (months >= backupPeriod.getMonths() && days >= backupPeriod.getDays()) {
 					return true;
 				}
@@ -65,19 +75,19 @@ public class BackupBO {
 	 * Returns the date in which the backup was performed last time.
 	 * @return The date of the last performed backup.
 	 */
-	private Calendar getLastBackupDate() {
+	public static Calendar getLastBackupDate() {
 		Calendar backupDate = null;
 		String dateString = Controller.getPropertie(ApplicationProperties.LAST_BACKUP_DATE);
 		
 		if (dateString != null && !"".equals(dateString)) {	
-			Matcher matcher = backupDatePattern.matcher(dateString);
+			Matcher matcher = BACKUP_DATE_PATTERN.matcher(dateString);
 			
 			if (matcher.find()) {
 				backupDate = Calendar.getInstance();
 				backupDate.clear();
 				
 				backupDate.set(Calendar.YEAR, Integer.parseInt(matcher.group(1)));
-				backupDate.set(Calendar.MONTH, Integer.parseInt(matcher.group(2)));
+				backupDate.set(Calendar.MONTH, Integer.parseInt(matcher.group(2)) - 1);
 				backupDate.set(Calendar.DAY_OF_MONTH, Integer.parseInt(matcher.group(3)));
 				backupDate.set(Calendar.HOUR, Integer.parseInt(matcher.group(4)));
 				backupDate.set(Calendar.MINUTE, Integer.parseInt(matcher.group(5)));
@@ -173,5 +183,10 @@ public class BackupBO {
 
 		backupProgressDialog.setTaskTitle("Restoring application...");
 		backupProgressDialog.setVisible(true);	// No need to set invisible, RunDatabaseRestore will do it.
+	}
+
+	@Override
+	public void update(Observable o, Object arg) {
+		if (mustPerformBackup()) startBackup(backupDialog);
 	}
 }

@@ -12,6 +12,7 @@ import java.io.File;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Observer;
 import javax.swing.JFrame;
 import javax.swing.WindowConstants;
 import org.slf4j.LoggerFactory;
@@ -35,7 +36,7 @@ public class Controller {
 	private BackupDialog backupDialog;
 	private BackupConfigDialog backupConfigDialog;
 	
-	private ControllerBO controllerBo = new ControllerBO();
+	private static ControllerBO controllerBo = new ControllerBO();
 	private TimerBO timerBo;	
 	private ActivityBO activityBo;
 	private TimeBO timeBo;
@@ -113,15 +114,23 @@ public class Controller {
 	}
 	
 	public static String getPropertie(ApplicationProperties key) {
-		return ControllerBO.getPropertie(key);
+		return controllerBo.getPropertie(key);
 	}
 	
 	public static void setPropertie(ApplicationProperties key, String value) {
-		ControllerBO.setPropertie(key, value);
+		controllerBo.setPropertie(key, value);
 	}
 	
-	public void removePropertie(ApplicationProperties key) {
-		ControllerBO.removePropertie(key);
+	public static void removePropertie(ApplicationProperties key) {
+		controllerBo.removePropertie(key);
+	}
+	
+	public static void addPropertiesObserver(Observer o) {
+		controllerBo.addObserver(o);
+	}
+	
+	public static void deletePropertiesObserver(Observer o) {
+		controllerBo.deleteObserver(o);
 	}
 	
 	/**
@@ -277,5 +286,9 @@ public class Controller {
 
 	public static void restoreBackup(Component parentWindow, String path) {
 		BackupBO.restoreBackup(parentWindow,path);
+	}
+
+	public static Calendar getLastBackupDate() {
+		return BackupBO.getLastBackupDate();
 	}
 }

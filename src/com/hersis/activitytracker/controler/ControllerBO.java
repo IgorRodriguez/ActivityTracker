@@ -15,6 +15,7 @@ import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.util.Calendar;
 import java.util.Locale;
+import java.util.Observable;
 import java.util.Properties;
 import javax.swing.LookAndFeel;
 import javax.swing.UIManager;
@@ -26,7 +27,7 @@ import org.slf4j.LoggerFactory;
  *
  * @author Igor Rodriguez <igorrodriguezelvira@gmail.com>
  */
-class ControllerBO {
+class ControllerBO extends Observable {
 	private static final Logger log = (Logger) LoggerFactory.getLogger("controller.ControllerBO");
 	private static final String PROPERTIES_FILE_PATH = System.getProperty("user.dir") + File.separatorChar +
 			"ActivityTracker.properties";
@@ -89,16 +90,20 @@ class ControllerBO {
         } 
     }
 	
-	static String getPropertie(ApplicationProperties key) {
+	String getPropertie(ApplicationProperties key) {
 		return appProperties.getProperty(key.toString());
 	}
 	
-	static void setPropertie(ApplicationProperties key, String value) {
+	void setPropertie(ApplicationProperties key, String value) {
 		appProperties.setProperty(key.toString(), value);
+		setChanged();
+		notifyObservers();
 	}
 	
-	static void removePropertie(ApplicationProperties key) {
+	void removePropertie(ApplicationProperties key) {
 		appProperties.remove(key.toString());
+		setChanged();
+		notifyObservers();
 	}
 	
 	

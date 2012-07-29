@@ -1,14 +1,19 @@
 package com.hersis.activitytracker.view;
 
 import com.hersis.activitytracker.controler.Controller;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Observable;
+import java.util.Observer;
 
 /**
  *
  * @author Igor Rodriguez <igorrodriguezelvira@gmail.com>
  */
-public class BackupDialog extends javax.swing.JDialog {
+public class BackupDialog extends javax.swing.JDialog implements Observer{
 	private final Controller controller;
 	private final BackupRestoreDialog backupRestoreDialog;
+	private final DateFormat backupDateFormat = new SimpleDateFormat("yyyy MMM dd, HH:mm:ss");
 	
 	/**
 	 * Creates new form BackupDialog
@@ -18,6 +23,13 @@ public class BackupDialog extends javax.swing.JDialog {
 		this.controller = controller;
 		backupRestoreDialog = new BackupRestoreDialog(parent, true);
 		initComponents();
+		Controller.addPropertiesObserver(this);
+		setBackupDateLabel();
+	}
+	
+	private void setBackupDateLabel() {
+		lblBackupDate.setText(backupDateFormat.format(Controller.getLastBackupDate().getTime()));
+		this.pack();
 	}
 
 	/**
@@ -30,6 +42,8 @@ public class BackupDialog extends javax.swing.JDialog {
         java.awt.GridBagConstraints gridBagConstraints;
 
         backupPanel = new javax.swing.JPanel();
+        lblBackupDateMessage = new javax.swing.JLabel();
+        lblBackupDate = new javax.swing.JLabel();
         btnBackupNow = new javax.swing.JButton();
         btnRestore = new javax.swing.JButton();
         btnConfigure = new javax.swing.JButton();
@@ -42,6 +56,20 @@ public class BackupDialog extends javax.swing.JDialog {
 
         backupPanel.setLayout(new java.awt.GridBagLayout());
 
+        lblBackupDateMessage.setText("Last backup date: ");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_START;
+        gridBagConstraints.insets = new java.awt.Insets(7, 7, 0, 0);
+        backupPanel.add(lblBackupDateMessage, gridBagConstraints);
+
+        lblBackupDate.setFont(new java.awt.Font("Dialog", 2, 12)); // NOI18N
+        lblBackupDate.setText("Unknown");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_START;
+        gridBagConstraints.insets = new java.awt.Insets(7, 5, 0, 7);
+        backupPanel.add(lblBackupDate, gridBagConstraints);
+
         btnBackupNow.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/hersis/activitytracker/images/backup_64.png"))); // NOI18N
         btnBackupNow.setText("Backup now");
         btnBackupNow.setToolTipText("Backup now");
@@ -53,7 +81,8 @@ public class BackupDialog extends javax.swing.JDialog {
         });
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 0;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.gridwidth = 2;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
         gridBagConstraints.weightx = 1.0;
@@ -72,7 +101,8 @@ public class BackupDialog extends javax.swing.JDialog {
         });
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 1;
+        gridBagConstraints.gridy = 2;
+        gridBagConstraints.gridwidth = 2;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
         gridBagConstraints.weightx = 1.0;
@@ -91,7 +121,8 @@ public class BackupDialog extends javax.swing.JDialog {
         });
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 2;
+        gridBagConstraints.gridy = 3;
+        gridBagConstraints.gridwidth = 2;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
         gridBagConstraints.weightx = 1.0;
@@ -111,7 +142,7 @@ public class BackupDialog extends javax.swing.JDialog {
 
         btnClose.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/hersis/activitytracker/images/button_cancel.png"))); // NOI18N
         btnClose.setText("Close");
-        btnClose.setToolTipText("");
+        btnClose.setToolTipText(null);
         btnClose.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnCloseActionPerformed(evt);
@@ -128,7 +159,8 @@ public class BackupDialog extends javax.swing.JDialog {
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 3;
+        gridBagConstraints.gridy = 4;
+        gridBagConstraints.gridwidth = 2;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
         gridBagConstraints.weightx = 1.0;
@@ -166,6 +198,13 @@ public class BackupDialog extends javax.swing.JDialog {
     private javax.swing.JButton btnConfigure;
     private javax.swing.JButton btnRestore;
     private javax.swing.JPanel buttonPanel;
+    private javax.swing.JLabel lblBackupDate;
+    private javax.swing.JLabel lblBackupDateMessage;
     private javax.swing.JPanel separatorPanel;
     // End of variables declaration//GEN-END:variables
+
+	@Override
+	public void update(Observable o, Object arg) {
+		setBackupDateLabel();
+	}
 }
