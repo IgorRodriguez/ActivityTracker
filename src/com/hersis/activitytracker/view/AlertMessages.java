@@ -3,6 +3,7 @@ package com.hersis.activitytracker.view;
 import ch.qos.logback.classic.Logger;
 import com.hersis.activitytracker.Activity;
 import com.hersis.activitytracker.Time;
+import com.hersis.activitytracker.controler.Controller;
 import java.awt.Component;
 import java.io.IOException;
 import java.sql.SQLException;
@@ -34,13 +35,15 @@ public abstract class AlertMessages {
 	public static void backupPathNull() {
 		String message = "Select a valid backup directory in the backup settings window";
 		String title = "Alert";
-		JOptionPane.showMessageDialog(null, message, title, JOptionPane.WARNING_MESSAGE);
+		JOptionPane.showMessageDialog(Controller.getMainFrame(), message, title, 
+				JOptionPane.WARNING_MESSAGE);
 	}
 
 	public static void backupSuccessful(String backupPath) {
 		String message = "The backup is done successfully in " + backupPath;
 		String title = "Info";
-		JOptionPane.showMessageDialog(null, message, title, JOptionPane.INFORMATION_MESSAGE);
+		JOptionPane.showMessageDialog(Controller.getMainFrame(), message, title, 
+				JOptionPane.INFORMATION_MESSAGE);
 	}
 
 	public static void backupPathNullWhileConfiguring(Component dialogParent) {
@@ -61,7 +64,8 @@ public abstract class AlertMessages {
 				"valid one.\nDefault value will be restored.\n";
 		log.error(message);
 		
-		JOptionPane.showMessageDialog(null, message, "Alert", JOptionPane.WARNING_MESSAGE);
+		JOptionPane.showMessageDialog(Controller.getMainFrame(), message, "Alert", 
+				JOptionPane.WARNING_MESSAGE);
 	}
 	
 	/***********************************************************************************************
@@ -161,14 +165,14 @@ public abstract class AlertMessages {
 	public static void propertiesLoadIOException(IOException e) {
 		String message = "Unable to load the previous configuration of the application.\n" +
 				"Default values will be loaded.";
-            JOptionPane.showMessageDialog(null, message, "Unable to load configuration",
+            JOptionPane.showMessageDialog(Controller.getMainFrame(), message, "Unable to load configuration",
                             JOptionPane.WARNING_MESSAGE);
             log.info(message + "\nMessage: {}", e.getLocalizedMessage());
 	}
 
 	public static void propertiesSaveIOException(IOException e) {
 		String message = "Unable to save the configuration of the application.";
-            JOptionPane.showMessageDialog(null, message, "Unable to save configuration",
+            JOptionPane.showMessageDialog(Controller.getMainFrame(), message, "Unable to save configuration",
                             JOptionPane.WARNING_MESSAGE);
             log.info(message + "\nMessage: {}", e.getLocalizedMessage());
 	}

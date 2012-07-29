@@ -1,8 +1,11 @@
 package com.hersis.activitytracker.view;
 
 import com.hersis.activitytracker.controler.Controller;
+import java.awt.Toolkit;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.net.URL;
+import javax.swing.ImageIcon;
 
 /**
  *
@@ -20,6 +23,9 @@ public class MainForm extends javax.swing.JFrame {
 	}
 
 	private void init() {
+		URL url = ClassLoader.getSystemResource("com/hersis/activitytracker/images/activity_tracker.png");
+		if (url != null) 
+			this.setIconImage(Toolkit.getDefaultToolkit().createImage(url));
 		this.addWindowListener(
 				new WindowAdapter() {
 					@Override

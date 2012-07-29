@@ -65,6 +65,7 @@ public class Icons {
 		ERROR,
 		QUESTION
 	}
+	
 	public static void main(String [] args) {
 		Icons icons = new Icons();
 		JFrame frame = new JFrame();

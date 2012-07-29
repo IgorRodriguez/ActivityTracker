@@ -48,20 +48,17 @@ public class BackupBO implements Observer {
 		long now = Calendar.getInstance().getTimeInMillis();
 		BackupPeriod backupPeriod = getBackupPeriod();
 		
-		System.out.println("lastBackupDate = " + backupDateFormat.format(getLastBackupDate().getTime()));
-		System.out.println("now = " + backupDateFormat.format(Calendar.getInstance().getTime()));
 		if (BackupPeriod.ALWAYS.equals(backupPeriod)) {
 			return true;
 		} else if (!BackupPeriod.DISABLED.equals((backupPeriod))) {
-			long millisecondsSinceBackup = now - lastBackupDate;
-			//TODO Check why Montly backup doesn't execute.
+			double millisecondsSinceBackup = now - lastBackupDate;
 			if (millisecondsSinceBackup > 0) {
-				int months = (int) millisecondsSinceBackup / (30 * 24 * 60 * 60 * 1000);
-				int days;
-				if (months != 0) {
-					days = (int) (millisecondsSinceBackup % months) / (24 * 60 * 60 * 1000);
+				double months = millisecondsSinceBackup / (30 * 24 * 60 * 60 * 1000D);
+				double days;
+				if ((int) months != 0) {
+					days = (millisecondsSinceBackup % (int) months) / (24 * 60 * 60 * 1000);
 				} else {
-					days = (int) millisecondsSinceBackup / (24 * 60 * 60 * 1000);
+					days = millisecondsSinceBackup / (24 * 60 * 60 * 1000);
 				}
 				if (months >= backupPeriod.getMonths() && days >= backupPeriod.getDays()) {
 					return true;
