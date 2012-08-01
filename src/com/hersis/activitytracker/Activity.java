@@ -9,7 +9,7 @@ import java.util.Objects;
 public class Activity implements Comparable{
 	private int idActivity = -1;
 	private String name;
-	private String description;
+	private String description = "";
 
 	public Activity(String name) {
 		this.name = name;

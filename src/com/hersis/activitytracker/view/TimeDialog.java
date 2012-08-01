@@ -290,10 +290,11 @@ public class TimeDialog extends javax.swing.JDialog {
         txaDescriptionScrollPane = new javax.swing.JScrollPane();
         txaDescription = new javax.swing.JTextArea();
         buttonPanel = new javax.swing.JPanel();
-        btnDelete = new javax.swing.JButton();
         separatorPanel = new javax.swing.JPanel();
         btnCancel = new javax.swing.JButton();
         btnAccept = new javax.swing.JButton();
+        deleteButtonPanel = new javax.swing.JPanel();
+        btnDelete = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
@@ -665,26 +666,9 @@ public class TimeDialog extends javax.swing.JDialog {
 
         buttonPanel.setLayout(new java.awt.GridBagLayout());
 
-        btnDelete.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/hersis/activitytracker/images/trashcan_full.png"))); // NOI18N
-        btnDelete.setText("Delete");
-        btnDelete.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnDeleteActionPerformed(evt);
-            }
-        });
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 0;
-        gridBagConstraints.gridwidth = 2;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.SOUTHWEST;
-        gridBagConstraints.weightx = 1.0;
-        gridBagConstraints.weighty = 1.0;
-        gridBagConstraints.insets = new java.awt.Insets(10, 7, 7, 7);
-        buttonPanel.add(btnDelete, gridBagConstraints);
-
         separatorPanel.setLayout(new java.awt.BorderLayout());
         gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gridBagConstraints.weightx = 2.0;
         gridBagConstraints.weighty = 1.0;
@@ -698,7 +682,7 @@ public class TimeDialog extends javax.swing.JDialog {
             }
         });
         gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 3;
+        gridBagConstraints.gridx = 2;
         gridBagConstraints.gridy = 0;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.SOUTHEAST;
@@ -715,7 +699,7 @@ public class TimeDialog extends javax.swing.JDialog {
             }
         });
         gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 4;
+        gridBagConstraints.gridx = 3;
         gridBagConstraints.gridy = 0;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.SOUTHEAST;
@@ -723,6 +707,27 @@ public class TimeDialog extends javax.swing.JDialog {
         gridBagConstraints.weighty = 1.0;
         gridBagConstraints.insets = new java.awt.Insets(10, 7, 7, 7);
         buttonPanel.add(btnAccept, gridBagConstraints);
+
+        deleteButtonPanel.setLayout(new java.awt.BorderLayout());
+
+        btnDelete.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/hersis/activitytracker/images/trashcan_full.png"))); // NOI18N
+        btnDelete.setText("Delete");
+        btnDelete.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnDeleteActionPerformed(evt);
+            }
+        });
+        deleteButtonPanel.add(btnDelete, java.awt.BorderLayout.CENTER);
+
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.weighty = 1.0;
+        gridBagConstraints.insets = new java.awt.Insets(10, 7, 7, 7);
+        buttonPanel.add(deleteButtonPanel, gridBagConstraints);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
@@ -781,6 +786,7 @@ public class TimeDialog extends javax.swing.JDialog {
     private javax.swing.JButton btnDelete;
     private javax.swing.JPanel buttonPanel;
     private javax.swing.JComboBox cmbActivities;
+    private javax.swing.JPanel deleteButtonPanel;
     private javax.swing.JPanel descriptionPanel;
     private javax.swing.JPanel durationPanel;
     private com.toedter.calendar.JDateChooser endTimeDateChooser;
