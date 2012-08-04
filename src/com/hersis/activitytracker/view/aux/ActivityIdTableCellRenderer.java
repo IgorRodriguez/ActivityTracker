@@ -15,13 +15,11 @@ import javax.swing.table.TableCellRenderer;
  * @since 2012-06-04
  */
 public class ActivityIdTableCellRenderer extends JLabel implements TableCellRenderer{
-	private final Controller controller;
 	private final ArrayList<Activity> activities;
 
-	public ActivityIdTableCellRenderer(Controller controller) {
+	public ActivityIdTableCellRenderer() {
 		super();
-		this.controller = controller;
-		this.activities = controller.getActivities();
+		this.activities = Controller.getActivities();
 	}
 	
     @Override

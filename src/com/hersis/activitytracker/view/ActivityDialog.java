@@ -8,15 +8,13 @@ import com.hersis.activitytracker.controler.Controller;
  * @author Igor Rodriguez <igorrodriguezelvira@gmail.com>
  */
 public class ActivityDialog extends javax.swing.JDialog {
-	private final Controller controller;
 	private Activity activity;
 
 	/**
 	 * Creates new form ActivityDialog
 	 */
-	public ActivityDialog(java.awt.Frame parent, boolean modal, Controller controller) {
+	public ActivityDialog(java.awt.Frame parent, boolean modal) {
 		super(parent, modal);
-		this.controller = controller;
 		initComponents();
 		this.getRootPane().setDefaultButton(btnAccept);
 	}
@@ -229,15 +227,15 @@ public class ActivityDialog extends javax.swing.JDialog {
     }// </editor-fold>//GEN-END:initComponents
 
 	private void btnAcceptActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAcceptActionPerformed
-		controller.saveActivity(activity, getActivityFromFields());
+		Controller.saveActivity(activity, getActivityFromFields());
 	}//GEN-LAST:event_btnAcceptActionPerformed
 	
 	private void btnCancelActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCancelActionPerformed
-		controller.cancelActivityEdition();
+		Controller.cancelActivityEdition();
 	}//GEN-LAST:event_btnCancelActionPerformed
 	
 	private void btnDeleteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDeleteActionPerformed
-		controller.deleteActivity(this, getActivity());
+		Controller.deleteActivity(this, getActivity());
 	}//GEN-LAST:event_btnDeleteActionPerformed
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel activityPanel;

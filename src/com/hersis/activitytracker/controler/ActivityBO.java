@@ -20,24 +20,15 @@ import java.util.Observer;
  * @author Igor Rodriguez <igorrodriguezelvira@gmail.com>
  */
 public class ActivityBO implements Observer {
-	private final Dao dao;
 	private final ActivityDialog activityDialog;
 	private final ActivityListDialog activityListDialog;
 	private final ActivityDao activityDao = ActivityDao.getInstance();
 	private final TimeDao timeDao = TimeDao.getInstance();
-	private final ErrorMessages errorMessages = new ErrorMessages();
-	private final Controller controller;
 
-	public ActivityBO(Controller controller, ActivityDialog activityDialog, ActivityListDialog activityListDialog) 
+	public ActivityBO(ActivityDialog activityDialog, ActivityListDialog activityListDialog) 
 			throws ClassNotFoundException, SQLException {
-		this.controller = controller;
-		this.dao = Dao.getInstance();
 		this.activityDialog = activityDialog;	
 		this.activityListDialog = activityListDialog;
-		
-		activityDao.addObserver(this);
-		timeDao.addObserver(this);
-		dao.addObserver(this);
 	}
 
 	void saveActivity(Activity oldActivity, Activity newActivity) {

@@ -4,7 +4,9 @@ import ch.qos.logback.classic.Logger;
 import com.hersis.activitytracker.Activity;
 import com.hersis.activitytracker.ApplicationProperties;
 import com.hersis.activitytracker.Time;
+import com.hersis.activitytracker.model.ActivityDao;
 import com.hersis.activitytracker.model.Dao;
+import com.hersis.activitytracker.model.TimeDao;
 import com.hersis.activitytracker.view.*;
 import java.awt.BorderLayout;
 import java.awt.Component;
@@ -24,40 +26,60 @@ import org.slf4j.LoggerFactory;
 public class Controller {
 	private static final Logger log = (Logger) LoggerFactory.getLogger("controller.Controller");
 	private static Controller controller;
-	private static Dao dao;
 
 	private static MainForm mainForm;
 	private MainToolbar mainToolbar;
-	private TimerPanel timerPanel;
+	private static TimerPanel timerPanel;
 	private ActivityDialog activityDialog;
 	private ActivityListDialog activityListDialog;
 	private TimeDialog timeDialog;
 	private TimeListDialog timeListDialog;
 	private BackupDialog backupDialog;
 	private BackupConfigDialog backupConfigDialog;
-	
+		
 	private static ControllerBO controllerBo = new ControllerBO();
-	private TimerBO timerBo;	
-	private ActivityBO activityBo;
-	private TimeBO timeBo;
-	private BackupBO backupBo;
+	private static TimerBO timerBo;	
+	private static ActivityBO activityBo;
+	private static TimeBO timeBo;
+	private static BackupBO backupBo;
 	
+	//TODO Remove references to the public variable below.
 	public static final String APPLICATION_NAME = "ActivityTrackerV2";
 		
 	public Controller() {
+		log.debug("Starting Controller()");
 		try {
 			init();
-			dao = Dao.getInstance();
 			
+			// TimerBO
 			timerBo = new TimerBO(timerPanel);
-			activityBo = new ActivityBO(this, activityDialog, activityListDialog);
+			Dao.getInstance().addObserver(timerBo);
+			ActivityDao.getInstance().addObserver(timerBo);
+			TimeDao.getInstance().addObserver(timerBo);
+			
+			// ActivityBO
+			activityBo = new ActivityBO(activityDialog, activityListDialog);
+			Dao.getInstance().addObserver(activityBo);
+			ActivityDao.getInstance().addObserver(activityBo);
+			TimeDao.getInstance().addObserver(activityBo);
+			
+			// TimeBO
 			timeBo = new TimeBO(timeDialog, timeListDialog);
+			Dao.getInstance().addObserver(timeBo);
+			ActivityDao.getInstance().addObserver(timeBo);
+			TimeDao.getInstance().addObserver(timeBo);
+			log.debug("TimeDao created");
+			// BackupBO
 			backupBo = new BackupBO(backupDialog, backupConfigDialog);
+			addPropertiesObserver(backupBo);
+			
+			log.debug("Forms created");
 			
 			// CmbActivities need to be loaded here, cannot be done in their's respectives BO constructors.
 			loadCmbActivities();
 			activityBo.updateActivityTable();
 			timeBo.updateTimeTable();
+			backupDialog.setBackupDateLabel();
 			
 			mainForm.setVisible(true);
 		} catch (NullPointerException ex) {
@@ -82,9 +104,13 @@ public class Controller {
 		controllerBo.loadProperties();
 		
 		// Main form creation and settings
-		mainForm = new MainForm(this);
+		mainForm = new MainForm();
+		log.debug("MainForm created");
+	
 		mainToolbar = new MainToolbar(this);
+		log.debug("MainToolbar created");
 		timerPanel = new TimerPanel(this);
+		log.debug("TimerPanel created");
 		
 		mainForm.add(mainToolbar, BorderLayout.NORTH);
 		mainForm.add(timerPanel, BorderLayout.CENTER);
@@ -93,19 +119,30 @@ public class Controller {
 		mainForm.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
 		mainForm.getRootPane().setDefaultButton(timerPanel.getNewButton());
 		
+		log.debug("MainForm configured");
 //		// Dialog creation and settings
-		activityDialog = new ActivityDialog(mainForm, true, this);
+		activityDialog = new ActivityDialog(mainForm, true);
 		activityDialog.setLocationRelativeTo(mainForm);
-		activityListDialog = new ActivityListDialog(mainForm, true, this);
+		
+		activityListDialog = new ActivityListDialog(mainForm, true);
 		activityListDialog.setLocationRelativeTo(mainForm);
-		timeDialog = new TimeDialog(mainForm, true, this);
+		
+		timeDialog = new TimeDialog(mainForm, true);
 		timeDialog.setLocationRelativeTo(mainForm);
-		timeListDialog = new TimeListDialog(mainForm, true, this);
+		log.debug("TimeDialog created");
+		
+		timeListDialog = new TimeListDialog(mainForm, true);
 		timeListDialog.setLocationRelativeTo(mainForm);
-		backupDialog = new BackupDialog(mainForm, true, this);
+		log.debug("TimeListDialog created");
+		
+		backupDialog = new BackupDialog(mainForm, true);
 		backupDialog.setLocationRelativeTo(mainForm);
-		backupConfigDialog = new BackupConfigDialog(mainForm, true, this);
+		addPropertiesObserver(backupDialog);
+		log.debug("BackupDialog created");
+		
+		backupConfigDialog = new BackupConfigDialog(mainForm, true);
 		backupConfigDialog.setLocationRelativeTo(mainForm);
+		log.debug("End of window creation");
 	}
 	
 	final void loadCmbActivities() {
@@ -136,8 +173,8 @@ public class Controller {
 	/**
 	 * Finalizes correctly the application and exits.
 	 */
-	public void exit() {
-		controllerBo.exit(dao, mainForm);
+	public static void exit() {
+		ControllerBO.exit(mainForm);
 	}
 	
 	public static JFrame getMainFrame() {
@@ -147,21 +184,21 @@ public class Controller {
 	/**
 	 * Action when "play" button is pressed in the GUI.
 	 */
-	public void play() {
+	public static void play() {
 		timerBo.play();
 	}
 
 	/**
 	 * Action when "pause" button is pressed in the GUI.
 	 */
-	public void pause() {
+	public static void pause() {
 		timerBo.pause();
 	}
 
 	/**
 	 * Action when "stop" button is pressed in the GUI.
 	 */
-	public void stop() {
+	public static void stop() {
 		try {
 			timerBo.stop();
 		} catch (SQLException ex) {
@@ -174,7 +211,7 @@ public class Controller {
 	/**
 	 * Action when "new" button is pressed in the GUI.
 	 */
-	public void startTracking() {
+	public static void startTracking() {
 		try {
 			timerBo.startTracking();
 		} catch (IndexOutOfBoundsException ex) {
@@ -185,78 +222,78 @@ public class Controller {
 	/**
 	 * Action when "new activity" is selected in the GUI.
 	 */
-	public void showNewActivityWindow() {
+	public static void showNewActivityWindow() {
 		activityBo.showNewActivity();
 	}
 
 	/**
 	 * Action when "accept" is pressed in the ActivityDialog.
 	 */
-	public void saveActivity(Activity oldActivity, Activity newActivity) {
+	public static void saveActivity(Activity oldActivity, Activity newActivity) {
 		activityBo.saveActivity(oldActivity, newActivity);
 	}
 
-	public void cancelActivityEdition() {
+	public static void cancelActivityEdition() {
 		activityBo.cancelActivityEdition();
 	}
 
-	public void closeActivityList() {
+	public static void closeActivityList() {
 		activityBo.closeActivityList();
 	}
 
-	public void viewActivitiesWindow() {
+	public static void viewActivitiesWindow() {
 		activityBo.viewActivities();
 	}
 
-	public void showEditActivityWindow(Activity activity) {
+	public static void showEditActivityWindow(Activity activity) {
 		activityBo.showEditActivity(activity);
 	}
 
-	public void deleteActivity(Component dialogParent, Activity activity) {
+	public static void deleteActivity(Component dialogParent, Activity activity) {
 		activityBo.deleteActivity(dialogParent, activity);
 	}
 
-	public void showNewTimeWindow() {
+	public static void showNewTimeWindow() {
 		timeBo.showNewTime();
 	}
 
-	public long calculateDuration(Calendar startTime, Calendar endTime) {
+	public static long calculateDuration(Calendar startTime, Calendar endTime) {
 		return controllerBo.calculateDuration(startTime, endTime);
 	}
 
-	public String getDurationString(long time) {
+	public static String getDurationString(long time) {
 		return controllerBo.getDurationString(time);
 	}
 
-	public ArrayList<Activity> getActivitiesOrderedByTime() {
+	public static ArrayList<Activity> getActivitiesOrderedByTime() {
 		return timeBo.getActivities();
 	}
 
-	public void cancelTimeEdition() {
+	public static void cancelTimeEdition() {
 		timeBo.cancelTimeEdition();
 	}
 
-	public void saveTime(Time oldTime, Time newTime) {
+	public static void saveTime(Time oldTime, Time newTime) {
 		timeBo.saveTime(oldTime, newTime);
 	}
 	
-	public ArrayList<Activity> getActivities() {
+	public static ArrayList<Activity> getActivities() {
 		return activityBo.getActivities();
 	}
 
-	public void showEditTimeWindow(Time time) {
+	public static void showEditTimeWindow(Time time) {
 		timeBo.showEditTime(time);
 	}
 
-	public void deleteTime(Component dialogParent, Time time) {
+	public static void deleteTime(Component dialogParent, Time time) {
 		timeBo.deleteTime(dialogParent, time);
 	}
 
-	public void viewTimesWindow() {
+	public static void viewTimesWindow() {
 		timeBo.viewTimes();
 	}
 
-	public void closeTimeList() {
+	public static void closeTimeList() {
 		timeBo.closeTimeList();
 	}
 
@@ -264,19 +301,19 @@ public class Controller {
 	 * Backup
 	 **********************************************************************************************/
 	
-	public void closeBackupWindow() {
+	public static void closeBackupWindow() {
 		backupBo.closeBackupWindow();
 	}
 
-	public void showBackupWindow() {
+	public static void showBackupWindow() {
 		backupBo.showBackupWindow();
 	}
 
-	public void showBackupConfigWindow() {
+	public static void showBackupConfigWindow() {
 		backupBo.showBackupConfigWindow();
 	}
 	
-	public void startBackup(Component parentWindow) {
+	public static void startBackup(Component parentWindow) {
 		backupBo.startBackup(parentWindow);
 	}
 	

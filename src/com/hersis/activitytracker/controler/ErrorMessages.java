@@ -46,6 +46,7 @@ public class ErrorMessages {
 
 	public static void nullPointerError(String methodName, NullPointerException ex) {
 		log.error("NullPointerException on {}: {}", methodName, ex.getLocalizedMessage());
+		ex.printStackTrace();
 	}
 
 	public static void unsupportedLookAndFeelError(String methodName, UnsupportedLookAndFeelException e) {

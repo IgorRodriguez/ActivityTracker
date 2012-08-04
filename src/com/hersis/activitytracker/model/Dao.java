@@ -1,6 +1,8 @@
 package com.hersis.activitytracker.model;
 
 import ch.qos.logback.classic.Logger;
+import com.hersis.activitytracker.ApplicationProperties;
+import com.hersis.activitytracker.controler.Controller;
 import com.hersis.activitytracker.controler.ErrorMessages;
 import java.io.Closeable;
 import java.io.File;
@@ -19,7 +21,7 @@ public class Dao extends Observable implements Closeable{
     private static final Logger log = (Logger) LoggerFactory.getLogger("model.Dao");
     private static Properties dbProperties;
     private static Connection dbConnection;
-    private static final String DERBY_SYSTEM_HOME = System.getProperty("user.dir");
+    private static final String DERBY_SYSTEM_HOME = Controller.getPropertie(ApplicationProperties.APPLICATION_PATH);
     private static final String DB_NAME = "db";
     private static final String SQL_BACKUP_DATABASE = "CALL SYSCS_UTIL.SYSCS_BACKUP_DATABASE(?)";
 	private static final String SQL_CREATE_ACTIVITIES_TABLE =

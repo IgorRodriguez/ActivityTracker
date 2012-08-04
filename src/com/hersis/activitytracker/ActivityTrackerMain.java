@@ -25,18 +25,22 @@ public class ActivityTrackerMain {
     }
     
     public static void main(String[] args) {
-        File lockFile = new File(System.getProperty("user.dir") + File.separatorChar + "lock.lck");
+        File lockFile = new File(Controller.getPropertie(ApplicationProperties.APPLICATION_PATH) + 
+				File.separatorChar + "lock.lck");
+		log.debug("Lock file path: {}", lockFile.getPath());
         if (!lockFile.exists()) {
             try {
                 lockFile.createNewFile();
-                Controller controller = new Controller();
+				log.debug("Application file lock created");
+                new Controller();
+				log.debug("Controller created");
             } catch (IOException ex) {
-                log.info("No se pudo crear el fichero de bloqueo.");
+                log.info("Couldn't create the locking file: \n{}", ex.getLocalizedMessage());
             } finally {
                 if (lockFile.exists()) lockFile.delete();
             }
         } else {
-            System.out.println("Ya se está ejecutando una instancia de este programa. Cierrela e intentelo de nuevo.");
+            log.error("There is running another instance of this application. Close it and try again.");
         }
 
     }

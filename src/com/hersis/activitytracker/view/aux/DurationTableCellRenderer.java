@@ -13,12 +13,6 @@ import javax.swing.table.TableCellRenderer;
  * @since 2012-06-04
  */
 public class DurationTableCellRenderer extends JLabel implements TableCellRenderer{
-	private final Controller controller;
-
-	public DurationTableCellRenderer(Controller controller) {
-		super();
-		this.controller = controller;
-	}
 	
     @Override
     public Component getTableCellRendererComponent(JTable table, Object number,
@@ -30,7 +24,7 @@ public class DurationTableCellRenderer extends JLabel implements TableCellRender
         
         long value = (long) number;
 
-        this.setText(controller.getDurationString(value));
+        this.setText(Controller.getDurationString(value));
 		this.setHorizontalAlignment(CENTER);
         this.setBackground(renderer.getBackground());
         this.setFont(renderer.getFont());

@@ -13,16 +13,14 @@ import javax.swing.table.TableColumnModel;
  * @author Igor Rodriguez <igorrodriguezelvira@gmail.com>
  */
 public class ActivityListDialog extends javax.swing.JDialog {
-	private final Controller controller;
 	private ActivityListTableModel activityListModel = new ActivityListTableModel();
 	int previousRow = -1;
 
 	/**
 	 * Creates new form ActivityListDialog
 	 */
-	public ActivityListDialog(java.awt.Frame parent, boolean modal, Controller controller) {
+	public ActivityListDialog(java.awt.Frame parent, boolean modal) {
 		super(parent, modal);
-		this.controller = controller;
 		initComponents();
 		this.getRootPane().setDefaultButton(btnClose);
 	}
@@ -276,11 +274,11 @@ public class ActivityListDialog extends javax.swing.JDialog {
     }// </editor-fold>//GEN-END:initComponents
 
 	private void btnCloseActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCloseActionPerformed
-		controller.closeActivityList();
+		Controller.closeActivityList();
 	}//GEN-LAST:event_btnCloseActionPerformed
 
 	private void btnNewActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnNewActionPerformed
-		controller.showNewActivityWindow();
+		Controller.showNewActivityWindow();
 	}//GEN-LAST:event_btnNewActionPerformed
 
 	private void btnEditActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEditActionPerformed
@@ -292,13 +290,13 @@ public class ActivityListDialog extends javax.swing.JDialog {
 		} else {
 			selectedActivity = null;
 		}
-		controller.showEditActivityWindow(selectedActivity);
+		Controller.showEditActivityWindow(selectedActivity);
 	}//GEN-LAST:event_btnEditActionPerformed
 
 	private void tblActivitiesMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tblActivitiesMouseClicked
 		if (evt.getClickCount() > 1) {
 			int row = tblActivities.rowAtPoint(new Point(evt.getX(), evt.getY()));
-			controller.showEditActivityWindow(activityListModel.getActivityAt(row));
+			Controller.showEditActivityWindow(activityListModel.getActivityAt(row));
 		}
 	}//GEN-LAST:event_tblActivitiesMouseClicked
 
@@ -311,7 +309,7 @@ public class ActivityListDialog extends javax.swing.JDialog {
 		} else {
 			selectedActivity = null;
 		}
-		controller.deleteActivity(this, selectedActivity);
+		Controller.deleteActivity(this, selectedActivity);
 	}//GEN-LAST:event_btnDeleteActionPerformed
 
 	

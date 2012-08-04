@@ -18,15 +18,13 @@ import java.util.Locale;
  * @author Igor Rodriguez <igorrodriguezelvira@gmail.com>
  */
 public class TimeDialog extends javax.swing.JDialog {
-	private final Controller controller;
 	private Time oldTime = null;
 
 	/**
 	 * Creates new form TimeDialog
 	 */
-	public TimeDialog(java.awt.Frame parent, boolean modal, Controller controller) {
+	public TimeDialog(java.awt.Frame parent, boolean modal) {
 		super(parent, modal);
-		this.controller = controller;
 		initComponents();
 		
 		// Set dateChoosers date format.
@@ -138,7 +136,7 @@ public class TimeDialog extends javax.swing.JDialog {
 	 * @param time A non null Time instance.
 	 */
 	private void fillAllFields(Time time) {
-		ArrayList<Activity> activities = controller.getActivities();
+		ArrayList<Activity> activities = Controller.getActivities();
 		for (Activity a : activities) {
 			if (a.getIdActivity() == time.getIdActivity()) cmbActivities.getModel().setSelectedItem(a);
 		}
@@ -177,7 +175,7 @@ public class TimeDialog extends javax.swing.JDialog {
 	 * @return The list of activities with which it has been filed.
 	 */
 	public ArrayList<Activity> loadCmbActivities() {
-		ArrayList<Activity> activities = controller.getActivitiesOrderedByTime();
+		ArrayList<Activity> activities = Controller.getActivitiesOrderedByTime();
 		cmbActivities.removeAllItems();
 		for (Activity a : activities) {
 			cmbActivities.addItem(a);
@@ -198,9 +196,9 @@ public class TimeDialog extends javax.swing.JDialog {
 		if (endTimeDateChooser.getCalendar() == null) {
 			endTimeDateChooser.setCalendar(Calendar.getInstance());
 		}
-		long duration = controller.calculateDuration(getStartTimeFromFields(), getEndTimeFromFields());
+		long duration = Controller.calculateDuration(getStartTimeFromFields(), getEndTimeFromFields());
 		txtDuration.setForeground((duration >= 0) ? defaultColor : errorColor);
-		String durationString = controller.getDurationString(duration);
+		String durationString = Controller.getDurationString(duration);
 		txtDuration.setText(durationString);
 	}
 	
@@ -235,7 +233,7 @@ public class TimeDialog extends javax.swing.JDialog {
 		if (startTimeCal != null) startTime = new Timestamp(startTimeCal.getTimeInMillis());
 		if (endTimeCal != null) endTime = new Timestamp(endTimeCal.getTimeInMillis());
 		if (startTime != null && endTime != null) {
-			duration = controller.calculateDuration(startTimeCal, endTimeCal);
+			duration = Controller.calculateDuration(startTimeCal, endTimeCal);
 		}
 		String description = txaDescription.getText();
 		
@@ -744,15 +742,15 @@ public class TimeDialog extends javax.swing.JDialog {
     }// </editor-fold>//GEN-END:initComponents
 
 	private void btnDeleteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDeleteActionPerformed
-		controller.deleteTime(this, oldTime);
+		Controller.deleteTime(this, oldTime);
 	}//GEN-LAST:event_btnDeleteActionPerformed
 
 	private void btnCancelActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCancelActionPerformed
-		controller.cancelTimeEdition();
+		Controller.cancelTimeEdition();
 	}//GEN-LAST:event_btnCancelActionPerformed
 
 	private void btnAcceptActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAcceptActionPerformed
-		controller.saveTime(oldTime, getTimeFromFields());
+		Controller.saveTime(oldTime, getTimeFromFields());
 	}//GEN-LAST:event_btnAcceptActionPerformed
 
 	private void startTimeDateChooserPropertyChange(java.beans.PropertyChangeEvent evt) {//GEN-FIRST:event_startTimeDateChooserPropertyChange

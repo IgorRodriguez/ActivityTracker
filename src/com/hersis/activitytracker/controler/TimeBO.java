@@ -21,21 +21,15 @@ import java.util.Observer;
  */
 public class TimeBO implements Observer {
 	public static final int MINIMUM_TIME_DURATION = 60_000;
-	private final Dao dao;
 	private final ActivityDao activityDao = ActivityDao.getInstance();
 	private final TimeDao timeDao = TimeDao.getInstance();
 	
 	private final TimeDialog timeDialog;
 	private final TimeListDialog timeListDialog;
 
-	TimeBO(TimeDialog timeDialog, TimeListDialog timeListDialog) throws ClassNotFoundException, SQLException {
-		this.dao = Dao.getInstance();
+	TimeBO(TimeDialog timeDialog, TimeListDialog timeListDialog) {
 		this.timeDialog = timeDialog;
 		this.timeListDialog = timeListDialog;
-		
-		activityDao.addObserver(this);
-		timeDao.addObserver(this);
-		dao.addObserver(this);
 	}
 
 	void showNewTime() {

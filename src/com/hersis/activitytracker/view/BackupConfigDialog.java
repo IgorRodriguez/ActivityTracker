@@ -10,14 +10,12 @@ import java.io.File;
  * @author Igor Rodriguez <igorrodriguezelvira@gmail.com>
  */
 public class BackupConfigDialog extends javax.swing.JDialog {
-	private final Controller controller;
 
 	/**
 	 * Creates new form BackupConfigDialog
 	 */
-	public BackupConfigDialog(java.awt.Frame parent, boolean modal, Controller controller) {
+	public BackupConfigDialog(java.awt.Frame parent, boolean modal) {
 		super(parent, modal);
-		this.controller = controller;
 		initComponents();
 		loadCmbPeriods();
 	}

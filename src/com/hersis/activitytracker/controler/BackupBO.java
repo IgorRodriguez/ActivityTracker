@@ -25,7 +25,7 @@ import java.util.regex.Pattern;
 public class BackupBO implements Observer {
 	private final BackupDialog backupDialog;
 	private final BackupConfigDialog backupConfigDialog;
-	private final DateFormat backupDateFormat = new SimpleDateFormat("yyyy-MM-dd_HH:mm:ss");
+	private static final DateFormat backupDateFormat = new SimpleDateFormat("yyyy-MM-dd_HH:mm:ss");
 	private static final Pattern BACKUP_DATE_PATTERN = 
 			Pattern.compile("(\\d{4})-(\\d{2})-(\\d{2})_(\\d{2}):(\\d{2}):(\\d{2})");
 	public static final String BACKUP_FORMAT_STRING = Controller.APPLICATION_NAME + "_";
@@ -33,8 +33,17 @@ public class BackupBO implements Observer {
 	BackupBO(BackupDialog backupDialog, BackupConfigDialog backupConfigDialog) {
 		this.backupDialog = backupDialog;
 		this.backupConfigDialog = backupConfigDialog;
-		Controller.addPropertiesObserver(this);
 		if (mustPerformBackup()) startBackup(Controller.getMainFrame());
+	}
+	
+	public static String getDefaultBackupDate() {
+		Calendar defaultDate = Calendar.getInstance();
+		defaultDate.setTimeInMillis(0);
+		return backupDateFormat.format(defaultDate.getTime());
+	}
+	
+	public static String getDefaultBackupPath() {
+		return "";
 	}
 	
 	/**
@@ -44,7 +53,11 @@ public class BackupBO implements Observer {
 	 * period.
 	 */
 	private boolean mustPerformBackup() {
-		long lastBackupDate = getLastBackupDate().getTimeInMillis();
+		long lastBackupDate = 0;
+		Calendar backupDate = getLastBackupDate();
+		if (backupDate != null)  {
+			 lastBackupDate = backupDate.getTimeInMillis();
+		}
 		long now = Calendar.getInstance().getTimeInMillis();
 		BackupPeriod backupPeriod = getBackupPeriod();
 		
@@ -73,7 +86,8 @@ public class BackupBO implements Observer {
 	 * @return The date of the last performed backup.
 	 */
 	public static Calendar getLastBackupDate() {
-		Calendar backupDate = null;
+		Calendar backupDate = Calendar.getInstance();
+		backupDate.setTimeInMillis(0); // Default value
 		String dateString = Controller.getPropertie(ApplicationProperties.LAST_BACKUP_DATE);
 		
 		if (dateString != null && !"".equals(dateString)) {	
@@ -99,11 +113,11 @@ public class BackupBO implements Observer {
 	 * @return The actual backup period.
 	 */
 	private BackupPeriod getBackupPeriod() {
-		BackupPeriod backupPeriod = null;
+		BackupPeriod backupPeriod = BackupPeriod.DISABLED; // Set backupPeriod to default: DISABLED.
 		String backupPeriodString = Controller.getPropertie(ApplicationProperties.BACKUP_PERIOD);
 		boolean backupPeriodNull = false;
 		
-		if (backupPeriodString != null) {
+		if (backupPeriodString != null && !"".equals(backupPeriodString)) {
 			backupPeriodString = backupPeriodString.toUpperCase();
 			try {
 				backupPeriod = BackupPeriod.valueOf(backupPeriodString);
@@ -111,10 +125,9 @@ public class BackupBO implements Observer {
 				backupPeriodNull = true;
 			}
 		} 
-		if (backupPeriodNull) {	// Set backupPeriod to default: DISABLED.
-			backupPeriod = BackupPeriod.DISABLED;
+		if (backupPeriodNull) {	
 			Controller.setPropertie(ApplicationProperties.BACKUP_PERIOD, backupPeriod.toString());
-			AlertMessages.backupPeriodIllegalArgumentException("BackupBO.getLastBackupDate()", 
+			AlertMessages.backupPeriodIllegalArgumentException("BackupBO.getBackupPeriod()", 
 					backupPeriodString);
 		}
 		return backupPeriod;

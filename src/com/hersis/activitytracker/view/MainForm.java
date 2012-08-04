@@ -5,19 +5,16 @@ import java.awt.Toolkit;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.net.URL;
-import javax.swing.ImageIcon;
 
 /**
  *
  * @author Igor Rodriguez <igorrodriguezelvira@gmail.com>
  */
 public class MainForm extends javax.swing.JFrame {
-	Controller controller;
 	/**
 	 * Creates new form MainForm
 	 */
-	public MainForm(Controller controller) {
-		this.controller = controller;
+	public MainForm() {
 		initComponents();
 		init();
 	}
@@ -30,7 +27,7 @@ public class MainForm extends javax.swing.JFrame {
 				new WindowAdapter() {
 					@Override
 					public void windowClosing(WindowEvent e) {
-						controller.exit();
+						Controller.exit();
 					}
 				});
 	}
@@ -134,27 +131,27 @@ public class MainForm extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
 	private void mniExitActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_mniExitActionPerformed
-		controller.exit();
+		Controller.exit();
 	}//GEN-LAST:event_mniExitActionPerformed
 
 	private void mniNewActivityActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_mniNewActivityActionPerformed
-		controller.showNewActivityWindow();
+		Controller.showNewActivityWindow();
 	}//GEN-LAST:event_mniNewActivityActionPerformed
 
 	private void mniViewActivitiesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_mniViewActivitiesActionPerformed
-		controller.viewActivitiesWindow();
+		Controller.viewActivitiesWindow();
 	}//GEN-LAST:event_mniViewActivitiesActionPerformed
 
 	private void mniNewTimeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_mniNewTimeActionPerformed
-		controller.showNewTimeWindow();
+		Controller.showNewTimeWindow();
 	}//GEN-LAST:event_mniNewTimeActionPerformed
 
 	private void mniViewTimesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_mniViewTimesActionPerformed
-		controller.viewTimesWindow();
+		Controller.viewTimesWindow();
 	}//GEN-LAST:event_mniViewTimesActionPerformed
 
 	private void mniBackupActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_mniBackupActionPerformed
-		controller.showBackupWindow();
+		Controller.showBackupWindow();
 	}//GEN-LAST:event_mniBackupActionPerformed
 
 	

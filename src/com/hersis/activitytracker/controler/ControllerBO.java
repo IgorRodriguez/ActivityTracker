@@ -1,7 +1,8 @@
 package com.hersis.activitytracker.controler;
 
-import com.hersis.activitytracker.ApplicationProperties;
 import ch.qos.logback.classic.Logger;
+import com.hersis.activitytracker.ActivityTrackerMain;
+import com.hersis.activitytracker.ApplicationProperties;
 import com.hersis.activitytracker.images.Icons;
 import com.hersis.activitytracker.model.Dao;
 import com.hersis.activitytracker.view.AlertMessages;
@@ -29,7 +30,9 @@ import org.slf4j.LoggerFactory;
  */
 class ControllerBO extends Observable {
 	private static final Logger log = (Logger) LoggerFactory.getLogger("controller.ControllerBO");
-	private static final String PROPERTIES_FILE_PATH = System.getProperty("user.dir") + File.separatorChar +
+	private static final String APPLICATION_PATH = new File(
+			ActivityTrackerMain.class.getProtectionDomain().getCodeSource().getLocation().getPath()).getParentFile().getPath();
+	private static final String PROPERTIES_FILE_PATH = APPLICATION_PATH + File.separatorChar +
 			"ActivityTracker.properties";
 	private static final Icons ICONS = new Icons();
 	private static final Properties appProperties = new Properties();
@@ -65,13 +68,14 @@ class ControllerBO extends Observable {
 		if (!new File(PROPERTIES_FILE_PATH).exists()) createPropertiesFile();
         try (FileInputStream propFis = new FileInputStream(PROPERTIES_FILE_PATH)) {
             appProperties.load(propFis);
+			setPropertie(ApplicationProperties.APPLICATION_PATH, APPLICATION_PATH);
             log.debug("Properties loaded successfully");
         } catch (IOException ioe) {
 			AlertMessages.propertiesLoadIOException(ioe);
         } 
     }
 	
-	void createPropertiesFile() {
+	private static void createPropertiesFile() {
 		File propertiesFile = new File(PROPERTIES_FILE_PATH);
 		try {
 			propertiesFile.createNewFile();
@@ -80,7 +84,7 @@ class ControllerBO extends Observable {
 		}
 	}
     
-    void saveProperties() {
+    private static void saveProperties() {
 		if (!new File(PROPERTIES_FILE_PATH).exists()) createPropertiesFile();
         try (FileOutputStream propFos = new FileOutputStream(PROPERTIES_FILE_PATH)) {
             appProperties.store(propFos, "Saved with date: ");
@@ -91,7 +95,12 @@ class ControllerBO extends Observable {
     }
 	
 	String getPropertie(ApplicationProperties key) {
-		return appProperties.getProperty(key.toString());
+		String propertieValue = appProperties.getProperty(key.toString());
+		if (propertieValue != null && !"".equals(propertieValue)) {
+			return propertieValue;
+		}
+		// Return default value
+		return key.getDefaultValue();
 	}
 	
 	void setPropertie(ApplicationProperties key, String value) {
@@ -144,7 +153,7 @@ class ControllerBO extends Observable {
 	/**
 	 * Finalizes correctly the application and exits.
 	 */
-	public void exit(Dao dao, Component mainParent) {	
+	public static void exit(Component mainParent) {	
 		boolean exit = true;
 		
         saveProperties();

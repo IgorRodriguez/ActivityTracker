@@ -50,10 +50,6 @@ public class TimerBO implements Observer {
 		this.dao = Dao.getInstance();
 		this.timerPanel = timerPanel;
 		
-		activityDao.addObserver(this);
-		timeDao.addObserver(this);
-		dao.addObserver(this);
-		
 		timerPanel.resetControls();
 		
 		/* Configuration for SimpleDateFormat that allows to show the time in GMT mode. Used in this 

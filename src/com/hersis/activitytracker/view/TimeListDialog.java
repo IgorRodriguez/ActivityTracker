@@ -15,16 +15,14 @@ import javax.swing.table.TableColumnModel;
  * @author Igor Rodriguez <igorrodriguezelvira@gmail.com>
  */
 public class TimeListDialog extends javax.swing.JDialog {
-	private final Controller controller;
 	private TimeListTableModel timeListModel = new TimeListTableModel();
 	int previousRow = -1;
 
 	/**
 	 * Creates new form ActivityListDialog
 	 */
-	public TimeListDialog(java.awt.Frame parent, boolean modal, Controller controller) {
+	public TimeListDialog(java.awt.Frame parent, boolean modal) {
 		super(parent, modal);
-		this.controller = controller;
 		initComponents();
 		this.getRootPane().setDefaultButton(btnClose);
 	}
@@ -42,10 +40,10 @@ public class TimeListDialog extends javax.swing.JDialog {
         cm.getColumn(0).setPreferredWidth(130);
 		cm.getColumn(3).setPreferredWidth(45);
 		
-		tblTimes.setDefaultRenderer(Integer.class, new ActivityIdTableCellRenderer(controller));
+		tblTimes.setDefaultRenderer(Integer.class, new ActivityIdTableCellRenderer());
         tblTimes.setDefaultRenderer(Timestamp.class, new TimestampTableCellRenderer());
         tblTimes.setDefaultRenderer(String.class, new CustomDefaultTableCellRenderer());
-        tblTimes.setDefaultRenderer(Long.class, new DurationTableCellRenderer(controller));
+        tblTimes.setDefaultRenderer(Long.class, new DurationTableCellRenderer());
     }
 	
 	public void selectPreviousRow() {
@@ -208,11 +206,11 @@ public class TimeListDialog extends javax.swing.JDialog {
     }// </editor-fold>//GEN-END:initComponents
 
 	private void btnCloseActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCloseActionPerformed
-		controller.closeTimeList();
+		Controller.closeTimeList();
 	}//GEN-LAST:event_btnCloseActionPerformed
 
 	private void btnNewActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnNewActionPerformed
-		controller.showNewTimeWindow();
+		Controller.showNewTimeWindow();
 	}//GEN-LAST:event_btnNewActionPerformed
 
 	private void btnEditActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEditActionPerformed
@@ -222,13 +220,13 @@ public class TimeListDialog extends javax.swing.JDialog {
 		if (selectedRow != -1) {
 			selectedTime = timeListModel.getTimeAt(selectedRow);
 		}
-		controller.showEditTimeWindow(selectedTime);
+		Controller.showEditTimeWindow(selectedTime);
 	}//GEN-LAST:event_btnEditActionPerformed
 
 	private void tblTimesMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tblTimesMouseClicked
 		if (evt.getClickCount() > 1) {
 			int row = tblTimes.rowAtPoint(new Point(evt.getX(), evt.getY()));
-			controller.showEditTimeWindow(timeListModel.getTimeAt(row));
+			Controller.showEditTimeWindow(timeListModel.getTimeAt(row));
 		}
 	}//GEN-LAST:event_tblTimesMouseClicked
 
@@ -239,7 +237,7 @@ public class TimeListDialog extends javax.swing.JDialog {
 		if (selectedRow != -1) {
 			selectedTime = timeListModel.getTimeAt(selectedRow);
 		}
-		controller.deleteTime(this, selectedTime);
+		Controller.deleteTime(this, selectedTime);
 	}//GEN-LAST:event_btnDeleteActionPerformed
 
 	

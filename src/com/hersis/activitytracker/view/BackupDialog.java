@@ -3,6 +3,7 @@ package com.hersis.activitytracker.view;
 import com.hersis.activitytracker.controler.Controller;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Observable;
 import java.util.Observer;
 
@@ -11,24 +12,23 @@ import java.util.Observer;
  * @author Igor Rodriguez <igorrodriguezelvira@gmail.com>
  */
 public class BackupDialog extends javax.swing.JDialog implements Observer{
-	private final Controller controller;
 	private final BackupRestoreDialog backupRestoreDialog;
 	private final DateFormat backupDateFormat = new SimpleDateFormat("yyyy MMM dd, HH:mm:ss");
 	
 	/**
 	 * Creates new form BackupDialog
 	 */
-	public BackupDialog(java.awt.Frame parent, boolean modal, Controller controller) {
+	public BackupDialog(java.awt.Frame parent, boolean modal) {
 		super(parent, modal);
-		this.controller = controller;
 		backupRestoreDialog = new BackupRestoreDialog(parent, true);
 		initComponents();
-		Controller.addPropertiesObserver(this);
-		setBackupDateLabel();
 	}
 	
-	private void setBackupDateLabel() {
-		lblBackupDate.setText(backupDateFormat.format(Controller.getLastBackupDate().getTime()));
+	public void setBackupDateLabel() {
+		Calendar backupDate = Controller.getLastBackupDate();
+		String backupDateString = "unknown";
+		if (backupDate.getTimeInMillis() != 0) backupDateString = backupDateFormat.format(backupDate.getTime());
+		lblBackupDate.setText(backupDateString);
 		this.pack();
 	}
 
@@ -180,15 +180,15 @@ public class BackupDialog extends javax.swing.JDialog implements Observer{
 	}//GEN-LAST:event_btnRestoreActionPerformed
 
 	private void btnBackupNowActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBackupNowActionPerformed
-		controller.startBackup(this);
+		Controller.startBackup(this);
 	}//GEN-LAST:event_btnBackupNowActionPerformed
 
 	private void btnConfigureActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnConfigureActionPerformed
-		controller.showBackupConfigWindow();
+		Controller.showBackupConfigWindow();
 	}//GEN-LAST:event_btnConfigureActionPerformed
 
 	private void btnCloseActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCloseActionPerformed
-		controller.closeBackupWindow();
+		Controller.closeBackupWindow();
 	}//GEN-LAST:event_btnCloseActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
