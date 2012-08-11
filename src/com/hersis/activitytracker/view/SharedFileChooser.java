@@ -1,5 +1,7 @@
 package com.hersis.activitytracker.view;
 
+import com.hersis.activitytracker.view.aux.BackupFileFilter;
+import com.hersis.activitytracker.view.aux.BackupSwingFileFilter;
 import java.awt.Component;
 import java.io.File;
 import javax.swing.JFileChooser;
@@ -21,20 +23,28 @@ class SharedFileChooser {
         fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
         fileChooser.setFileFilter(new FileFilter() {
 			@Override
-            public boolean accept (File fichero) {
-                if(fichero.isDirectory()) {
+            public boolean accept (File file) {
+                if(file.isDirectory()) {
                     return true;
                 }
                 return false;
             }
 			@Override
             public String getDescription() {
-                return "Select directory";
+                return "Directories";
             }
         });
 		
 		return fileChooser.showDialog(parentComponent, acceptButtonString);
 	}
+	
+	public static int showBackupsChooser(Component parentComponent, String acceptButtonString) {
+		// JFileChooser must show only backups
+        fileChooser.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
+        fileChooser.setFileFilter(new BackupSwingFileFilter());
+		
+		return fileChooser.showDialog(parentComponent, acceptButtonString);
+	}	
 	
 	public static File getSelectedFile() {
 		return fileChooser.getSelectedFile();

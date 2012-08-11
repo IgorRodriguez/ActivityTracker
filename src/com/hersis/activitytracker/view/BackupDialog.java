@@ -1,6 +1,8 @@
 package com.hersis.activitytracker.view;
 
+import com.hersis.activitytracker.ApplicationProperties;
 import com.hersis.activitytracker.controler.Controller;
+import java.io.File;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -174,13 +176,32 @@ public class BackupDialog extends javax.swing.JDialog implements Observer{
     }// </editor-fold>//GEN-END:initComponents
 
 	private void btnRestoreActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRestoreActionPerformed
-		backupRestoreDialog.loadBackupValues();
-		backupRestoreDialog.setLocationRelativeTo(this);
-		backupRestoreDialog.setVisible(true);
+		int selected = SharedFileChooser.showBackupsChooser(this, "Select");
+		if (selected == SharedFileChooser.APPROVE_OPTION) {
+			File backupFile = SharedFileChooser.getSelectedFile();
+			if (backupFile.isFile()) {
+				String backupPath = backupFile.getPath();
+				Controller.restoreBackup(this, backupPath);
+			} else {
+				AlertMessages.noFileSelected(this, backupFile.getPath());
+			}
+		}
+//		backupRestoreDialog.loadBackupValues();
+//		backupRestoreDialog.setLocationRelativeTo(this);
+//		backupRestoreDialog.setVisible(true);
 	}//GEN-LAST:event_btnRestoreActionPerformed
 
 	private void btnBackupNowActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBackupNowActionPerformed
-		Controller.startBackup(this);
+		String backupPath = Controller.getPropertie(ApplicationProperties.BACKUP_PATH);
+		
+		if (backupPath == null || "".equals(backupPath)) {
+			int selected = SharedFileChooser.showDirectoryChooser(this, "Select");
+			if (selected == SharedFileChooser.APPROVE_OPTION) {
+				backupPath = SharedFileChooser.getSelectedFile().getPath();
+				Controller.setPropertie(ApplicationProperties.BACKUP_PATH, backupPath);
+			}
+		}
+		Controller.startBackup(this, backupPath);
 	}//GEN-LAST:event_btnBackupNowActionPerformed
 
 	private void btnConfigureActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnConfigureActionPerformed

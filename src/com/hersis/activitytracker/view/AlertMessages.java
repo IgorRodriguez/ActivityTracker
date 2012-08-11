@@ -198,4 +198,11 @@ public abstract class AlertMessages {
 		log.error(message);
 		JOptionPane.showMessageDialog(parent, message, "Error", JOptionPane.ERROR_MESSAGE);
 	}
+
+	static void noFileSelected(Component parent, String file) {
+		String logMessage = "The selected path is not a file. File: {}";
+		log.warn(logMessage, file);
+		String message = "The selected path is not a file. Please, select a valid one.";
+		JOptionPane.showMessageDialog(parent, message, "Warning", JOptionPane.WARNING_MESSAGE);
+	}
 }

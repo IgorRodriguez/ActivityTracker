@@ -29,10 +29,10 @@ public class RunDatabaseBackup extends SwingWorker<Void, Void> {
 	@Override
 	protected Void doInBackground() throws Exception {
 		String backupDate = backupDateFormat.format(new Date());
-		String path = destinationRoot + File.separatorChar + backupFormatString +
-				backupDate;
+		String fileName = backupFormatString + backupDate;
+//		String path = destinationRoot + File.separatorChar + fileName;
 		try {
-			Dao.executeBackup(path);
+			Dao.executeBackup(destinationRoot, fileName);
 			Controller.setPropertie(ApplicationProperties.LAST_BACKUP_DATE, backupDate);
 		} catch (SQLException ex) {
 			ErrorMessages.sqlExceptionError("RunDatabaseBackup.doInBackground()", ex);

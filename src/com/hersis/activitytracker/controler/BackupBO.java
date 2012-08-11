@@ -25,15 +25,17 @@ import java.util.regex.Pattern;
 public class BackupBO implements Observer {
 	private final BackupDialog backupDialog;
 	private final BackupConfigDialog backupConfigDialog;
-	private static final DateFormat backupDateFormat = new SimpleDateFormat("yyyy-MM-dd_HH:mm:ss");
+	// TODO Remove : from the backup path, since it's incompatible with Windows.
+	private static final DateFormat backupDateFormat = new SimpleDateFormat("yyyy-MM-dd_HHmmss");
 	private static final Pattern BACKUP_DATE_PATTERN = 
-			Pattern.compile("(\\d{4})-(\\d{2})-(\\d{2})_(\\d{2}):(\\d{2}):(\\d{2})");
+			Pattern.compile("(\\d{4})-(\\d{2})-(\\d{2})_(\\d{2})(\\d{2})(\\d{2})");
 	public static final String BACKUP_FORMAT_STRING = Controller.APPLICATION_NAME + "_";
 
 	BackupBO(BackupDialog backupDialog, BackupConfigDialog backupConfigDialog) {
 		this.backupDialog = backupDialog;
 		this.backupConfigDialog = backupConfigDialog;
-		if (mustPerformBackup()) startBackup(Controller.getMainFrame());
+		if (mustPerformBackup()) startBackup(Controller.getMainFrame(), 
+				Controller.getPropertie(ApplicationProperties.BACKUP_PATH));
 	}
 	
 	public static String getDefaultBackupDate() {
@@ -150,13 +152,11 @@ public class BackupBO implements Observer {
 	 * Starts the backup of the application to the path specified in the application's properties.
 	 * @param parentWindow The parent window for the progress dialog that will be displayed.
 	 */
-	final void startBackup(Component parentWindow) {
-		final String destinationRoot = Controller.getPropertie(ApplicationProperties.BACKUP_PATH);
-		
-		if (destinationRoot != null && !"".equals(destinationRoot.trim())) {
+	final void startBackup(Component parentWindow, String destinationPath) {
+		if (destinationPath != null && !"".equals(destinationPath.trim())) {
 			ProgressBarDialog backupProgressDialog = ProgressBarDialog.getInstance(parentWindow);
 			RunDatabaseBackup runBackup = new RunDatabaseBackup(backupProgressDialog, 
-					destinationRoot, backupDateFormat, BACKUP_FORMAT_STRING);
+					destinationPath, backupDateFormat, BACKUP_FORMAT_STRING);
 			runBackup.execute();
 			
 			backupProgressDialog.setTaskTitle("Backing up application...");
@@ -197,6 +197,7 @@ public class BackupBO implements Observer {
 
 	@Override
 	public void update(Observable o, Object arg) {
-		if (mustPerformBackup()) startBackup(backupDialog);
+		if (mustPerformBackup()) startBackup(backupDialog, 
+				Controller.getPropertie(ApplicationProperties.BACKUP_PATH));
 	}
 }

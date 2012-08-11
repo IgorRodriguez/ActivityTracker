@@ -1,7 +1,7 @@
 package com.hersis.activitytracker;
 
 import com.hersis.activitytracker.controler.BackupBO;
-import java.io.File;
+import com.hersis.activitytracker.controler.ControllerBO;
 
 /**
  *
@@ -9,11 +9,11 @@ import java.io.File;
  */
 public enum ApplicationProperties {
 	APPLICATION_NAME("ActivityTrackerV2"),
-	APPLICATION_PATH(new File(
-			ActivityTrackerMain.class.getProtectionDomain().getCodeSource().getLocation().getPath()).getParentFile().getPath()),
+	APPLICATION_PATH(ControllerBO.getDefaultApplicationPath()),
 	BACKUP_PERIOD(BackupPeriod.DISABLED.toString()), 
 	BACKUP_PATH(BackupBO.getDefaultBackupPath()), 
-	LAST_BACKUP_DATE(BackupBO.getDefaultBackupDate());
+	LAST_BACKUP_DATE(BackupBO.getDefaultBackupDate()),
+	PROPERTIES_FILE_PATH(ControllerBO.getDefaultPropertiesFilePath());
 	
 	private String defaultValue;
 	

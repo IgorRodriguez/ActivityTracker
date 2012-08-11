@@ -4,12 +4,17 @@ import ch.qos.logback.classic.Logger;
 import com.hersis.activitytracker.ApplicationProperties;
 import com.hersis.activitytracker.controler.Controller;
 import com.hersis.activitytracker.controler.ErrorMessages;
+import com.hersis.activitytracker.model.nio.DirUtils;
 import java.io.Closeable;
 import java.io.File;
 import java.io.IOException;
 import java.sql.*;
 import java.util.Observable;
 import java.util.Properties;
+import net.lingala.zip4j.core.ZipFile;
+import net.lingala.zip4j.exception.ZipException;
+import net.lingala.zip4j.model.ZipParameters;
+import net.lingala.zip4j.util.Zip4jConstants;
 import org.slf4j.LoggerFactory;
 
 /**
@@ -130,6 +135,9 @@ public class Dao extends Observable implements Closeable{
         dbProperties.put("derby.driver", "org.apache.derby.jdbc.EmbeddedDriver");
         dbProperties.put("derby.url", "jdbc:derby:");
         dbProperties.put("db.schema", "APP");
+		System.setProperty("derby.stream.error.file", 
+				Controller.getPropertie(ApplicationProperties.APPLICATION_PATH) + 
+				File.separatorChar + "derbyLog.log");
     }
 
 	/**
@@ -251,14 +259,31 @@ public class Dao extends Observable implements Closeable{
 	 * @throws SQLException If there is a problem when accessing the database.
 	 * @throws ClassNotFoundException If there is a problem while loading the database driver.
 	 */
-	public static int executeBackup(String backupPath) throws SQLException, ClassNotFoundException {
+	public static int executeBackup(String backupPath, String fileName) throws SQLException, ClassNotFoundException {
 		try (PreparedStatement stmt = getConnection().prepareStatement(SQL_BACKUP_DATABASE)) {
-			stmt.setString(1, backupPath);
-			int executeUpdate = stmt.executeUpdate();
+			String tempPath = Controller.getPropertie(ApplicationProperties.APPLICATION_PATH) + 
+					File.separatorChar + fileName;
+			stmt.setString(1, tempPath);
+			int result = stmt.executeUpdate();
+			if (result != -1) {
+				ZipFile zipFile = new ZipFile(backupPath + File.separatorChar + fileName + ".zip");
+				ZipParameters parameters = new ZipParameters();
+				parameters.setCompressionMethod(Zip4jConstants.COMP_DEFLATE);
+				parameters.setCompressionLevel(Zip4jConstants.DEFLATE_LEVEL_NORMAL);
+				zipFile.addFolder(tempPath, parameters);
+				
+				// Remove the temp directory
+				DirUtils.deleteIfExists(new File(tempPath).toPath());
+			}
 			log.info("Database backed-up in {}", backupPath);
-			return executeUpdate;
+			return result;
 		} catch (SQLException ex) {
 			ErrorMessages.databaseBackupError("Dao.executeBackup()", ex, backupPath);
+		} catch (ZipException ex) {
+			ErrorMessages.databaseBackupZipError("Dao.executeBackup()", ex, backupPath);
+		} catch (IOException ex) {
+			log.warn("The temporary database backup directory couldn't been removed. Error message:\n{}", 
+					ex.getLocalizedMessage());
 		}
 		return -1;
 	}
@@ -269,21 +294,33 @@ public class Dao extends Observable implements Closeable{
 	 * @throws SQLException If there was any problem when accessing the database.
 	 */
 	public void restoreBackup(String backupSourcePath) throws SQLException {
+		String backupTempDirectory = Controller.getPropertie(ApplicationProperties.APPLICATION_PATH);
+		
 		try {
+			ZipFile zipFile = new ZipFile(backupSourcePath);
+			zipFile.extractAll(backupTempDirectory);
+			backupTempDirectory += File.separator + (new File(backupSourcePath)).getName().replace(".zip", "");
+			
 			closeDatabase();
-			String connectionString = getDatabaseUrl() + ";restoreFrom=" + backupSourcePath + 
+			String connectionString = getDatabaseUrl() + ";restoreFrom=" + backupTempDirectory + 
 					File.separatorChar + DB_NAME;
 
 			dbConnection = DriverManager.getConnection(connectionString);
 
 			log.info("Database has been restored from {}", backupSourcePath);
 				
+			// Remove the temp directory
+			DirUtils.deleteIfExists(new File(backupTempDirectory).toPath());
 			// Notify the Observers to allow the GUI update.
 			setChanged();
 			notifyObservers();
 		} catch (SQLException ex) {
-			ErrorMessages.databaseRestoreError("Dao.restoreBackup()", ex, backupSourcePath);
-			throw ex;
+			ErrorMessages.databaseRestoreError("Dao.restoreBackup()", ex, backupTempDirectory);
+		} catch (ZipException ex) {
+			ErrorMessages.databaseRestoreZipError("Dao.restoreBackup()", ex, backupSourcePath);
+		} catch (IOException ex) {
+			log.warn("The temporary database restore directory couldn't been removed. Error message:\n{}", 
+					ex.getLocalizedMessage());
 		}
 	}
 

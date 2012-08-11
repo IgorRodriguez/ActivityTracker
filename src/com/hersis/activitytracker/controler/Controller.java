@@ -313,8 +313,8 @@ public class Controller {
 		backupBo.showBackupConfigWindow();
 	}
 	
-	public static void startBackup(Component parentWindow) {
-		backupBo.startBackup(parentWindow);
+	public static void startBackup(Component parentWindow, String destinationPath) {
+		backupBo.startBackup(parentWindow, destinationPath);
 	}
 	
 	public static File[] getAvailableBackups(File filePath) {
