@@ -25,7 +25,6 @@ import java.util.regex.Pattern;
 public class BackupBO implements Observer {
 	private final BackupDialog backupDialog;
 	private final BackupConfigDialog backupConfigDialog;
-	// TODO Remove : from the backup path, since it's incompatible with Windows.
 	private static final DateFormat backupDateFormat = new SimpleDateFormat("yyyy-MM-dd_HHmmss");
 	private static final Pattern BACKUP_DATE_PATTERN = 
 			Pattern.compile("(\\d{4})-(\\d{2})-(\\d{2})_(\\d{2})(\\d{2})(\\d{2})");

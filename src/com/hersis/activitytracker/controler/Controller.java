@@ -68,12 +68,10 @@ public class Controller {
 			Dao.getInstance().addObserver(timeBo);
 			ActivityDao.getInstance().addObserver(timeBo);
 			TimeDao.getInstance().addObserver(timeBo);
-			log.debug("TimeDao created");
+			
 			// BackupBO
 			backupBo = new BackupBO(backupDialog, backupConfigDialog);
 			addPropertiesObserver(backupBo);
-			
-			log.debug("Forms created");
 			
 			// CmbActivities need to be loaded here, cannot be done in their's respectives BO constructors.
 			loadCmbActivities();
@@ -104,13 +102,9 @@ public class Controller {
 		controllerBo.loadProperties();
 		
 		// Main form creation and settings
-		mainForm = new MainForm();
-		log.debug("MainForm created");
-	
+		mainForm = new MainForm();	
 		mainToolbar = new MainToolbar(this);
-		log.debug("MainToolbar created");
 		timerPanel = new TimerPanel(this);
-		log.debug("TimerPanel created");
 		
 		mainForm.add(mainToolbar, BorderLayout.NORTH);
 		mainForm.add(timerPanel, BorderLayout.CENTER);
@@ -119,7 +113,6 @@ public class Controller {
 		mainForm.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
 		mainForm.getRootPane().setDefaultButton(timerPanel.getNewButton());
 		
-		log.debug("MainForm configured");
 //		// Dialog creation and settings
 		activityDialog = new ActivityDialog(mainForm, true);
 		activityDialog.setLocationRelativeTo(mainForm);
@@ -129,16 +122,13 @@ public class Controller {
 		
 		timeDialog = new TimeDialog(mainForm, true);
 		timeDialog.setLocationRelativeTo(mainForm);
-		log.debug("TimeDialog created");
 		
 		timeListDialog = new TimeListDialog(mainForm, true);
 		timeListDialog.setLocationRelativeTo(mainForm);
-		log.debug("TimeListDialog created");
 		
 		backupDialog = new BackupDialog(mainForm, true);
 		backupDialog.setLocationRelativeTo(mainForm);
 		addPropertiesObserver(backupDialog);
-		log.debug("BackupDialog created");
 		
 		backupConfigDialog = new BackupConfigDialog(mainForm, true);
 		backupConfigDialog.setLocationRelativeTo(mainForm);
