@@ -86,7 +86,7 @@ public class TimeListDialog extends javax.swing.JDialog {
         btnNew = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
-        setTitle("Activity list");
+        setTitle("Time list");
         setName("ActivityListDialog");
 
         timeListPanel.setPreferredSize(new java.awt.Dimension(600, 415));

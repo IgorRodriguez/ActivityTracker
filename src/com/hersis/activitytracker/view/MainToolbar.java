@@ -7,14 +7,13 @@ import com.hersis.activitytracker.controler.Controller;
  * @author Igor Rodriguez <igorrodriguezelvira@gmail.com>
  */
 public class MainToolbar extends javax.swing.JPanel {
-	private final Controller controller;
 
 	/**
 	 * Creates new form MainToolbar
 	 */
-	public MainToolbar(Controller controller) {
-		this.controller = controller;
+	public MainToolbar() {
 		initComponents();
+		this.btnOptions.setVisible(false);
 	}
 
 	/**
@@ -109,23 +108,23 @@ public class MainToolbar extends javax.swing.JPanel {
     }// </editor-fold>//GEN-END:initComponents
 
 	private void btnNewActivityActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnNewActivityActionPerformed
-		controller.showNewActivityWindow();
+		Controller.showNewActivityWindow();
 	}//GEN-LAST:event_btnNewActivityActionPerformed
 
 	private void btnViewActivitiesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnViewActivitiesActionPerformed
-		controller.viewActivitiesWindow();
+		Controller.viewActivitiesWindow();
 	}//GEN-LAST:event_btnViewActivitiesActionPerformed
 
 	private void btnNewTimeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnNewTimeActionPerformed
-		controller.showNewTimeWindow();
+		Controller.showNewTimeWindow();
 	}//GEN-LAST:event_btnNewTimeActionPerformed
 
 	private void btnViewTimesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnViewTimesActionPerformed
-		controller.viewTimesWindow();
+		Controller.viewTimesWindow();
 	}//GEN-LAST:event_btnViewTimesActionPerformed
 
 	private void btnBackupActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBackupActionPerformed
-		controller.showBackupWindow();
+		Controller.showBackupWindow();
 	}//GEN-LAST:event_btnBackupActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

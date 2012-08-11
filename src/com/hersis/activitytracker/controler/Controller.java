@@ -36,6 +36,7 @@ public class Controller {
 	private TimeListDialog timeListDialog;
 	private BackupDialog backupDialog;
 	private BackupConfigDialog backupConfigDialog;
+	private static AboutDialog aboutDialog;
 		
 	private static ControllerBO controllerBo = new ControllerBO();
 	private static TimerBO timerBo;	
@@ -103,8 +104,8 @@ public class Controller {
 		
 		// Main form creation and settings
 		mainForm = new MainForm();	
-		mainToolbar = new MainToolbar(this);
-		timerPanel = new TimerPanel(this);
+		mainToolbar = new MainToolbar();
+		timerPanel = new TimerPanel();
 		
 		mainForm.add(mainToolbar, BorderLayout.NORTH);
 		mainForm.add(timerPanel, BorderLayout.CENTER);
@@ -132,6 +133,9 @@ public class Controller {
 		
 		backupConfigDialog = new BackupConfigDialog(mainForm, true);
 		backupConfigDialog.setLocationRelativeTo(mainForm);
+		
+		aboutDialog = new AboutDialog(mainForm, true);
+		aboutDialog.setLocationRelativeTo(mainForm);
 		log.debug("End of window creation");
 	}
 	
@@ -285,6 +289,10 @@ public class Controller {
 
 	public static void closeTimeList() {
 		timeBo.closeTimeList();
+	}
+	
+	public static void showAboutWindow() {
+		aboutDialog.setVisible(true);
 	}
 
 	/**********************************************************************************************

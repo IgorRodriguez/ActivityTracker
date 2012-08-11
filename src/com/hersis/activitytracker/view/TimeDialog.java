@@ -295,6 +295,7 @@ public class TimeDialog extends javax.swing.JDialog {
         btnDelete = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+        setTitle("Time editor");
 
         timePanel.setLayout(new java.awt.GridBagLayout());
 

@@ -72,6 +72,7 @@ public class BackupConfigDialog extends javax.swing.JDialog {
         btnAccept = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+        setTitle("Backup configuration");
 
         backupConfigPanel.setLayout(new java.awt.GridBagLayout());
 
