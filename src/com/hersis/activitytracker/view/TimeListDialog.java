@@ -206,7 +206,7 @@ public class TimeListDialog extends javax.swing.JDialog {
     }// </editor-fold>//GEN-END:initComponents
 
 	private void btnCloseActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCloseActionPerformed
-		Controller.closeTimeList();
+		setVisible(false);
 	}//GEN-LAST:event_btnCloseActionPerformed
 
 	private void btnNewActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnNewActionPerformed
