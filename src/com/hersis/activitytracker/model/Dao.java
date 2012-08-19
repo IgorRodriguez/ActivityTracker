@@ -1,6 +1,8 @@
 package com.hersis.activitytracker.model;
 
 import ch.qos.logback.classic.Logger;
+import com.hersis.activitytracker.Activity;
+import com.hersis.activitytracker.Time;
 import com.hersis.activitytracker.ApplicationProperties;
 import com.hersis.activitytracker.controler.Controller;
 import com.hersis.activitytracker.controler.ErrorMessages;
@@ -29,11 +31,12 @@ public class Dao extends Observable implements Closeable{
     private static final String DERBY_SYSTEM_HOME = Controller.getPropertie(ApplicationProperties.APPLICATION_PATH);
     private static final String DB_NAME = "db";
     private static final String SQL_BACKUP_DATABASE = "CALL SYSCS_UTIL.SYSCS_BACKUP_DATABASE(?)";
+	
 	private static final String SQL_CREATE_ACTIVITIES_TABLE =
             "CREATE TABLE APP.ACTIVITIES (" +
             "   ID_ACTIVITY INT NOT NULL GENERATED ALWAYS AS IDENTITY CONSTRAINT ID_ACTIVITY_PK PRIMARY KEY," +
-            "   NAME VARCHAR(35) UNIQUE NOT NULL," +
-            "   DESCRIPTION VARCHAR(200)" +
+            "   NAME VARCHAR(" + Activity.getNameFieldLength() + ") UNIQUE NOT NULL," +
+            "   DESCRIPTION VARCHAR(" + Activity.getDescriptionFieldLength() + ")" +
             ")";
 	private static final String SQL_CREATE_TIMES_TABLE =
             "CREATE TABLE APP.TIMES (" +
@@ -42,7 +45,7 @@ public class Dao extends Observable implements Closeable{
             "   START_TIME TIMESTAMP NOT NULL," +
             "   END_TIME TIMESTAMP NOT NULL," +
             "   DURATION BIGINT NOT NULL," +
-            "   DESCRIPTION VARCHAR(200)," +
+            "   DESCRIPTION VARCHAR(" + Time.getDescriptionFieldLength() + ")," +
             "   FOREIGN KEY (ID_ACTIVITY) REFERENCES APP.ACTIVITIES(ID_ACTIVITY)" +
             ")";
 

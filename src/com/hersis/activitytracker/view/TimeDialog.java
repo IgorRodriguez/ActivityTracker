@@ -69,7 +69,7 @@ public class TimeDialog extends javax.swing.JDialog {
 			minute.clear();
 			hour.setTime((Date) spnHourStartTime.getValue());
 			minute.setTime((Date) spnMinuteStartTime.getValue());
-			startTime.set(Calendar.HOUR, hour.get(Calendar.HOUR));
+			startTime.set(Calendar.HOUR_OF_DAY, hour.get(Calendar.HOUR_OF_DAY));
 			startTime.set(Calendar.MINUTE, minute.get(Calendar.MINUTE));
 		}
 		return startTime;
@@ -94,7 +94,7 @@ public class TimeDialog extends javax.swing.JDialog {
 			minute.clear();
 			hour.setTime((Date) spnHourEndTime.getValue());
 			minute.setTime((Date) spnMinuteEndTime.getValue());
-			endTime.set(Calendar.HOUR, hour.get(Calendar.HOUR));
+			endTime.set(Calendar.HOUR_OF_DAY, hour.get(Calendar.HOUR_OF_DAY));
 			endTime.set(Calendar.MINUTE, minute.get(Calendar.MINUTE));
 		}
 		return endTime;

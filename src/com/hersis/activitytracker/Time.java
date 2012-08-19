@@ -1,5 +1,6 @@
 package com.hersis.activitytracker;
 
+import com.hersis.activitytracker.model.Dao;
 import java.sql.Timestamp;
 import java.util.Objects;
 
@@ -14,13 +15,14 @@ public class Time implements Comparable{
 	private Timestamp endTime;
 	private long duration = -1;
 	private String description;
+	private static final int descriptionFieldLength = 200;
 
 	public Time(int idActivity, Timestamp startTime, Timestamp endTime, long duration, String description) {
 		this.idActivity = idActivity;
 		this.startTime = startTime;
 		this.endTime = endTime;
 		this.duration = duration;
-		this.description = description;
+		setDescription(description);
 	}
 
 	public Time(int idTime, int idActivity, Timestamp startTime, Timestamp endTime, long duration, String description) {
@@ -29,14 +31,18 @@ public class Time implements Comparable{
 		this.startTime = startTime;
 		this.endTime = endTime;
 		this.duration = duration;
-		this.description = description;
+		setDescription(description);
 	}
 
 	public String getDescription() {
 		return description;
 	}
 
-	public void setDescription(String description) {
+	public final void setDescription(String description) {
+		description = description.trim();
+		if (description.length() > getDescriptionFieldLength()) 
+			description = description.substring(0, getDescriptionFieldLength());
+		
 		this.description = description;
 	}
 
@@ -78,6 +84,10 @@ public class Time implements Comparable{
 
 	public void setStartTime(Timestamp startTime) {
 		this.startTime = startTime;
+	}
+
+	public static int getDescriptionFieldLength() {
+		return descriptionFieldLength;
 	}
 
 	@Override

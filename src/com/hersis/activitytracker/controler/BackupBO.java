@@ -101,7 +101,7 @@ public class BackupBO implements Observer {
 				backupDate.set(Calendar.YEAR, Integer.parseInt(matcher.group(1)));
 				backupDate.set(Calendar.MONTH, Integer.parseInt(matcher.group(2)) - 1);
 				backupDate.set(Calendar.DAY_OF_MONTH, Integer.parseInt(matcher.group(3)));
-				backupDate.set(Calendar.HOUR, Integer.parseInt(matcher.group(4)));
+				backupDate.set(Calendar.HOUR_OF_DAY, Integer.parseInt(matcher.group(4)));
 				backupDate.set(Calendar.MINUTE, Integer.parseInt(matcher.group(5)));
 				backupDate.set(Calendar.SECOND, Integer.parseInt(matcher.group(6)));
 			}

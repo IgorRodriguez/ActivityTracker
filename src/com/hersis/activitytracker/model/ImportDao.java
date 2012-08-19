@@ -77,8 +77,8 @@ public class ImportDao {
     private void setDBSystemDir() {
         // Decidir cual sera el directorio de sistema de la bd.
         // Ruta de ejecucion de la aplicacion
-        String userHomeDir = "/media/Z/tmp/SeguimientoEstudiosDB/";
-        String systemDir = "/media/Z/tmp/SeguimientoEstudiosDB/";
+        String userHomeDir = "/media/Z/tmp/";
+        String systemDir = "/media/Z/tmp/";
         System.setProperty("derby.system.home", systemDir);
         
         // Crear el directorio de sistema de la bd.
@@ -310,7 +310,8 @@ public class ImportDao {
 		}
 	}
 
-    private final String DIRECTORIO_ARCHIVOS = "/media/Z/tmp/SeguimientoEstudiosDB";
+//    private final String DIRECTORIO_ARCHIVOS = "/media/Z/tmp/SeguimientoEstudiosDB";
+    private final String DIRECTORIO_ARCHIVOS = "/media/Z/tmp";
     private Connection dbConnection;
     private Properties dbProperties;
     private boolean isConnected;

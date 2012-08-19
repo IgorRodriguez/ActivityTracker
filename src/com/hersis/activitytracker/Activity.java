@@ -1,5 +1,6 @@
 package com.hersis.activitytracker;
 
+import com.hersis.activitytracker.model.Dao;
 import java.util.Objects;
 
 /**
@@ -10,27 +11,33 @@ public class Activity implements Comparable{
 	private int idActivity = -1;
 	private String name;
 	private String description = "";
+	private static final int nameFieldLength = 35;
+	private static final int descriptionFieldLength = 200;
 
 	public Activity(String name) {
-		this.name = name;
+		setName(name);
 	}
 
 	public Activity(String name, String description) {
-		this.name = name;
-		this.description = description;
+		setName(name);
+		setDescription(description);
 	}
 
 	public Activity(int idActivity, String name, String description) {
 		this.idActivity = idActivity;
-		this.name = name;
-		this.description = description;
+		setName(name);
+		setDescription(description);
 	}
 
 	public String getDescription() {
 		return description;
 	}
 
-	public void setDescription(String description) {
+	public final void setDescription(String description) {
+		description = description.trim();
+		if (description.length() > getDescriptionFieldLength()) 
+			description = description.substring(0, getDescriptionFieldLength());
+		
 		this.description = description;
 	}
 
@@ -46,8 +53,20 @@ public class Activity implements Comparable{
 		return name;
 	}
 
-	public void setName(String name) {
+	public final void setName(String name) {
+		name = name.trim();
+		if (name.length() > getNameFieldLength()) 
+			name = name.substring(0, getNameFieldLength());
+		
 		this.name = name;
+	}
+
+	public static int getDescriptionFieldLength() {
+		return descriptionFieldLength;
+	}
+
+	public static int getNameFieldLength() {
+		return nameFieldLength;
 	}
 
 	@Override
