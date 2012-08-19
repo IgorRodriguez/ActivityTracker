@@ -3,7 +3,7 @@
 <Form version="1.6" maxVersion="1.8" type="org.netbeans.modules.form.forminfo.JDialogFormInfo">
   <Properties>
     <Property name="defaultCloseOperation" type="int" value="2"/>
-    <Property name="title" type="java.lang.String" value="Activity list"/>
+    <Property name="title" type="java.lang.String" value="Time list"/>
     <Property name="name" type="java.lang.String" value="ActivityListDialog"/>
   </Properties>
   <SyntheticProperties>

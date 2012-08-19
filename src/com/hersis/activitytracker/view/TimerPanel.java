@@ -10,12 +10,10 @@ import javax.swing.JButton;
  * @author Igor Rodriguez <igorrodriguezelvira@gmail.com>
  */
 public class TimerPanel extends javax.swing.JPanel {
-	private Controller controller;
 	/**
 	 * Creates new form TimerPanel
 	 */
-	public TimerPanel(Controller controller) {
-		this.controller = controller;
+	public TimerPanel() {
 		initComponents();
 	}
 
@@ -61,34 +59,6 @@ public class TimerPanel extends javax.swing.JPanel {
 		return cmbActivities.getSelectedIndex();
 	}
 	
-//	public void setEnabledBtnPlay(boolean value) {
-//		btnPlay.setEnabled(value);
-//	}
-//	
-//	public void setEnabledBtnPause(boolean value) {
-//		btnPause.setEnabled(value);
-//	}
-//	
-//	public void setEnabledBtnStop(boolean value) {
-//		btnStop.setEnabled(value);
-//	}
-//	
-//	public void setEnabledBtnNew(boolean value) {
-//		btnNew.setEnabled(value);
-//	}
-//	
-//	public void setEnabledCmbActivities(boolean value) {
-//		cmbActivities.setEnabled(value);
-//	}
-//	
-//	public void setStartTimeText(String text) {
-//		txtStartTime.setText(text);
-//	}
-//	
-//	public void setPausedAtText(String text) {
-//		txtPausedAt.setText(text);
-//	}
-//	
 	public void setTotalTimeText(String text) {
 		txtTotalTime.setText(text);
 	}
@@ -107,7 +77,6 @@ public class TimerPanel extends javax.swing.JPanel {
 		txtPausedAt.setText("");
 		txtTotalTime.setText("");
 	}
-
 
 	/**
 	 * This method is called from within the constructor to initialize the form. WARNING: Do NOT modify this code. The
@@ -288,19 +257,19 @@ public class TimerPanel extends javax.swing.JPanel {
     }// </editor-fold>//GEN-END:initComponents
 
 	private void btnPlayActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnPlayActionPerformed
-		controller.play();
+		Controller.play();
 	}//GEN-LAST:event_btnPlayActionPerformed
 
 	private void btnPauseActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnPauseActionPerformed
-		controller.pause();
+		Controller.pause();
 	}//GEN-LAST:event_btnPauseActionPerformed
 
 	private void btnStopActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnStopActionPerformed
-		controller.stop();
+		Controller.stop();
 	}//GEN-LAST:event_btnStopActionPerformed
 
 	private void btnNewActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnNewActionPerformed
-		controller.startTracking();
+		Controller.startTracking();
 	}//GEN-LAST:event_btnNewActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

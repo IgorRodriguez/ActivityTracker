@@ -23,6 +23,9 @@ public class MainForm extends javax.swing.JFrame {
 		URL url = ClassLoader.getSystemResource("com/hersis/activitytracker/images/activity_tracker.png");
 		if (url != null) 
 			this.setIconImage(Toolkit.getDefaultToolkit().createImage(url));
+		
+		this.mniOptions.setVisible(false);
+
 		this.addWindowListener(
 				new WindowAdapter() {
 					@Override
@@ -121,6 +124,11 @@ public class MainForm extends javax.swing.JFrame {
         mnuHelp.setText("Help");
 
         mniAbout.setText("About...");
+        mniAbout.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                mniAboutActionPerformed(evt);
+            }
+        });
         mnuHelp.add(mniAbout);
 
         mainMenuBar.add(mnuHelp);
@@ -153,6 +161,10 @@ public class MainForm extends javax.swing.JFrame {
 	private void mniBackupActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_mniBackupActionPerformed
 		Controller.showBackupWindow();
 	}//GEN-LAST:event_mniBackupActionPerformed
+
+	private void mniAboutActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_mniAboutActionPerformed
+		Controller.showAboutWindow();
+	}//GEN-LAST:event_mniAboutActionPerformed
 
 	
     // Variables declaration - do not modify//GEN-BEGIN:variables
