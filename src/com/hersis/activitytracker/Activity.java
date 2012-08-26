@@ -1,6 +1,5 @@
 package com.hersis.activitytracker;
 
-import com.hersis.activitytracker.model.Dao;
 import java.util.Objects;
 
 /**
