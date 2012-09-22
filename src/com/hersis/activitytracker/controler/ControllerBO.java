@@ -49,7 +49,7 @@ public class ControllerBO extends Observable {
 		return getDefaultApplicationPath() + File.separatorChar + "ActivityTracker.properties";
 	}
 	
-	public static String getDefaultLogPropertiesFilePath() {
+	public static String getDefaultLogFilePath() {
 		return getDefaultApplicationPath() + File.separatorChar + "ActivityTracker.log";
 	}
 		
@@ -98,19 +98,26 @@ public class ControllerBO extends Observable {
     }
 	
 	void loadLogProperties() {
-		final String filePath = ApplicationProperties.LOG_PROPERTIES_FILE_PATH.getDefaultValue();
-		final File logPropertiesFile = new File(filePath);
+		final String propertiesFilePath = 
+				ApplicationProperties.LOG_PROPERTIES_FILE_PATH.getDefaultValue();
+		final File logPropertiesFile = new File(propertiesFilePath);
 		
 		if (logPropertiesFile.exists()) { return; }
-		
+		//TODO Complete log
 		try {
 			logPropertiesFile.createNewFile();
-			//TODO complete
-			BufferedWriter out = new BufferedWriter(new FileWriter("out.txt"));
-			out.write("Hello Java");
-			//Close the output stream
-			out.close();
+			final String logFilePath = ApplicationProperties.LOG_FILE_PATH.getDefaultValue();
+			final String fileContent = 
+					"log4j.appender.rollingFile=org.apache.log4j.RollingFileAppender\n" +
+					"log4j.appender.rollingFile.File=" + logFilePath + "\n" +
+					"log4j.appender.rollingFile.MaxFileSize=1MB\n" +
+					"log4j.appender.rollingFile.MaxBackupIndex=2\n" +
+					"log4j.appender.rollingFile.layout = org.apache.log4j.PatternLayout\n" +
+					"log4j.appender.rollingFile.layout.ConversionPattern=%p %t %c - %m%n\n";
 			
+			try (BufferedWriter out = new BufferedWriter(new FileWriter(propertiesFilePath))) {
+				out.write(fileContent);
+			}
 		} catch (IOException ex) {
 			ErrorMessages.createPropertiesFileIOException("createLogPropertiesFile()", ex);
 		}

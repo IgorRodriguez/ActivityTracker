@@ -14,7 +14,8 @@ public enum ApplicationProperties {
 	BACKUP_PATH(BackupBO.getDefaultBackupPath()), 
 	LAST_BACKUP_DATE(BackupBO.getDefaultBackupDate()),
 	PROPERTIES_FILE_PATH(ControllerBO.getDefaultPropertiesFilePath()),
-	LOG_PROPERTIES_FILE_PATH(ControllerBO.getDefaultLogPropertiesFilePath());
+	LOG_PROPERTIES_FILE_PATH("log4j.properties"),
+	LOG_FILE_PATH(ControllerBO.getDefaultLogFilePath());
 	
 	private String defaultValue;
 	

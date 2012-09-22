@@ -100,6 +100,7 @@ public class Controller {
 	private void init() {
 		controllerBo.modifyLookAndFeel();
 		
+		controllerBo.loadLogProperties();
 		controllerBo.loadProperties();
 		
 		// Main form creation and settings
