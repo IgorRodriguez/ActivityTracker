@@ -2,7 +2,6 @@ package com.hersis.activitytracker.controler;
 
 import com.hersis.activitytracker.ApplicationProperties;
 import com.hersis.activitytracker.model.Dao;
-import java.io.File;
 import java.sql.SQLException;
 import java.text.DateFormat;
 import java.util.Date;
@@ -28,9 +27,9 @@ public class RunDatabaseBackup extends SwingWorker<Void, Void> {
 	}
 	@Override
 	protected Void doInBackground() throws Exception {
-		String backupDate = backupDateFormat.format(new Date());
-		String fileName = backupFormatString + backupDate;
-//		String path = destinationRoot + File.separatorChar + fileName;
+		final String backupDate = backupDateFormat.format(new Date());
+		final String fileName = backupFormatString + backupDate;
+
 		try {
 			Dao.executeBackup(destinationRoot, fileName);
 			Controller.setPropertie(ApplicationProperties.LAST_BACKUP_DATE, backupDate);

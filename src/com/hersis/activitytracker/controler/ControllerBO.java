@@ -16,7 +16,6 @@ import java.util.Calendar;
 import java.util.Locale;
 import java.util.Observable;
 import java.util.Properties;
-import java.util.logging.Level;
 import javax.swing.LookAndFeel;
 import javax.swing.UIManager;
 import javax.swing.UIManager.LookAndFeelInfo;
@@ -31,6 +30,7 @@ public class ControllerBO extends Observable {
 	private static final Logger log = (Logger) LoggerFactory.getLogger("controller.ControllerBO");			
 	private static final Icons ICONS = new Icons();
 	private static final Properties appProperties = new Properties();
+	private static final Properties logProperties = new Properties();
 
 	public static String getDefaultApplicationPath() {
 		String path = "";
@@ -47,6 +47,10 @@ public class ControllerBO extends Observable {
 	
 	public static String getDefaultPropertiesFilePath() {
 		return getDefaultApplicationPath() + File.separatorChar + "ActivityTracker.properties";
+	}
+	
+	public static String getDefaultLogPropertiesFilePath() {
+		return getDefaultApplicationPath() + File.separatorChar + "ActivityTracker.log";
 	}
 		
 	/**
@@ -80,7 +84,9 @@ public class ControllerBO extends Observable {
 	void loadProperties() {
 		String propertiesFilePath = ApplicationProperties.PROPERTIES_FILE_PATH.getDefaultValue();
 		
-		if (!new File(propertiesFilePath).exists()) createPropertiesFile();
+		if (!new File(propertiesFilePath).exists()) {
+			createPropertiesFile();
+		}
         try (FileInputStream propFis = new FileInputStream(propertiesFilePath)) {
             appProperties.load(propFis);
 			setPropertie(ApplicationProperties.APPLICATION_PATH, 
@@ -90,6 +96,25 @@ public class ControllerBO extends Observable {
 			AlertMessages.propertiesLoadIOException(ioe);
         } 
     }
+	
+	void loadLogProperties() {
+		final String filePath = ApplicationProperties.LOG_PROPERTIES_FILE_PATH.getDefaultValue();
+		final File logPropertiesFile = new File(filePath);
+		
+		if (logPropertiesFile.exists()) { return; }
+		
+		try {
+			logPropertiesFile.createNewFile();
+			//TODO complete
+			BufferedWriter out = new BufferedWriter(new FileWriter("out.txt"));
+			out.write("Hello Java");
+			//Close the output stream
+			out.close();
+			
+		} catch (IOException ex) {
+			ErrorMessages.createPropertiesFileIOException("createLogPropertiesFile()", ex);
+		}
+	}
 	
 	private static void createPropertiesFile() {
 		File propertiesFile = new File(ApplicationProperties.PROPERTIES_FILE_PATH.getDefaultValue());
@@ -103,7 +128,9 @@ public class ControllerBO extends Observable {
     private static void saveProperties() {
 		String propertiesFilePath = ApplicationProperties.PROPERTIES_FILE_PATH.getDefaultValue();
 		
-		if (!new File(propertiesFilePath).exists()) createPropertiesFile();
+		if (!new File(propertiesFilePath).exists()) {
+			createPropertiesFile();
+		}
         try (FileOutputStream propFos = new FileOutputStream(propertiesFilePath)) {
             appProperties.store(propFos, "Saved with date: ");
             log.debug("Properties saved successfully");
@@ -113,18 +140,18 @@ public class ControllerBO extends Observable {
     }
 	
 	String getPropertie(ApplicationProperties key) {
-		String propertieValue = appProperties.getProperty(key.toString());
-		if (propertieValue != null && !"".equals(propertieValue)) {
-			return propertieValue;
-		}
-		// Return default value
-		return key.getDefaultValue();
+			final String propertieValue = appProperties.getProperty(key.toString());
+			if (propertieValue != null && !"".equals(propertieValue)) {
+				return propertieValue;
+			}
+			// Return default value
+			return key.getDefaultValue();
 	}
 	
 	void setPropertie(ApplicationProperties key, String value) {
-		appProperties.setProperty(key.toString(), value);
-		setChanged();
-		notifyObservers();
+			appProperties.setProperty(key.toString(), value);
+			setChanged();
+			notifyObservers();
 	}
 	
 	void removePropertie(ApplicationProperties key) {

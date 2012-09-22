@@ -24,13 +24,13 @@ import org.slf4j.LoggerFactory;
  * @author Igor Rodriguez <igorrodriguezelvira@gmail.com>
  */
 public class TimerBO implements Observer {
-	private final Logger log = (Logger) LoggerFactory.getLogger("controller.TimerBO");
-	private TimerPanel timerPanel;
-	private Dao dao;
-	private TimeDao timeDao = TimeDao.getInstance();
-	private ActivityDao activityDao = ActivityDao.getInstance();
+    private final Logger log = (Logger) LoggerFactory.getLogger("controller.TimerBO");
+    private TimerPanel timerPanel;
+    private Dao dao;
+    private TimeDao timeDao = TimeDao.getInstance();
+    private ActivityDao activityDao = ActivityDao.getInstance();
 	
-	private long totalTime = 0;     // Total of time in "play" status
+    private long totalTime = 0;     // Total of time in "play" status
     private long diffTime = 0;      // Time since the last time "play" was pressed.
     private long startTime = -1;    // Time of the first "play".
     private long restartTime = -1;  // Time of the last "play".

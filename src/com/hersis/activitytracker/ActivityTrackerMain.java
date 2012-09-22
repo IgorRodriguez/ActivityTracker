@@ -37,7 +37,9 @@ public class ActivityTrackerMain {
             } catch (IOException ex) {
                 log.info("Couldn't create the locking file: \n{}", ex.getLocalizedMessage());
             } finally {
-                if (lockFile.exists()) lockFile.delete();
+                if (lockFile.exists()) {
+					lockFile.delete();
+				}
             }
         } else {
             log.error("There is running another instance of this application. Close it and try again.");

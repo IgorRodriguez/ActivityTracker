@@ -13,7 +13,8 @@ public enum ApplicationProperties {
 	BACKUP_PERIOD(BackupPeriod.DISABLED.toString()), 
 	BACKUP_PATH(BackupBO.getDefaultBackupPath()), 
 	LAST_BACKUP_DATE(BackupBO.getDefaultBackupDate()),
-	PROPERTIES_FILE_PATH(ControllerBO.getDefaultPropertiesFilePath());
+	PROPERTIES_FILE_PATH(ControllerBO.getDefaultPropertiesFilePath()),
+	LOG_PROPERTIES_FILE_PATH(ControllerBO.getDefaultLogPropertiesFilePath());
 	
 	private String defaultValue;
 	

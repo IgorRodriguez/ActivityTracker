@@ -148,6 +148,11 @@ public class Controller {
 		return controllerBo.getPropertie(key);
 	}
 	
+	/**
+	 * Sets the specified property to the given value.
+	 * @param key The property to change.
+	 * @param value The new value to the given property.
+	 */
 	public static void setPropertie(ApplicationProperties key, String value) {
 		controllerBo.setPropertie(key, value);
 	}

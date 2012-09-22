@@ -4,3 +4,4 @@
 /bin/
 ActivityTracker.properties
 derby.log
+/nbproject/private/
