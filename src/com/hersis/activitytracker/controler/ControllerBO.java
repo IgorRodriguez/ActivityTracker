@@ -1,6 +1,10 @@
 package com.hersis.activitytracker.controler;
 
 import ch.qos.logback.classic.Logger;
+import ch.qos.logback.classic.LoggerContext;
+import ch.qos.logback.classic.joran.JoranConfigurator;
+import ch.qos.logback.core.joran.spi.JoranException;
+import ch.qos.logback.core.util.StatusPrinter;
 import com.hersis.activitytracker.ActivityTrackerMain;
 import com.hersis.activitytracker.ApplicationProperties;
 import com.hersis.activitytracker.images.Icons;
@@ -16,6 +20,9 @@ import java.util.Calendar;
 import java.util.Locale;
 import java.util.Observable;
 import java.util.Properties;
+import java.util.Scanner;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import javax.swing.LookAndFeel;
 import javax.swing.UIManager;
 import javax.swing.UIManager.LookAndFeelInfo;
@@ -30,7 +37,6 @@ public class ControllerBO extends Observable {
 	private static final Logger log = (Logger) LoggerFactory.getLogger("controller.ControllerBO");			
 	private static final Icons ICONS = new Icons();
 	private static final Properties appProperties = new Properties();
-	private static final Properties logProperties = new Properties();
 
 	public static String getDefaultApplicationPath() {
 		String path = "";
@@ -52,12 +58,16 @@ public class ControllerBO extends Observable {
 	public static String getDefaultLogFilePath() {
 		return getDefaultApplicationPath() + File.separatorChar + "ActivityTracker.log";
 	}
+
+	public static String getDefaultLogPropertiesFilePath() {
+		return getDefaultApplicationPath() + File.separatorChar + "logback.xml";
+	}
 		
 	/**
 	 * Changes some things on the default LookAndFeel, such as alert message's icons.
 	 */
 	void modifyLookAndFeel() {
-		LookAndFeel laf = UIManager.getLookAndFeel();
+		final LookAndFeel laf = UIManager.getLookAndFeel();
 		try {
 			for (LookAndFeelInfo info : UIManager.getInstalledLookAndFeels()) {
 				if ("Nimbus".equals(info.getName())) {
@@ -97,30 +107,24 @@ public class ControllerBO extends Observable {
         } 
     }
 	
-	void loadLogProperties() {
-		final String propertiesFilePath = 
-				ApplicationProperties.LOG_PROPERTIES_FILE_PATH.getDefaultValue();
-		final File logPropertiesFile = new File(propertiesFilePath);
+	static void loadLogProperties() {
+		// Get the file of log properties.
+		final File logPropertiesFile = getLogPropertiesFile();
 		
-		if (logPropertiesFile.exists()) { return; }
-		//TODO Complete log
+		// Configure the logger.
+		final LoggerContext context = (LoggerContext) LoggerFactory.getILoggerFactory();
+		final JoranConfigurator configurator = new JoranConfigurator();
+		configurator.setContext(context);
+		// Call context.reset() to clear any previous configuration, e.g. default 
+		// configuration. For multi-step configuration, omit calling context.reset().
+		context.reset(); 
 		try {
-			logPropertiesFile.createNewFile();
-			final String logFilePath = ApplicationProperties.LOG_FILE_PATH.getDefaultValue();
-			final String fileContent = 
-					"log4j.appender.rollingFile=org.apache.log4j.RollingFileAppender\n" +
-					"log4j.appender.rollingFile.File=" + logFilePath + "\n" +
-					"log4j.appender.rollingFile.MaxFileSize=1MB\n" +
-					"log4j.appender.rollingFile.MaxBackupIndex=2\n" +
-					"log4j.appender.rollingFile.layout = org.apache.log4j.PatternLayout\n" +
-					"log4j.appender.rollingFile.layout.ConversionPattern=%p %t %c - %m%n\n";
-			
-			try (BufferedWriter out = new BufferedWriter(new FileWriter(propertiesFilePath))) {
-				out.write(fileContent);
-			}
-		} catch (IOException ex) {
-			ErrorMessages.createPropertiesFileIOException("createLogPropertiesFile()", ex);
+			configurator.doConfigure(logPropertiesFile);
+		} catch (JoranException ex) {
+			AlertMessages.logConfigurationAlert(ex);
 		}
+		
+		StatusPrinter.printInCaseOfErrorsOrWarnings(context);
 	}
 	
 	private static void createPropertiesFile() {
@@ -203,6 +207,110 @@ public class ControllerBO extends Observable {
 	}
 	
 	/**
+	 * Returns the file containing the log properties. If it doesn't exist, it's created with the 
+	 * default values.
+	 * For multi-system reasons, the log file path will be always overwritten to the value in 
+	 * <code>ApplicationProperties.LOG_FILE_PATH.getDefaultValue()</code>
+	 * @return The file containing the log properties.
+	 */
+	private static File getLogPropertiesFile() {
+		final String propertiesFilePath = 
+				ApplicationProperties.LOG_PROPERTIES_FILE_PATH.getDefaultValue();
+		final File logPropertiesFile = new File(propertiesFilePath);
+		
+		final String fileContent;
+		if (!logPropertiesFile.exists()) {
+			fileContent = getDefaultLogPropertiesFileContent();
+		} else {
+			fileContent = getUpdatedLogPropertiesFileContent(propertiesFilePath);
+		}
+		
+		createLogPropertiesFile(logPropertiesFile, fileContent);
+		
+		return logPropertiesFile;
+	}
+	
+	/**
+	 * Returns the default content of the log properties file.
+	 * @param logFilePath The path to the file where the application log will be saved.
+	 * @return The content of the file.
+	 */
+	private static String getDefaultLogPropertiesFileContent() {
+		final String logFilePath = ApplicationProperties.LOG_FILE_PATH.getDefaultValue();
+		
+		final String fileContent = 
+			"<configuration>\n" + 
+			"	<appender name=\"FILE\" class=\"ch.qos.logback.core.FileAppender\">\n" + 
+			"		<file>" + logFilePath + "</file>\n" + 
+			"		<encoder>\n" + 
+			"			<pattern>%date %level [%thread] %logger{10} [%file:%line] %msg%n</pattern>\n" + 
+			"		</encoder>\n" + 
+			"	</appender>\n" + 
+			"\n" + 
+			"	<appender name=\"STDOUT\" class=\"ch.qos.logback.core.ConsoleAppender\">\n" + 
+			"		<encoder>\n" + 
+			"			<pattern>%level - %msg%n</pattern>\n" + 
+			"		</encoder>\n" + 
+			"	</appender>\n" + 
+			"\n" + 
+			"	<root level=\"debug\">\n" + 
+			"		<appender-ref ref=\"FILE\" />\n" + 
+			"		<appender-ref ref=\"STDOUT\" />\n" + 
+			"	 </root>\n" + 
+			"</configuration>";
+		
+		return fileContent;
+	}
+
+	private static String getUpdatedLogPropertiesFileContent(String propertiesFilePath) {
+		final File logPropertiesFile = new File(propertiesFilePath);
+		final String filePathRegex = ".*<file>(.*?)</file>.*";
+		
+		String fileContent = "";
+		try {
+			fileContent = new Scanner(logPropertiesFile, "UTF-8").useDelimiter("\\A").next();
+		} catch (FileNotFoundException ex) {
+			AlertMessages.logPropertiesFileNotFound(ex);
+		}
+		
+		// Exit
+		if (fileContent == null || "".equals(fileContent)) { return null; }
+		
+		// Replace all found files with the value of 
+		// <code>ApplicationProperties.LOG_FILE_PATH.getDefaultValue()</code>
+		final Pattern pattern = Pattern.compile(filePathRegex);
+		final Matcher matcher = pattern.matcher(fileContent);
+		final String logFilePath = ApplicationProperties.LOG_FILE_PATH.getDefaultValue();
+		boolean changed = false;
+		
+		while (matcher.find()) {
+			fileContent = fileContent.replace(matcher.group(1), logFilePath);
+			changed = true;
+		}
+		
+		// Exit
+		if (!changed) { return null; }
+		
+		return fileContent;
+	}
+
+	/**
+	 * Created the file of log properties.
+	 * @param logPropertiesFile The file where to create the physical file.
+	 * @param fileContent The content of the file to be created.
+	 */
+	private static void createLogPropertiesFile(final File logPropertiesFile, final String fileContent) {
+		try {
+			logPropertiesFile.createNewFile();
+			try (final BufferedWriter out = new BufferedWriter(new FileWriter(logPropertiesFile))) {
+				out.write(fileContent);
+			}
+		} catch (IOException ex) {
+			ErrorMessages.createPropertiesFileIOException("createLogPropertiesFile()", ex);
+		}
+	}
+	
+	/**
 	 * Finalizes correctly the application and exits.
 	 */
 	public static void exit(Component mainParent) {	
@@ -215,6 +323,11 @@ public class ControllerBO extends Observable {
 			exit = AlertMessages.exitSQLException(mainParent, ex);
 		} finally {
 			if (exit) {
+				final String separator= "*****************************************************************";
+				final String message =	"Exiting from the application";
+				log.info(separator);
+				log.info(message);
+				log.info(separator);
 				System.exit(0);
 			}
 		}

@@ -6,7 +6,6 @@
  */
 package com.hersis.activitytracker;
 
-import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.Logger;
 import com.hersis.activitytracker.controler.Controller;
 import java.io.File;
@@ -21,7 +20,6 @@ public class ActivityTrackerMain {
     private static final Logger log = (Logger) LoggerFactory.getLogger("controler.ActivityTrackerMain");
 
     public ActivityTrackerMain() {
-        log.setLevel(Level.DEBUG);
     }
     
     public static void main(String[] args) {

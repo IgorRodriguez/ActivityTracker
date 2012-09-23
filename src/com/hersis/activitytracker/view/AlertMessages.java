@@ -5,6 +5,7 @@ import com.hersis.activitytracker.Activity;
 import com.hersis.activitytracker.Time;
 import com.hersis.activitytracker.controler.Controller;
 import java.awt.Component;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.sql.SQLException;
 import javax.swing.JOptionPane;
@@ -165,15 +166,15 @@ public abstract class AlertMessages {
 	public static void propertiesLoadIOException(IOException e) {
 		String message = "Unable to load the previous configuration of the application.\n" +
 				"Default values will be loaded.";
-            JOptionPane.showMessageDialog(Controller.getMainFrame(), message, "Unable to load configuration",
-                            JOptionPane.WARNING_MESSAGE);
+            JOptionPane.showMessageDialog(Controller.getMainFrame(), message, 
+					"Unable to load configuration", JOptionPane.WARNING_MESSAGE);
             log.info(message + "\nMessage: {}", e.getLocalizedMessage());
 	}
 
 	public static void propertiesSaveIOException(IOException e) {
 		String message = "Unable to save the configuration of the application.";
-            JOptionPane.showMessageDialog(Controller.getMainFrame(), message, "Unable to save configuration",
-                            JOptionPane.WARNING_MESSAGE);
+            JOptionPane.showMessageDialog(Controller.getMainFrame(), message, 
+					"Unable to save configuration", JOptionPane.WARNING_MESSAGE);
             log.info(message + "\nMessage: {}", e.getLocalizedMessage());
 	}
 	
@@ -188,21 +189,37 @@ public abstract class AlertMessages {
 		
 		int answer = JOptionPane.showConfirmDialog(mainParent, errorMessage, 
 				"¿Force and exit?", JOptionPane.OK_CANCEL_OPTION, JOptionPane.WARNING_MESSAGE);
-		if (answer == JOptionPane.CANCEL_OPTION || answer == JOptionPane.CLOSED_OPTION) exit = false; 
+		if (answer == JOptionPane.CANCEL_OPTION || answer == JOptionPane.CLOSED_OPTION) {
+			exit = false;
+		} 
 		
 		return exit;
 	}
 	
 	public static void startTrackingIndexOutOfBounds(Component parent, IndexOutOfBoundsException ex) {
-		String message = ex.getLocalizedMessage();
+		final String message = ex.getLocalizedMessage();
 		log.error(message);
 		JOptionPane.showMessageDialog(parent, message, "Error", JOptionPane.ERROR_MESSAGE);
 	}
 
 	static void noFileSelected(Component parent, String file) {
-		String logMessage = "The selected path is not a file. File: {}";
+		final String logMessage = "The selected path is not a file. File: {}";
 		log.warn(logMessage, file);
-		String message = "The selected path is not a file. Please, select a valid one.";
+		final String message = "The selected path is not a file. Please, select a valid one.";
 		JOptionPane.showMessageDialog(parent, message, "Warning", JOptionPane.WARNING_MESSAGE);
+	}
+
+	public static void logConfigurationAlert(Exception ex) {
+		final String message = "Unable to configure the application logging.";
+        JOptionPane.showMessageDialog(Controller.getMainFrame(), message, 
+				"Unable to configure log", JOptionPane.INFORMATION_MESSAGE);
+        log.info(message + "\nMessage: {}", ex.getLocalizedMessage());
+	}
+
+	public static void logPropertiesFileNotFound(FileNotFoundException ex) {
+		final String message = "Unable to open the logging configuration of the application.";
+        JOptionPane.showMessageDialog(Controller.getMainFrame(), message, 
+				"Unable to open logging configuration", JOptionPane.WARNING_MESSAGE);
+        log.info(message + "\nMessage: {}", ex.getLocalizedMessage());
 	}
 }

@@ -1,6 +1,5 @@
 package com.hersis.activitytracker;
 
-import com.hersis.activitytracker.model.Dao;
 import java.util.Objects;
 
 /**
@@ -11,7 +10,9 @@ public class Activity implements Comparable{
 	private int idActivity = -1;
 	private String name;
 	private String description = "";
+	// Maximum length of the name field. Defines the length of the database field at table creation.
 	private static final int nameFieldLength = 35;
+	// Maximum length of the description field. Defines the length of the database field at table creation.
 	private static final int descriptionFieldLength = 200;
 
 	public Activity(String name) {
@@ -33,10 +34,16 @@ public class Activity implements Comparable{
 		return description;
 	}
 
+	/**
+	 * Sets the description of the activity, limited by the number of characters given by 
+	 * getDescriptionFieldLength(). If the string passed is longer, it will be truncated.
+	 * @param description The description for the activity.
+	 */
 	public final void setDescription(String description) {
 		description = description.trim();
-		if (description.length() > getDescriptionFieldLength()) 
+		if (description.length() > getDescriptionFieldLength()) {
 			description = description.substring(0, getDescriptionFieldLength());
+		}
 		
 		this.description = description;
 	}
@@ -52,19 +59,32 @@ public class Activity implements Comparable{
 	public String getName() {
 		return name;
 	}
-
+	/**
+	 * Sets the name of the activity, limited by the number of characters given by 
+	 * getNameFieldLength(). If the string passed is longer, it will be truncated.
+	 * @param description The name of the activity.
+	 */
 	public final void setName(String name) {
 		name = name.trim();
-		if (name.length() > getNameFieldLength()) 
+		if (name.length() > getNameFieldLength()) {
 			name = name.substring(0, getNameFieldLength());
+		}
 		
 		this.name = name;
 	}
 
+	/**
+	 * Returns the maximum character length allowed for the description property of Activity.
+	 * @return The maximum character length of the description property.
+	 */
 	public static int getDescriptionFieldLength() {
 		return descriptionFieldLength;
 	}
-
+	
+	/**
+	 * Returns the maximum character length allowed for the name property of Activity.
+	 * @return The maximum character length of the name property.
+	 */
 	public static int getNameFieldLength() {
 		return nameFieldLength;
 	}
@@ -113,8 +133,12 @@ public class Activity implements Comparable{
 		int nam = this.getName().compareTo(a.getName());
 		int desc = this.getDescription().compareTo((a.getDescription()));
 		
-		if (nam != 0) return nam;
-		else return desc;
+		if (nam != 0) {
+			return nam;
+		}
+		else {
+			return desc;
+		}
 	}
 	
 }

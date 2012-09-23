@@ -1,5 +1,6 @@
 package com.hersis.activitytracker.controler;
 
+import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.Logger;
 import com.hersis.activitytracker.Activity;
 import com.hersis.activitytracker.ApplicationProperties;
@@ -100,7 +101,7 @@ public class Controller {
 	private void init() {
 		controllerBo.modifyLookAndFeel();
 		
-		controllerBo.loadLogProperties();
+		configureLogger();
 		controllerBo.loadProperties();
 		
 		// Main form creation and settings
@@ -138,6 +139,20 @@ public class Controller {
 		aboutDialog = new AboutDialog(mainForm, true);
 		aboutDialog.setLocationRelativeTo(mainForm);
 		log.debug("End of window creation");
+	}
+	
+	/**
+	 * Configures the logging of the application.
+	 */
+	public void configureLogger() {
+        log.setLevel(Level.DEBUG);
+		ControllerBO.loadLogProperties();
+		
+		final String separator= "*****************************************************************";
+		final String message =	"Starting the application";
+		log.info(separator);
+		log.info(message);
+		log.info(separator);
 	}
 	
 	final void loadCmbActivities() {

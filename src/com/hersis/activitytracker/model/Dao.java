@@ -140,7 +140,7 @@ public class Dao extends Observable implements Closeable{
         dbProperties.put("db.schema", "APP");
 		System.setProperty("derby.stream.error.file", 
 				Controller.getPropertie(ApplicationProperties.APPLICATION_PATH) + 
-				File.separatorChar + "derbyLog.log");
+				File.separatorChar + "derby.log");
     }
 
 	/**
