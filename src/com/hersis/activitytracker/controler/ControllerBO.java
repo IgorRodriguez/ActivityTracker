@@ -240,8 +240,21 @@ public class ControllerBO extends Observable {
 		
 		final String fileContent = 
 			"<configuration>\n" + 
-			"	<appender name=\"FILE\" class=\"ch.qos.logback.core.FileAppender\">\n" + 
+			"	<appender name=\"FILE\" class=\"ch.qos.logback.core.rolling.RollingFileAppender\">\n" + 
 			"		<file>" + logFilePath + "</file>\n" + 
+			"		<rollingPolicy class=\"ch.qos.logback.core.rolling.FixedWindowRollingPolicy\">\n" +
+			"			<fileNamePattern>test.%i.log.zip</fileNamePattern>\n" +
+			"			<minIndex>1</minIndex>\n" +
+			"			<maxIndex>3</maxIndex>\n" +
+//			"		<rollingPolicy class=\"ch.qos.logback.core.rolling.TimeBasedRollingPolicy\">\n" + 
+//			"			<SizeBasedTriggeringPolicy " +
+//			"				class=\"ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy\">\n" + 
+//			"				<maxFileSize>1KB</maxFileSize>\n" + 
+//			"			</SizeBasedTriggeringPolicy>\n" + 
+			"		</rollingPolicy>\n" + 
+			"		<triggeringPolicy class=\"ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy\">\n" +
+			"			<maxFileSize>1KB</maxFileSize>\n" +
+			"		</triggeringPolicy>\n" +
 			"		<encoder>\n" + 
 			"			<pattern>%date %level [%thread] %logger{10} [%file:%line] %msg%n</pattern>\n" + 
 			"		</encoder>\n" + 
