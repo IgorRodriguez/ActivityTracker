@@ -30,7 +30,9 @@ public class ActivityTrackerMain {
             try {
                 lockFile.createNewFile();
 				log.debug("Application file lock created");
-                new Controller();
+				Controller.getInstance();
+				//TODO Check if the new object must be created.
+//                new Controller();
 				log.debug("Controller created");
             } catch (IOException ex) {
                 log.info("Couldn't create the locking file: \n{}", ex.getLocalizedMessage());

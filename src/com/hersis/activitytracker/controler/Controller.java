@@ -88,7 +88,7 @@ public class Controller {
 		}
 	}
 	
-	private static Controller getInstance() {
+	public static Controller getInstance() {
 		if (controller == null) {
 			controller = new Controller();
 		}

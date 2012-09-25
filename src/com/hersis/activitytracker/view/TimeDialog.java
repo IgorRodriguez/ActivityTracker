@@ -138,7 +138,9 @@ public class TimeDialog extends javax.swing.JDialog {
 	private void fillAllFields(Time time) {
 		ArrayList<Activity> activities = Controller.getActivities();
 		for (Activity a : activities) {
-			if (a.getIdActivity() == time.getIdActivity()) cmbActivities.getModel().setSelectedItem(a);
+			if (a.getIdActivity() == time.getIdActivity()) {
+				cmbActivities.getModel().setSelectedItem(a);
+			}
 		}
 		setStartTimeFields(time.getStartTime());
 		setEndTimeFields(time.getEndTime());
@@ -206,7 +208,7 @@ public class TimeDialog extends javax.swing.JDialog {
 	 * Returns the activity selected in cmbActivities.
 	 * @return The Activity selected in cmbActivities. Doesn't check if there is an activity selected.
 	 */
-	public Activity getSelectedActivity() {
+	private Activity getSelectedActivity() {
 		return (Activity) cmbActivities.getSelectedItem();
 	}
 	
@@ -214,7 +216,7 @@ public class TimeDialog extends javax.swing.JDialog {
 	 * Returns the index of the Activity selected in cmbActivities.
 	 * @return The index of the activity selected in cmbActivities. -1 if there is no activity selected.
 	 */
-	public int getSelectedActivityIndex() {
+	private int getSelectedActivityIndex() {
 		return cmbActivities.getSelectedIndex();
 	}
 	
@@ -230,8 +232,12 @@ public class TimeDialog extends javax.swing.JDialog {
 		Timestamp startTime = null;
 		Timestamp endTime = null;
 		long duration = -1;
-		if (startTimeCal != null) startTime = new Timestamp(startTimeCal.getTimeInMillis());
-		if (endTimeCal != null) endTime = new Timestamp(endTimeCal.getTimeInMillis());
+		if (startTimeCal != null) {
+			startTime = new Timestamp(startTimeCal.getTimeInMillis());
+		}
+		if (endTimeCal != null) {
+			endTime = new Timestamp(endTimeCal.getTimeInMillis());
+		}
 		if (startTime != null && endTime != null) {
 			duration = Controller.calculateDuration(startTimeCal, endTimeCal);
 		}
@@ -751,7 +757,11 @@ public class TimeDialog extends javax.swing.JDialog {
 	}//GEN-LAST:event_btnCancelActionPerformed
 
 	private void btnAcceptActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAcceptActionPerformed
-		Controller.saveTime(oldTime, getTimeFromFields());
+		if (getSelectedActivityIndex() != -1) {
+			Controller.saveTime(oldTime, getTimeFromFields());
+		} else {
+			AlertMessages.noActivitySelectedForCreatingTime(this);
+		}		
 	}//GEN-LAST:event_btnAcceptActionPerformed
 
 	private void startTimeDateChooserPropertyChange(java.beans.PropertyChangeEvent evt) {//GEN-FIRST:event_startTimeDateChooserPropertyChange

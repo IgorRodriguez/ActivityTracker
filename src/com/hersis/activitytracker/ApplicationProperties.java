@@ -33,7 +33,8 @@ public enum ApplicationProperties {
 	BACKUP_PATH(BackupBO.getDefaultBackupPath()), 
 	
 	/**
-	 * 
+	 * The prefix of the database backup file.
+	 * Default value: APPLICATION_NAME + "_"
 	 */
 	BACKUP_FORMAT_STRING(APPLICATION_NAME + "_"),
 	

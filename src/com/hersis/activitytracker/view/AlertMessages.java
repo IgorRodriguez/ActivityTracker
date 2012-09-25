@@ -5,7 +5,6 @@ import com.hersis.activitytracker.Activity;
 import com.hersis.activitytracker.Time;
 import com.hersis.activitytracker.controler.Controller;
 import java.awt.Component;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.sql.SQLException;
 import javax.swing.JOptionPane;
@@ -142,7 +141,9 @@ public abstract class AlertMessages {
 		String title = "Alert";
 		int response = JOptionPane.showConfirmDialog(dialogParent, message, title, 
 				JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
-		if (response == JOptionPane.OK_OPTION) delete = true;
+		if (response == JOptionPane.OK_OPTION) {
+			delete = true;
+		}
 		
 		return delete;
 	}
@@ -156,6 +157,14 @@ public abstract class AlertMessages {
 	public static void noTimeSelectedInTableForEditing(Component dialogParent) {
 		String message = "You need to select a time in the table in order to edit it";
 		String title = "Alert";
+		JOptionPane.showMessageDialog(dialogParent, message, title, JOptionPane.WARNING_MESSAGE);
+	}
+
+	static void noActivitySelectedForCreatingTime(Component dialogParent) {
+		final String message = "You need to select an activity in the list in order to create a " + 
+				"new time.\n" +
+				"If the 'Activity' list is empty, you'll need to create one before creating a time.";
+		String title = "No activity selected";
 		JOptionPane.showMessageDialog(dialogParent, message, title, JOptionPane.WARNING_MESSAGE);
 	}
 
