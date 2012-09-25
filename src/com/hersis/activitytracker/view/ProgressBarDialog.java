@@ -1,6 +1,6 @@
 package com.hersis.activitytracker.view;
 
-import com.hersis.activitytracker.view.aux.ProgressBarPanel;
+import com.hersis.activitytracker.view.util.ProgressBarPanel;
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Frame;

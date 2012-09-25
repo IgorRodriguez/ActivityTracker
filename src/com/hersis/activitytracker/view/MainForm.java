@@ -1,28 +1,39 @@
 package com.hersis.activitytracker.view;
 
 import com.hersis.activitytracker.controler.Controller;
+import com.hersis.activitytracker.view.util.Locatable;
 import java.awt.Toolkit;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.net.URL;
+import javax.swing.JFrame;
 
 /**
  *
  * @author Igor Rodriguez <igorrodriguezelvira@gmail.com>
  */
-public class MainForm extends javax.swing.JFrame {
+public class MainForm extends JFrame implements Locatable {
 	/**
 	 * Creates new form MainForm
 	 */
-	public MainForm() {
+	private MainForm() {
 		initComponents();
 		init();
+	}
+	
+	public static MainForm getInstance(final String name) {
+		MainForm mainForm = new MainForm();
+		mainForm.setName(name);
+		Controller.registerLocatableWindow(mainForm);
+		
+		return mainForm;
 	}
 
 	private void init() {
 		URL url = ClassLoader.getSystemResource("com/hersis/activitytracker/images/activity_tracker.png");
-		if (url != null) 
+		if (url != null) {
 			this.setIconImage(Toolkit.getDefaultToolkit().createImage(url));
+		}
 		
 		this.mniOptions.setVisible(false);
 

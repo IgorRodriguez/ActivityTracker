@@ -1,6 +1,5 @@
 package com.hersis.activitytracker.controler;
 
-import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.Logger;
 import com.hersis.activitytracker.Activity;
 import com.hersis.activitytracker.ApplicationProperties;
@@ -9,6 +8,7 @@ import com.hersis.activitytracker.model.ActivityDao;
 import com.hersis.activitytracker.model.Dao;
 import com.hersis.activitytracker.model.TimeDao;
 import com.hersis.activitytracker.view.*;
+import com.hersis.activitytracker.view.util.Locatable;
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.io.File;
@@ -44,8 +44,10 @@ public class Controller {
 	private static ActivityBO activityBo;
 	private static TimeBO timeBo;
 	private static BackupBO backupBo;
+	
+	private static ArrayList<Locatable> locatableWindows = new ArrayList<>();
 			
-	public Controller() {
+	private Controller() {
 		log.debug("Starting Controller()");
 		try {
 			init();
@@ -88,20 +90,15 @@ public class Controller {
 		}
 	}
 	
-	public static Controller getInstance() {
-		if (controller == null) {
-			controller = new Controller();
-		}
-		return controller;
-	}
-	
 	private void init() {
-//		controllerBo.modifyLookAndFeel();
-		
-		configureLogger();
+		final String separator= "*****************************************************************";
+		final String message =	"Starting application";
+		log.info(separator);
+		log.info(message);
+		log.info(separator);
 		
 		// Main form creation and settings
-		mainForm = new MainForm();	
+		mainForm = MainForm.getInstance("mainForm");	
 		mainToolbar = new MainToolbar();
 		timerPanel = new TimerPanel();
 		
@@ -137,18 +134,16 @@ public class Controller {
 		log.debug("End of window creation");
 	}
 	
-	/**
-	 * Configures the logging of the application.
-	 */
-	public void configureLogger() {
-        log.setLevel(Level.DEBUG);
-		ControllerBO.configureLog();
-		
-		final String separator= "*****************************************************************";
-		final String message =	"Starting application";
-		log.info(separator);
-		log.info(message);
-		log.info(separator);
+	public static Controller getInstance() {
+		if (controller == null) {
+			controller = new Controller();
+			controllerBo.locateWindows();
+		}
+		return controller;
+	}
+
+	public static void registerLocatableWindow(Locatable window) {
+		controllerBo.registerLocatableWindow(window);
 	}
 	
 	final void loadCmbActivities() {

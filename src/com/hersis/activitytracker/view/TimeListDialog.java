@@ -1,8 +1,12 @@
 package com.hersis.activitytracker.view;
 
+import com.hersis.activitytracker.view.util.TimeListTableModel;
+import com.hersis.activitytracker.view.util.TimestampTableCellRenderer;
+import com.hersis.activitytracker.view.util.CustomDefaultTableCellRenderer;
+import com.hersis.activitytracker.view.util.DurationTableCellRenderer;
+import com.hersis.activitytracker.view.util.ActivityIdTableCellRenderer;
 import com.hersis.activitytracker.Time;
 import com.hersis.activitytracker.controler.Controller;
-import com.hersis.activitytracker.view.aux.*;
 import java.awt.Point;
 import java.sql.Timestamp;
 import java.util.ArrayList;

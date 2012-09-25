@@ -1,7 +1,7 @@
 package com.hersis.activitytracker.view;
 
-import com.hersis.activitytracker.view.aux.BackupFileFilter;
-import com.hersis.activitytracker.view.aux.BackupSwingFileFilter;
+import com.hersis.activitytracker.view.util.BackupFileFilter;
+import com.hersis.activitytracker.view.util.BackupSwingFileFilter;
 import java.awt.Component;
 import java.io.File;
 import javax.swing.JFileChooser;

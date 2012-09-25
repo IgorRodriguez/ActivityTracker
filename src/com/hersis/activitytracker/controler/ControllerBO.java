@@ -1,5 +1,6 @@
 package com.hersis.activitytracker.controler;
 
+import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.Logger;
 import com.hersis.activitytracker.ActivityTrackerMain;
 import com.hersis.activitytracker.ApplicationProperties;
@@ -8,15 +9,28 @@ import com.hersis.activitytracker.controler.util.PropertiesFile;
 import com.hersis.activitytracker.images.Icons;
 import com.hersis.activitytracker.model.Dao;
 import com.hersis.activitytracker.view.AlertMessages;
+import com.hersis.activitytracker.view.util.Locatable;
 import java.awt.Component;
+import java.awt.Dimension;
+import java.awt.Rectangle;
+import java.awt.Toolkit;
 import java.io.*;
 import java.net.URLDecoder;
 import java.sql.SQLException;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Iterator;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Observable;
+import java.util.Set;
+import java.util.TreeMap;
+import java.util.TreeSet;
+import javax.swing.JDialog;
+import javax.swing.JFrame;
+import javax.swing.JPanel;
 import javax.swing.LookAndFeel;
 import javax.swing.UIManager;
 import javax.swing.UIManager.LookAndFeelInfo;
@@ -34,8 +48,10 @@ public class ControllerBO extends Observable {
 	private static final Icons ICONS = new Icons();
 	private static ControllerBO controllerBo;
 	private final PropertiesFile appProperties;
+	private final ArrayList<Locatable> locatableWindows = new ArrayList<>();
 
 	private ControllerBO() {
+		configureLog();
 		appProperties = new PropertiesFile(ApplicationProperties.PROPERTIES_FILE.getDefaultValue());
 		modifyLookAndFeel();
 	}
@@ -155,7 +171,8 @@ public class ControllerBO extends Observable {
 	/**
 	 * Configures the log of the application.
 	 */
-	static void configureLog() {
+	private void configureLog() {
+		log.setLevel(Level.DEBUG);
 		LogToFile.configure(ApplicationProperties.LOG_PROPERTIES_FILE.getDefaultValue(), 
 							ApplicationProperties.LOG_FILE_PATH.getDefaultValue(),
 							ApplicationProperties.LOG_NAME.getDefaultValue(),
@@ -168,6 +185,7 @@ public class ControllerBO extends Observable {
 	public void exit(Component mainParent) {	
 		boolean exit = true;
 		
+		savePositionOfWindows();
         appProperties.saveProperties();
 		try {
 			Dao.closeDatabaseEngine();
@@ -200,5 +218,97 @@ public class ControllerBO extends Observable {
 
 	public void setPropertie(ApplicationProperties key, String value) {
 		appProperties.setPropertie(key.toString(), value);
+	}
+
+	/***********************************************************************************************
+	 * Window positioning
+	 **********************************************************************************************/
+	
+	void registerLocatableWindow(Locatable window) {
+		locatableWindows.add(window);
+	}
+
+	public void locateWindows() {
+		for (final Locatable window : locatableWindows) {
+			Rectangle position = deserializeWindowPosition(window);
+			
+			if (position == null) {
+				position = getDefaultPositionValues(window);
+			} else if (position.x < 0 || position.y < 0) {
+				final Rectangle defaultPosition = getDefaultPositionValues(window);
+				
+				position.x = (position.x < 0) ? defaultPosition.x : position.x;
+				position.y = (position.y < 0) ? defaultPosition.y : position.y;
+			}
+			log.debug("Window's bounds = {}", window.getBounds());
+			log.debug("New bounds = {}", position);
+			window.setBounds(position);
+			((JFrame) window).pack();
+			
+		
+		}
+	}
+
+	public void savePositionOfWindows() {
+		for (final Locatable window : locatableWindows) {
+			appProperties.setPropertie(window.getName(), serializeWindowPosition(window));
+		}
+	}
+	
+	private String serializeWindowPosition(Locatable window) {
+		final Rectangle bounds = window.getBounds();
+		String positionString = "";
+		
+		positionString += bounds.x + " ";
+		positionString += bounds.y + " ";
+		positionString += bounds.width + " ";
+		positionString += bounds.height;
+		
+		return positionString;
+	}
+
+	private Rectangle deserializeWindowPosition(Locatable window) {
+		final String positionString = appProperties.getPropertie(window.getName());
+		
+		// Exit
+		if (positionString == null) {
+			log.debug("The position of the window {} is not saved in the properties file.", 
+					window.getName());
+			return null;
+		}
+		
+		final String [] values = positionString.split(" ");
+		
+		// Exit
+		if (values.length < 4) { return null; }
+		
+		final Rectangle rectangle = new Rectangle();
+		
+		try {
+			rectangle.x = Integer.parseInt(values[0]);
+			rectangle.y = Integer.parseInt(values[1]);
+			rectangle.width = Integer.parseInt(values[2]);
+			rectangle.height = Integer.parseInt(values[3]);
+		} catch (NumberFormatException ex) {
+			log.debug("Unable to deserialize the window position of {}. Serialized position: {}", 
+					window.getName(), serializeWindowPosition(window));
+			return null;
+		}
+		
+		return rectangle;		
+	}
+	
+	private Rectangle getDefaultPositionValues(Locatable window) {
+		Rectangle position = new Rectangle();
+		// Get the size of the screen
+		Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
+
+		// Determine the new location of the window
+		position.width = window.getPreferredSize().width;
+		position.height = window.getPreferredSize().height;
+		position.x = (dim.width - position.width) / 2;
+		position.y = (dim.height - position.height) / 2;
+		
+		return position;
 	}
 }

@@ -30,8 +30,6 @@ public class PropertiesFile extends Observable {
 		}
         try (FileInputStream propFis = new FileInputStream(propertiesFilePath)) {
             appProperties.load(propFis);
-//			setPropertie(ApplicationProperties.APPLICATION_PATH, 
-//					ApplicationProperties.APPLICATION_PATH.getDefaultValue());
             log.debug("Properties loaded successfully");
         } catch (IOException ex) {
 			log.error("Couldn't load the application's properties file.\nError: {}", ex);

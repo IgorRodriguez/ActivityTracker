@@ -6,7 +6,7 @@ import com.hersis.activitytracker.view.AlertMessages;
 import com.hersis.activitytracker.view.BackupConfigDialog;
 import com.hersis.activitytracker.view.BackupDialog;
 import com.hersis.activitytracker.view.ProgressBarDialog;
-import com.hersis.activitytracker.view.aux.BackupFileFilter;
+import com.hersis.activitytracker.view.util.BackupFileFilter;
 import java.awt.Component;
 import java.io.File;
 import java.io.FileFilter;

@@ -2,8 +2,8 @@ package com.hersis.activitytracker.view;
 
 import com.hersis.activitytracker.Activity;
 import com.hersis.activitytracker.controler.Controller;
-import com.hersis.activitytracker.view.aux.ActivityListTableModel;
-import com.hersis.activitytracker.view.aux.CustomDefaultTableCellRenderer;
+import com.hersis.activitytracker.view.util.ActivityListTableModel;
+import com.hersis.activitytracker.view.util.CustomDefaultTableCellRenderer;
 import java.awt.Point;
 import java.util.ArrayList;
 import javax.swing.table.TableColumnModel;

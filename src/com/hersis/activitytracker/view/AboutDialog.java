@@ -74,7 +74,7 @@ public class AboutDialog extends javax.swing.JDialog {
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
         gridBagConstraints.weightx = 1.0;
-        gridBagConstraints.insets = new java.awt.Insets(7, 0, 19, 7);
+        gridBagConstraints.insets = new java.awt.Insets(7, 0, 19, 20);
         getContentPane().add(lblDevelopedByData, gridBagConstraints);
 
         lblReleaseDate.setText("Release date:");
@@ -93,7 +93,7 @@ public class AboutDialog extends javax.swing.JDialog {
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
         gridBagConstraints.weightx = 1.0;
-        gridBagConstraints.insets = new java.awt.Insets(7, 0, 19, 7);
+        gridBagConstraints.insets = new java.awt.Insets(7, 0, 19, 20);
         getContentPane().add(lblReleaseDateData, gridBagConstraints);
 
         lblLicense.setText("License: ");
@@ -112,7 +112,7 @@ public class AboutDialog extends javax.swing.JDialog {
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
         gridBagConstraints.weightx = 1.0;
-        gridBagConstraints.insets = new java.awt.Insets(7, 0, 19, 7);
+        gridBagConstraints.insets = new java.awt.Insets(7, 0, 19, 20);
         getContentPane().add(lblLicenseData, gridBagConstraints);
 
         buttonPanel.setLayout(new java.awt.GridBagLayout());

@@ -18,11 +18,9 @@ import org.slf4j.LoggerFactory;
  */
 public class ActivityTrackerMain {
     private static final Logger log = (Logger) LoggerFactory.getLogger("controler.ActivityTrackerMain");
-
-    public ActivityTrackerMain() {
-    }
     
     public static void main(String[] args) {
+		log.info("Log saved on {}", ApplicationProperties.LOG_FILE_PATH.getDefaultValue());
         File lockFile = new File(Controller.getPropertie(ApplicationProperties.APPLICATION_PATH) + 
 				File.separatorChar + "lock.lck");
 		log.debug("Lock file path: {}", lockFile.getPath());
@@ -31,8 +29,6 @@ public class ActivityTrackerMain {
                 lockFile.createNewFile();
 				log.debug("Application file lock created");
 				Controller.getInstance();
-				//TODO Check if the new object must be created.
-//                new Controller();
 				log.debug("Controller created");
             } catch (IOException ex) {
                 log.info("Couldn't create the locking file: \n{}", ex.getLocalizedMessage());

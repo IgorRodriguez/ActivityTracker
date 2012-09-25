@@ -1,4 +1,4 @@
-package com.hersis.activitytracker.view.aux;
+package com.hersis.activitytracker.view.util;
 
 import com.hersis.activitytracker.Activity;
 import java.util.ArrayList;
