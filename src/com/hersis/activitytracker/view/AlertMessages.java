@@ -215,11 +215,4 @@ public abstract class AlertMessages {
 				"Unable to configure log", JOptionPane.INFORMATION_MESSAGE);
         log.info(message + "\nMessage: {}", ex.getLocalizedMessage());
 	}
-
-	public static void logPropertiesFileNotFound(FileNotFoundException ex) {
-		final String message = "Unable to open the logging configuration of the application.";
-        JOptionPane.showMessageDialog(Controller.getMainFrame(), message, 
-				"Unable to open logging configuration", JOptionPane.WARNING_MESSAGE);
-        log.info(message + "\nMessage: {}", ex.getLocalizedMessage());
-	}
 }

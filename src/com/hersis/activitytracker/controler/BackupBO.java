@@ -28,11 +28,11 @@ public class BackupBO implements Observer {
 	private static final DateFormat backupDateFormat = new SimpleDateFormat("yyyy-MM-dd_HHmmss");
 	private static final Pattern BACKUP_DATE_PATTERN = 
 			Pattern.compile("(\\d{4})-(\\d{2})-(\\d{2})_(\\d{2})(\\d{2})(\\d{2})");
-	public static final String BACKUP_FORMAT_STRING = Controller.APPLICATION_NAME + "_";
 
 	BackupBO(BackupDialog backupDialog, BackupConfigDialog backupConfigDialog) {
 		this.backupDialog = backupDialog;
 		this.backupConfigDialog = backupConfigDialog;
+				
 		if (mustPerformBackup()) {
 			startBackup(Controller.getMainFrame(), 
 					Controller.getPropertie(ApplicationProperties.BACKUP_PATH));
@@ -169,7 +169,8 @@ public class BackupBO implements Observer {
 			
 		ProgressBarDialog backupProgressDialog = ProgressBarDialog.getInstance(parentWindow);
 		RunDatabaseBackup runBackup = new RunDatabaseBackup(backupProgressDialog, 
-				destinationPath, backupDateFormat, BACKUP_FORMAT_STRING);
+				destinationPath, backupDateFormat, 
+				ApplicationProperties.BACKUP_FORMAT_STRING.getDefaultValue());
 		runBackup.execute();
 
 		backupProgressDialog.setTaskTitle("Backing up application...");

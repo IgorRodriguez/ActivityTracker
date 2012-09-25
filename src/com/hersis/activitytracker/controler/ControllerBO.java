@@ -1,12 +1,10 @@
 package com.hersis.activitytracker.controler;
 
 import ch.qos.logback.classic.Logger;
-import ch.qos.logback.classic.LoggerContext;
-import ch.qos.logback.classic.joran.JoranConfigurator;
-import ch.qos.logback.core.joran.spi.JoranException;
-import ch.qos.logback.core.util.StatusPrinter;
 import com.hersis.activitytracker.ActivityTrackerMain;
 import com.hersis.activitytracker.ApplicationProperties;
+import com.hersis.activitytracker.controler.util.LogToFile;
+import com.hersis.activitytracker.controler.util.PropertiesFile;
 import com.hersis.activitytracker.images.Icons;
 import com.hersis.activitytracker.model.Dao;
 import com.hersis.activitytracker.view.AlertMessages;
@@ -19,10 +17,6 @@ import java.text.DecimalFormatSymbols;
 import java.util.Calendar;
 import java.util.Locale;
 import java.util.Observable;
-import java.util.Properties;
-import java.util.Scanner;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import javax.swing.LookAndFeel;
 import javax.swing.UIManager;
 import javax.swing.UIManager.LookAndFeelInfo;
@@ -30,14 +24,34 @@ import javax.swing.UnsupportedLookAndFeelException;
 import org.slf4j.LoggerFactory;
 
 /**
- *
+ * Sets up some application-wide properties and methods as: 
+ * the <code>Properties</code> management, the application's look and feel, the logging 
+ * policy and the application's <code>exit()</code> method.
  * @author Igor Rodriguez <igorrodriguezelvira@gmail.com>
  */
 public class ControllerBO extends Observable {
 	private static final Logger log = (Logger) LoggerFactory.getLogger("controller.ControllerBO");			
 	private static final Icons ICONS = new Icons();
-	private static final Properties appProperties = new Properties();
+	private static ControllerBO controllerBo;
+	private final PropertiesFile appProperties;
 
+	private ControllerBO() {
+		appProperties = new PropertiesFile(ApplicationProperties.PROPERTIES_FILE.getDefaultValue());
+		modifyLookAndFeel();
+	}
+	
+	public static ControllerBO getInstance() {
+		if (controllerBo == null) {
+			controllerBo = new ControllerBO();
+		}
+		
+		return controllerBo;
+	}
+	/**
+	 * Calculates the absolute path to the application's parent directory.
+	 * @return The absolute path to the application's parent directory or the user's home directory 
+	 * in case of error.
+	 */
 	public static String getDefaultApplicationPath() {
 		String path = "";
 		
@@ -51,22 +65,34 @@ public class ControllerBO extends Observable {
 		}
 	}
 	
+	/**
+	 * Returns the absolute path to the application properties file.
+	 * @return The absolute path to the application properties file.
+	 */
 	public static String getDefaultPropertiesFilePath() {
 		return getDefaultApplicationPath() + File.separatorChar + "ActivityTracker.properties";
 	}
 	
+	/**
+	 * Returns the absolute path to the directory where the log files will be saved.
+	 * @return The absolute path to the directory where the log files will be saved.
+	 */
 	public static String getDefaultLogFilePath() {
-		return getDefaultApplicationPath() + File.separatorChar + "ActivityTracker.log";
+		return getDefaultApplicationPath() + File.separatorChar + "log";
 	}
 
-	public static String getDefaultLogPropertiesFilePath() {
+	/**
+	 * Returns the absolute path, including name, of the log's properties file.
+	 * @return The absolute path of the log's properties file, including its name.
+	 */
+	public static String getDefaultLogPropertiesFile() {
 		return getDefaultApplicationPath() + File.separatorChar + "logback.xml";
 	}
 		
 	/**
 	 * Changes some things on the default LookAndFeel, such as alert message's icons.
 	 */
-	void modifyLookAndFeel() {
+	private void modifyLookAndFeel() {
 		final LookAndFeel laf = UIManager.getLookAndFeel();
 		try {
 			for (LookAndFeelInfo info : UIManager.getInstalledLookAndFeels()) {
@@ -89,86 +115,6 @@ public class ControllerBO extends Observable {
 		UIManager.put("OptionPane.errorIcon", ICONS.getIcon(Icons.IconValues.ERROR));
 		UIManager.put("OptionPane.questionIcon", ICONS.getIcon(Icons.IconValues.QUESTION));
 		UIManager.put("OptionPane.warningIcon", ICONS.getIcon(Icons.IconValues.WARNING));
-	}
-	
-	void loadProperties() {
-		String propertiesFilePath = ApplicationProperties.PROPERTIES_FILE_PATH.getDefaultValue();
-		
-		if (!new File(propertiesFilePath).exists()) {
-			createPropertiesFile();
-		}
-        try (FileInputStream propFis = new FileInputStream(propertiesFilePath)) {
-            appProperties.load(propFis);
-			setPropertie(ApplicationProperties.APPLICATION_PATH, 
-					ApplicationProperties.APPLICATION_PATH.getDefaultValue());
-            log.debug("Properties loaded successfully");
-        } catch (IOException ioe) {
-			AlertMessages.propertiesLoadIOException(ioe);
-        } 
-    }
-	
-	static void loadLogProperties() {
-		// Get the file of log properties.
-		final File logPropertiesFile = getLogPropertiesFile();
-		
-		// Configure the logger.
-		final LoggerContext context = (LoggerContext) LoggerFactory.getILoggerFactory();
-		final JoranConfigurator configurator = new JoranConfigurator();
-		configurator.setContext(context);
-		// Call context.reset() to clear any previous configuration, e.g. default 
-		// configuration. For multi-step configuration, omit calling context.reset().
-		context.reset(); 
-		try {
-			configurator.doConfigure(logPropertiesFile);
-		} catch (JoranException ex) {
-			AlertMessages.logConfigurationAlert(ex);
-		}
-		
-		StatusPrinter.printInCaseOfErrorsOrWarnings(context);
-	}
-	
-	private static void createPropertiesFile() {
-		File propertiesFile = new File(ApplicationProperties.PROPERTIES_FILE_PATH.getDefaultValue());
-		try {
-			propertiesFile.createNewFile();
-		} catch (IOException ex) {
-			ErrorMessages.createPropertiesFileIOException("createPropertiesFile()", ex);
-		}
-	}
-    
-    private static void saveProperties() {
-		String propertiesFilePath = ApplicationProperties.PROPERTIES_FILE_PATH.getDefaultValue();
-		
-		if (!new File(propertiesFilePath).exists()) {
-			createPropertiesFile();
-		}
-        try (FileOutputStream propFos = new FileOutputStream(propertiesFilePath)) {
-            appProperties.store(propFos, "Saved with date: ");
-            log.debug("Properties saved successfully");
-        } catch (IOException ioe) {
-			AlertMessages.propertiesSaveIOException(ioe);
-        } 
-    }
-	
-	String getPropertie(ApplicationProperties key) {
-			final String propertieValue = appProperties.getProperty(key.toString());
-			if (propertieValue != null && !"".equals(propertieValue)) {
-				return propertieValue;
-			}
-			// Return default value
-			return key.getDefaultValue();
-	}
-	
-	void setPropertie(ApplicationProperties key, String value) {
-			appProperties.setProperty(key.toString(), value);
-			setChanged();
-			notifyObservers();
-	}
-	
-	void removePropertie(ApplicationProperties key) {
-		appProperties.remove(key.toString());
-		setChanged();
-		notifyObservers();
 	}
 	
 	
@@ -207,129 +153,22 @@ public class ControllerBO extends Observable {
 	}
 	
 	/**
-	 * Returns the file containing the log properties. If it doesn't exist, it's created with the 
-	 * default values.
-	 * For multi-system reasons, the log file path will be always overwritten to the value in 
-	 * <code>ApplicationProperties.LOG_FILE_PATH.getDefaultValue()</code>
-	 * @return The file containing the log properties.
+	 * Configures the log of the application.
 	 */
-	private static File getLogPropertiesFile() {
-		final String propertiesFilePath = 
-				ApplicationProperties.LOG_PROPERTIES_FILE_PATH.getDefaultValue();
-		final File logPropertiesFile = new File(propertiesFilePath);
-		
-		final String fileContent;
-		if (!logPropertiesFile.exists()) {
-			fileContent = getDefaultLogPropertiesFileContent();
-		} else {
-			fileContent = getUpdatedLogPropertiesFileContent(propertiesFilePath);
-		}
-		
-		createLogPropertiesFile(logPropertiesFile, fileContent);
-		
-		return logPropertiesFile;
-	}
-	
-	/**
-	 * Returns the default content of the log properties file.
-	 * @param logFilePath The path to the file where the application log will be saved.
-	 * @return The content of the file.
-	 */
-	private static String getDefaultLogPropertiesFileContent() {
-		final String logFilePath = ApplicationProperties.LOG_FILE_PATH.getDefaultValue();
-		
-		final String fileContent = 
-			"<configuration>\n" + 
-			"	<appender name=\"FILE\" class=\"ch.qos.logback.core.rolling.RollingFileAppender\">\n" + 
-			"		<file>" + logFilePath + "</file>\n" + 
-			"		<rollingPolicy class=\"ch.qos.logback.core.rolling.FixedWindowRollingPolicy\">\n" +
-			"			<fileNamePattern>test.%i.log.zip</fileNamePattern>\n" +
-			"			<minIndex>1</minIndex>\n" +
-			"			<maxIndex>3</maxIndex>\n" +
-//			"		<rollingPolicy class=\"ch.qos.logback.core.rolling.TimeBasedRollingPolicy\">\n" + 
-//			"			<SizeBasedTriggeringPolicy " +
-//			"				class=\"ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy\">\n" + 
-//			"				<maxFileSize>1KB</maxFileSize>\n" + 
-//			"			</SizeBasedTriggeringPolicy>\n" + 
-			"		</rollingPolicy>\n" + 
-			"		<triggeringPolicy class=\"ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy\">\n" +
-			"			<maxFileSize>1KB</maxFileSize>\n" +
-			"		</triggeringPolicy>\n" +
-			"		<encoder>\n" + 
-			"			<pattern>%date %level [%thread] %logger{10} [%file:%line] %msg%n</pattern>\n" + 
-			"		</encoder>\n" + 
-			"	</appender>\n" + 
-			"\n" + 
-			"	<appender name=\"STDOUT\" class=\"ch.qos.logback.core.ConsoleAppender\">\n" + 
-			"		<encoder>\n" + 
-			"			<pattern>%level - %msg%n</pattern>\n" + 
-			"		</encoder>\n" + 
-			"	</appender>\n" + 
-			"\n" + 
-			"	<root level=\"debug\">\n" + 
-			"		<appender-ref ref=\"FILE\" />\n" + 
-			"		<appender-ref ref=\"STDOUT\" />\n" + 
-			"	 </root>\n" + 
-			"</configuration>";
-		
-		return fileContent;
-	}
-
-	private static String getUpdatedLogPropertiesFileContent(String propertiesFilePath) {
-		final File logPropertiesFile = new File(propertiesFilePath);
-		final String filePathRegex = ".*<file>(.*?)</file>.*";
-		
-		String fileContent = "";
-		try {
-			fileContent = new Scanner(logPropertiesFile, "UTF-8").useDelimiter("\\A").next();
-		} catch (FileNotFoundException ex) {
-			AlertMessages.logPropertiesFileNotFound(ex);
-		}
-		
-		// Exit
-		if (fileContent == null || "".equals(fileContent)) { return null; }
-		
-		// Replace all found files with the value of 
-		// <code>ApplicationProperties.LOG_FILE_PATH.getDefaultValue()</code>
-		final Pattern pattern = Pattern.compile(filePathRegex);
-		final Matcher matcher = pattern.matcher(fileContent);
-		final String logFilePath = ApplicationProperties.LOG_FILE_PATH.getDefaultValue();
-		boolean changed = false;
-		
-		while (matcher.find()) {
-			fileContent = fileContent.replace(matcher.group(1), logFilePath);
-			changed = true;
-		}
-		
-		// Exit
-		if (!changed) { return null; }
-		
-		return fileContent;
-	}
-
-	/**
-	 * Created the file of log properties.
-	 * @param logPropertiesFile The file where to create the physical file.
-	 * @param fileContent The content of the file to be created.
-	 */
-	private static void createLogPropertiesFile(final File logPropertiesFile, final String fileContent) {
-		try {
-			logPropertiesFile.createNewFile();
-			try (final BufferedWriter out = new BufferedWriter(new FileWriter(logPropertiesFile))) {
-				out.write(fileContent);
-			}
-		} catch (IOException ex) {
-			ErrorMessages.createPropertiesFileIOException("createLogPropertiesFile()", ex);
-		}
+	static void configureLog() {
+		LogToFile.configure(ApplicationProperties.LOG_PROPERTIES_FILE.getDefaultValue(), 
+							ApplicationProperties.LOG_FILE_PATH.getDefaultValue(),
+							ApplicationProperties.LOG_NAME.getDefaultValue(),
+							ApplicationProperties.LOG_MAXIMUM_SIZE.getDefaultValue());
 	}
 	
 	/**
 	 * Finalizes correctly the application and exits.
 	 */
-	public static void exit(Component mainParent) {	
+	public void exit(Component mainParent) {	
 		boolean exit = true;
 		
-        saveProperties();
+        appProperties.saveProperties();
 		try {
 			Dao.closeDatabaseEngine();
 		} catch (SQLException ex) {
@@ -337,12 +176,29 @@ public class ControllerBO extends Observable {
 		} finally {
 			if (exit) {
 				final String separator= "*****************************************************************";
-				final String message =	"Exiting from the application";
+				final String message =	"Quitting application";
 				log.info(separator);
 				log.info(message);
 				log.info(separator);
 				System.exit(0);
 			}
 		}
+	}
+
+	public String getPropertie(ApplicationProperties key) {
+		final String propertyValue = appProperties.getPropertie(key.toString());
+		if (propertyValue != null && !"".equals(propertyValue)) {
+			return propertyValue;
+		}
+		// Return default value
+		return key.getDefaultValue();
+	}
+
+	public void removePropertie(ApplicationProperties key) {
+		appProperties.removePropertie(key.toString());
+	}
+
+	public void setPropertie(ApplicationProperties key, String value) {
+		appProperties.setPropertie(key.toString(), value);
 	}
 }

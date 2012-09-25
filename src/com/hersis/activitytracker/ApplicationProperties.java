@@ -33,6 +33,11 @@ public enum ApplicationProperties {
 	BACKUP_PATH(BackupBO.getDefaultBackupPath()), 
 	
 	/**
+	 * 
+	 */
+	BACKUP_FORMAT_STRING(APPLICATION_NAME + "_"),
+	
+	/**
 	 * The last date when the application was backed-up.
 	 * Default value defined in BackupBO.getDefaultBackupDate().
 	 */
@@ -42,19 +47,29 @@ public enum ApplicationProperties {
 	 * The path to the applications properties file. 
 	 * Default value defined in ControllerBO.getDefaultPropertiesFilePath().
 	 */
-	PROPERTIES_FILE_PATH(ControllerBO.getDefaultPropertiesFilePath()),
+	PROPERTIES_FILE(ControllerBO.getDefaultPropertiesFilePath()),
 	
 	/**
 	 * The path to the log properties file.
 	 * Default value defined in ControllerBO.getDefaultLogPropertiesFilePath();
 	 */
-	LOG_PROPERTIES_FILE_PATH(ControllerBO.getDefaultLogPropertiesFilePath()),
+	LOG_PROPERTIES_FILE(ControllerBO.getDefaultLogPropertiesFile()),
 	
 	/**
-	 * The path to the file where the log of the application will be saved.
+	 * The path where the log and log-backup files will be saved.
 	 * Default value defined in ControllerBO.getDefaultLogFilePath();
 	 */
-	LOG_FILE_PATH(ControllerBO.getDefaultLogFilePath());
+	LOG_FILE_PATH(ControllerBO.getDefaultLogFilePath()),
+	
+	/**
+	 * The name of the log file that will be created without extension.
+	 */
+	LOG_NAME("ActivityTracker"),
+	
+	/**
+	 * The maximum size of the log file, in KB.
+	 */
+	LOG_MAXIMUM_SIZE("250");
 	
 	private String defaultValue;
 	

@@ -39,15 +39,12 @@ public class Controller {
 	private BackupConfigDialog backupConfigDialog;
 	private static AboutDialog aboutDialog;
 		
-	private static ControllerBO controllerBo = new ControllerBO();
+	private static ControllerBO controllerBo = ControllerBO.getInstance();
 	private static TimerBO timerBo;	
 	private static ActivityBO activityBo;
 	private static TimeBO timeBo;
 	private static BackupBO backupBo;
-	
-	//TODO Remove references to the public variable below.
-	public static final String APPLICATION_NAME = "ActivityTrackerV2";
-		
+			
 	public Controller() {
 		log.debug("Starting Controller()");
 		try {
@@ -99,10 +96,9 @@ public class Controller {
 	}
 	
 	private void init() {
-		controllerBo.modifyLookAndFeel();
+//		controllerBo.modifyLookAndFeel();
 		
 		configureLogger();
-		controllerBo.loadProperties();
 		
 		// Main form creation and settings
 		mainForm = new MainForm();	
@@ -146,10 +142,10 @@ public class Controller {
 	 */
 	public void configureLogger() {
         log.setLevel(Level.DEBUG);
-		ControllerBO.loadLogProperties();
+		ControllerBO.configureLog();
 		
 		final String separator= "*****************************************************************";
-		final String message =	"Starting the application";
+		final String message =	"Starting application";
 		log.info(separator);
 		log.info(message);
 		log.info(separator);
@@ -189,7 +185,7 @@ public class Controller {
 	 * Finalizes correctly the application and exits.
 	 */
 	public static void exit() {
-		ControllerBO.exit(mainForm);
+		controllerBo.exit(mainForm);
 	}
 	
 	public static JFrame getMainFrame() {
