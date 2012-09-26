@@ -2,8 +2,10 @@ package com.hersis.activitytracker.view;
 
 import com.hersis.activitytracker.Activity;
 import com.hersis.activitytracker.Time;
-import com.hersis.activitytracker.controler.Controller;
+import com.hersis.activitytracker.controller.Controller;
+import com.hersis.activitytracker.view.util.Locatable;
 import java.awt.Color;
+import java.awt.Frame;
 import java.sql.Timestamp;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -17,24 +19,32 @@ import java.util.Locale;
  * 
  * @author Igor Rodriguez <igorrodriguezelvira@gmail.com>
  */
-public class TimeDialog extends javax.swing.JDialog {
+public class TimeDialog extends javax.swing.JDialog implements Locatable {
 	private Time oldTime = null;
 
 	/**
 	 * Creates new form TimeDialog
 	 */
-	public TimeDialog(java.awt.Frame parent, boolean modal) {
+	private TimeDialog(java.awt.Frame parent, boolean modal) {
 		super(parent, modal);
 		initComponents();
 		
 		// Set dateChoosers date format.
-		Locale locale = Locale.getDefault();
-		String localeDatePattern = 
+		final Locale locale = Locale.getDefault();
+		final String localeDatePattern = 
 				((SimpleDateFormat) DateFormat.getDateInstance(SimpleDateFormat.LONG, locale)).toPattern();		
 		startTimeDateChooser.setDateFormatString(localeDatePattern);
 		endTimeDateChooser.setDateFormatString(localeDatePattern);
+	}
+	
+	public static TimeDialog getInstance(
+			final Frame parent, final boolean modal, final String name) {
+		TimeDialog timeDialog = new TimeDialog(parent, modal);
+		timeDialog.setLocationRelativeTo(parent);
+		timeDialog.getRootPane().setDefaultButton(btnAccept);
+		Controller.registerLocatableWindow(timeDialog, name);
 		
-		this.getRootPane().setDefaultButton(btnAccept);
+		return timeDialog;
 	}
 	
 	/**
@@ -790,7 +800,7 @@ public class TimeDialog extends javax.swing.JDialog {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel activityPanel;
-    private javax.swing.JButton btnAccept;
+    private static javax.swing.JButton btnAccept;
     private javax.swing.JButton btnCancel;
     private javax.swing.JButton btnDelete;
     private javax.swing.JPanel buttonPanel;

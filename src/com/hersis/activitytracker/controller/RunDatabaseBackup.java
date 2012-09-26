@@ -1,4 +1,4 @@
-package com.hersis.activitytracker.controler;
+package com.hersis.activitytracker.controller;
 
 import com.hersis.activitytracker.ApplicationProperties;
 import com.hersis.activitytracker.model.Dao;
@@ -32,7 +32,7 @@ public class RunDatabaseBackup extends SwingWorker<Void, Void> {
 
 		try {
 			Dao.executeBackup(destinationRoot, fileName);
-			Controller.setPropertie(ApplicationProperties.LAST_BACKUP_DATE, backupDate);
+			Controller.setProperty(ApplicationProperties.LAST_BACKUP_DATE, backupDate);
 		} catch (SQLException ex) {
 			ErrorMessages.sqlExceptionError("RunDatabaseBackup.doInBackground()", ex);
 		} catch (ClassNotFoundException ex) {

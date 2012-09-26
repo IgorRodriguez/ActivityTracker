@@ -1,7 +1,9 @@
 package com.hersis.activitytracker.view;
 
 import com.hersis.activitytracker.ApplicationProperties;
-import com.hersis.activitytracker.controler.Controller;
+import com.hersis.activitytracker.controller.Controller;
+import com.hersis.activitytracker.view.util.Locatable;
+import java.awt.Frame;
 import java.io.File;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -13,23 +15,36 @@ import java.util.Observer;
  *
  * @author Igor Rodriguez <igorrodriguezelvira@gmail.com>
  */
-public class BackupDialog extends javax.swing.JDialog implements Observer{
-	private final BackupRestoreDialog backupRestoreDialog;
+public class BackupDialog extends javax.swing.JDialog implements Observer, Locatable {
 	private final DateFormat backupDateFormat = new SimpleDateFormat("yyyy MMM dd, HH:mm:ss");
+	private final SharedFileChooser sharedFileChooser = 
+			SharedFileChooser.getInstance("backupFileChooser");
 	
 	/**
 	 * Creates new form BackupDialog
 	 */
-	public BackupDialog(java.awt.Frame parent, boolean modal) {
+	private  BackupDialog(java.awt.Frame parent, boolean modal) {
 		super(parent, modal);
-		backupRestoreDialog = new BackupRestoreDialog(parent, true);
 		initComponents();
+	}
+	
+	public static BackupDialog getInstance(
+			final Frame parent, final boolean modal, final String name) {
+		BackupDialog backupDialog = new BackupDialog(parent, modal);
+		backupDialog.setLocationRelativeTo(parent);
+		backupDialog.getRootPane().setDefaultButton(btnClose);
+		Controller.addPropertiesObserver(backupDialog);
+		Controller.registerLocatableWindow(backupDialog, name);
+		
+		return backupDialog;
 	}
 	
 	public void setBackupDateLabel() {
 		Calendar backupDate = Controller.getLastBackupDate();
 		String backupDateString = "unknown";
-		if (backupDate.getTimeInMillis() != 0) backupDateString = backupDateFormat.format(backupDate.getTime());
+		if (backupDate.getTimeInMillis() != 0) {
+			backupDateString = backupDateFormat.format(backupDate.getTime());
+		}
 		lblBackupDate.setText(backupDateString);
 		this.pack();
 	}
@@ -176,11 +191,11 @@ public class BackupDialog extends javax.swing.JDialog implements Observer{
     }// </editor-fold>//GEN-END:initComponents
 
 	private void btnRestoreActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRestoreActionPerformed
-		int selected = SharedFileChooser.showBackupsChooser(this, "Select");
+		final int selected = sharedFileChooser.showBackupsChooser(this, "Select");
 		if (selected == SharedFileChooser.APPROVE_OPTION) {
-			File backupFile = SharedFileChooser.getSelectedFile();
+			final File backupFile = sharedFileChooser.getSelectedFile();
 			if (backupFile.isFile()) {
-				String backupPath = backupFile.getPath();
+				final String backupPath = backupFile.getPath();
 				Controller.restoreBackup(this, backupPath);
 			} else {
 				AlertMessages.noFileSelected(this, backupFile.getPath());
@@ -192,13 +207,13 @@ public class BackupDialog extends javax.swing.JDialog implements Observer{
 	}//GEN-LAST:event_btnRestoreActionPerformed
 
 	private void btnBackupNowActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBackupNowActionPerformed
-		String backupPath = Controller.getPropertie(ApplicationProperties.BACKUP_PATH);
+		String backupPath = Controller.getProperty(ApplicationProperties.BACKUP_PATH);
 		
 		if (backupPath == null || "".equals(backupPath)) {
-			int selected = SharedFileChooser.showDirectoryChooser(this, "Select");
+			final int selected = sharedFileChooser.showDirectoryChooser(this, "Select");
 			if (selected == SharedFileChooser.APPROVE_OPTION) {
-				backupPath = SharedFileChooser.getSelectedFile().getPath();
-				Controller.setPropertie(ApplicationProperties.BACKUP_PATH, backupPath);
+				backupPath = sharedFileChooser.getSelectedFile().getPath();
+				Controller.setProperty(ApplicationProperties.BACKUP_PATH, backupPath);
 			}
 		}
 		Controller.startBackup(this, backupPath);
@@ -215,7 +230,7 @@ public class BackupDialog extends javax.swing.JDialog implements Observer{
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel backupPanel;
     private javax.swing.JButton btnBackupNow;
-    private javax.swing.JButton btnClose;
+    private static javax.swing.JButton btnClose;
     private javax.swing.JButton btnConfigure;
     private javax.swing.JButton btnRestore;
     private javax.swing.JPanel buttonPanel;

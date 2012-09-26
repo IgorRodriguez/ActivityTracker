@@ -1,4 +1,4 @@
-package com.hersis.activitytracker.controler;
+package com.hersis.activitytracker.controller;
 
 import com.hersis.activitytracker.Activity;
 import com.hersis.activitytracker.Time;

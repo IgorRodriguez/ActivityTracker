@@ -2,22 +2,34 @@ package com.hersis.activitytracker.view;
 
 import com.hersis.activitytracker.ApplicationProperties;
 import com.hersis.activitytracker.BackupPeriod;
-import com.hersis.activitytracker.controler.Controller;
+import com.hersis.activitytracker.controller.Controller;
+import com.hersis.activitytracker.view.util.Locatable;
+import java.awt.Frame;
 import java.io.File;
 
 /**
  *
  * @author Igor Rodriguez <igorrodriguezelvira@gmail.com>
  */
-public class BackupConfigDialog extends javax.swing.JDialog {
-
+public class BackupConfigDialog extends javax.swing.JDialog implements Locatable {
+	private final SharedFileChooser sharedFileChooser = 
+			SharedFileChooser.getInstance("backupConfigFileChooser");
 	/**
 	 * Creates new form BackupConfigDialog
 	 */
-	public BackupConfigDialog(java.awt.Frame parent, boolean modal) {
+	private BackupConfigDialog(java.awt.Frame parent, boolean modal) {
 		super(parent, modal);
 		initComponents();
 		loadCmbPeriods();
+	}
+	
+	public static BackupConfigDialog getInstance(
+			final Frame parent, final boolean modal, final String name) {
+		BackupConfigDialog backupConfigDialog = new BackupConfigDialog(parent, modal);
+		backupConfigDialog.setLocationRelativeTo(parent);
+		Controller.registerLocatableWindow(backupConfigDialog, name);
+		
+		return backupConfigDialog;
 	}
 
 	private void loadCmbPeriods() {
@@ -28,7 +40,7 @@ public class BackupConfigDialog extends javax.swing.JDialog {
 	}
 	
 	private void selectBackupPeriodOnComboBox() {
-		String propertie = Controller.getPropertie(ApplicationProperties.BACKUP_PERIOD);
+		String propertie = Controller.getProperty(ApplicationProperties.BACKUP_PERIOD);
 		BackupPeriod backupPeriod;
 		if (propertie != null) {
 			propertie = propertie.toUpperCase();
@@ -38,7 +50,7 @@ public class BackupConfigDialog extends javax.swing.JDialog {
 	}
 	
 	private void setBackupPath() {
-		String propertie = Controller.getPropertie(ApplicationProperties.BACKUP_PATH);
+		String propertie = Controller.getProperty(ApplicationProperties.BACKUP_PATH);
 		if (propertie != null) {
 			txtPath.setText(propertie);
 		} else {
@@ -200,14 +212,14 @@ public class BackupConfigDialog extends javax.swing.JDialog {
 		String backupPath = txtPath.getText();
 		File filePath = new File(txtPath.getText().trim());
 		if (backupPath != null && !"".equals(backupPath.trim()) && filePath.exists()) {
-			Controller.setPropertie(ApplicationProperties.BACKUP_PATH, backupPath.trim());
+			Controller.setProperty(ApplicationProperties.BACKUP_PATH, backupPath.trim());
 		} else {
 			AlertMessages.backupPathNullWhileConfiguring(this);
 			return;
 		}
 		Object selectedPeriod = cmbPeriods.getModel().getSelectedItem();
 		if (selectedPeriod != null) {
-			Controller.setPropertie(ApplicationProperties.BACKUP_PERIOD, selectedPeriod.toString());
+			Controller.setProperty(ApplicationProperties.BACKUP_PERIOD, selectedPeriod.toString());
 		} else {
 			AlertMessages.backupPeriodNull(this);
 			return;
@@ -217,10 +229,10 @@ public class BackupConfigDialog extends javax.swing.JDialog {
 	}//GEN-LAST:event_btnAcceptActionPerformed
 
 	private void btnFindPathActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnFindPathActionPerformed
-		SharedFileChooser.setSelectedFile(txtPath.getText().trim());
-		int selected = SharedFileChooser.showDirectoryChooser(this, "Select");
+		sharedFileChooser.setSelectedFile(txtPath.getText().trim());
+		final int selected = sharedFileChooser.showDirectoryChooser(this, "Select");
 		if (selected == SharedFileChooser.APPROVE_OPTION) {
-			txtPath.setText(SharedFileChooser.getSelectedFile().getPath());
+			txtPath.setText(sharedFileChooser.getSelectedFile().getPath());
 		}
 	}//GEN-LAST:event_btnFindPathActionPerformed
 

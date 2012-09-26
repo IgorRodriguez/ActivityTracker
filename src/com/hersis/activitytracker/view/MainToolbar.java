@@ -1,6 +1,6 @@
 package com.hersis.activitytracker.view;
 
-import com.hersis.activitytracker.controler.Controller;
+import com.hersis.activitytracker.controller.Controller;
 
 /**
  *

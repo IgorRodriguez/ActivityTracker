@@ -3,7 +3,7 @@ package com.hersis.activitytracker.view;
 import ch.qos.logback.classic.Logger;
 import com.hersis.activitytracker.Activity;
 import com.hersis.activitytracker.Time;
-import com.hersis.activitytracker.controler.Controller;
+import com.hersis.activitytracker.controller.Controller;
 import java.awt.Component;
 import java.io.IOException;
 import java.sql.SQLException;

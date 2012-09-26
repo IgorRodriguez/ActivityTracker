@@ -1,22 +1,38 @@
 package com.hersis.activitytracker.view;
 
 import com.hersis.activitytracker.Activity;
-import com.hersis.activitytracker.controler.Controller;
+import com.hersis.activitytracker.controller.Controller;
+import com.hersis.activitytracker.view.util.Locatable;
+import java.awt.Frame;
 
 /**
  *
  * @author Igor Rodriguez <igorrodriguezelvira@gmail.com>
  */
-public class ActivityDialog extends javax.swing.JDialog {
+public class ActivityDialog extends javax.swing.JDialog implements Locatable {
 	private Activity activity;
 
 	/**
 	 * Creates new form ActivityDialog
 	 */
-	public ActivityDialog(java.awt.Frame parent, boolean modal) {
+	private ActivityDialog(Frame parent, boolean modal) {
 		super(parent, modal);
 		initComponents();
-		this.getRootPane().setDefaultButton(btnAccept);
+	}
+	
+	/**
+	 * Returns a new ActivityDialog object.
+	 * @param parent The parent of the new ActivityDialog
+	 * @param modal True if the dialog will be modal, false otherwise.
+	 * @return The new ActivityDialog.
+	 */
+	public static ActivityDialog getInstance(final Frame parent, final boolean modal, final String name) {
+		ActivityDialog activityDialog = new ActivityDialog(parent, modal);
+		activityDialog.getRootPane().setDefaultButton(btnAccept);
+		activityDialog.setLocationRelativeTo(parent);
+		Controller.registerLocatableWindow(activityDialog, name);
+		
+		return activityDialog;
 	}
 	
 	public void newActivity() {
@@ -239,7 +255,7 @@ public class ActivityDialog extends javax.swing.JDialog {
 	}//GEN-LAST:event_btnDeleteActionPerformed
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel activityPanel;
-    private javax.swing.JButton btnAccept;
+    private static javax.swing.JButton btnAccept;
     private javax.swing.JButton btnCancel;
     private javax.swing.JButton btnDelete;
     private javax.swing.JPanel buttonPanel;

@@ -2,10 +2,10 @@ package com.hersis.activitytracker.model;
 
 import ch.qos.logback.classic.Logger;
 import com.hersis.activitytracker.Activity;
-import com.hersis.activitytracker.Time;
 import com.hersis.activitytracker.ApplicationProperties;
-import com.hersis.activitytracker.controler.Controller;
-import com.hersis.activitytracker.controler.ErrorMessages;
+import com.hersis.activitytracker.Time;
+import com.hersis.activitytracker.controller.Controller;
+import com.hersis.activitytracker.controller.ErrorMessages;
 import com.hersis.activitytracker.model.nio.DirUtils;
 import java.io.Closeable;
 import java.io.File;
@@ -28,7 +28,7 @@ public class Dao extends Observable implements Closeable{
     private static final Logger log = (Logger) LoggerFactory.getLogger("model.Dao");
     private static Properties dbProperties;
     private static Connection dbConnection;
-    private static final String DERBY_SYSTEM_HOME = Controller.getPropertie(ApplicationProperties.APPLICATION_PATH);
+    private static final String DERBY_SYSTEM_HOME = Controller.getProperty(ApplicationProperties.APPLICATION_PATH);
     private static final String DB_NAME = "db";
     private static final String SQL_BACKUP_DATABASE = "CALL SYSCS_UTIL.SYSCS_BACKUP_DATABASE(?)";
 	
@@ -78,7 +78,9 @@ public class Dao extends Observable implements Closeable{
 	 * @throws ClassNotFoundException If there was an error when loading the database driver.
 	 */
     private static Connection connect() throws SQLException, ClassNotFoundException {
-		if (dbConnection != null && !dbConnection.isClosed()) return dbConnection;
+		if (dbConnection != null && !dbConnection.isClosed()) {
+			return dbConnection;
+		}
         log.debug("Opening database connection...");
         try {
             Class.forName(dbProperties.getProperty("derby.driver"));
@@ -123,7 +125,9 @@ public class Dao extends Observable implements Closeable{
 			// At database engine shutdown, Derby throws error 50.000 and SQLState XJ015 to show 
 			// that the operation was successful.
 			int errorCode = ex.getErrorCode();
-			if (!(errorCode == 50000 && "XJ015".equals(ex.getSQLState()))) throw ex;
+			if (!(errorCode == 50000 && "XJ015".equals(ex.getSQLState()))) {
+				throw ex;
+			}
 			log.info("Successfully disconnected from the database engine: {}", errorCode);
         } 
     }
@@ -139,7 +143,7 @@ public class Dao extends Observable implements Closeable{
         dbProperties.put("derby.url", "jdbc:derby:");
         dbProperties.put("db.schema", "APP");
 		System.setProperty("derby.stream.error.file", 
-				Controller.getPropertie(ApplicationProperties.APPLICATION_PATH) + 
+				Controller.getProperty(ApplicationProperties.APPLICATION_PATH) + 
 				File.separatorChar + "derby.log");
     }
 
@@ -224,8 +228,11 @@ public class Dao extends Observable implements Closeable{
 	 * @throws ClassNotFoundException If there is any problem when loading the database driver.
 	 */
 	public static Connection getConnection() throws SQLException, ClassNotFoundException {
-		if (dbConnection == null || dbConnection.isClosed()) return connect();
-		else return dbConnection;
+		if (dbConnection == null || dbConnection.isClosed()) {
+			return connect();
+		} else {
+			return dbConnection;
+		}
 	}
 
 	/**
@@ -250,7 +257,9 @@ public class Dao extends Observable implements Closeable{
 			// If the database is successfully shutted-down, Derby throws an SQLException with
 			// errorCode = 45.000 and SQLState = 080006.
 			int errorCode = ex.getErrorCode();
-			if (!(errorCode == 45000 && "08006".equals(ex.getSQLState()))) throw ex;
+			if (!(errorCode == 45000 && "08006".equals(ex.getSQLState()))) {
+				throw ex;
+			}
 			log.info("Database successfully shutted-down");
 		}
     }
@@ -262,9 +271,10 @@ public class Dao extends Observable implements Closeable{
 	 * @throws SQLException If there is a problem when accessing the database.
 	 * @throws ClassNotFoundException If there is a problem while loading the database driver.
 	 */
-	public static int executeBackup(String backupPath, String fileName) throws SQLException, ClassNotFoundException {
+	public static int executeBackup(String backupPath, String fileName) 
+			throws SQLException, ClassNotFoundException {
 		try (PreparedStatement stmt = getConnection().prepareStatement(SQL_BACKUP_DATABASE)) {
-			String tempPath = Controller.getPropertie(ApplicationProperties.APPLICATION_PATH) + 
+			String tempPath = Controller.getProperty(ApplicationProperties.APPLICATION_PATH) + 
 					File.separatorChar + fileName;
 			stmt.setString(1, tempPath);
 			int result = stmt.executeUpdate();
@@ -297,7 +307,7 @@ public class Dao extends Observable implements Closeable{
 	 * @throws SQLException If there was any problem when accessing the database.
 	 */
 	public void restoreBackup(String backupSourcePath) throws SQLException {
-		String backupTempDirectory = Controller.getPropertie(ApplicationProperties.APPLICATION_PATH);
+		String backupTempDirectory = Controller.getProperty(ApplicationProperties.APPLICATION_PATH);
 		
 		try {
 			ZipFile zipFile = new ZipFile(backupSourcePath);

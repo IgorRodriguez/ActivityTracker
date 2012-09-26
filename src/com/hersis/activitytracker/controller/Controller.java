@@ -1,4 +1,4 @@
-package com.hersis.activitytracker.controler;
+package com.hersis.activitytracker.controller;
 
 import ch.qos.logback.classic.Logger;
 import com.hersis.activitytracker.Activity;
@@ -29,7 +29,6 @@ public class Controller {
 	private static Controller controller;
 
 	private static MainForm mainForm;
-	private MainToolbar mainToolbar;
 	private static TimerPanel timerPanel;
 	private ActivityDialog activityDialog;
 	private ActivityListDialog activityListDialog;
@@ -44,8 +43,6 @@ public class Controller {
 	private static ActivityBO activityBo;
 	private static TimeBO timeBo;
 	private static BackupBO backupBo;
-	
-	private static ArrayList<Locatable> locatableWindows = new ArrayList<>();
 			
 	private Controller() {
 		log.debug("Starting Controller()");
@@ -98,39 +95,19 @@ public class Controller {
 		log.info(separator);
 		
 		// Main form creation and settings
-		mainForm = MainForm.getInstance("mainForm");	
-		mainToolbar = new MainToolbar();
 		timerPanel = new TimerPanel();
-		
-		mainForm.add(mainToolbar, BorderLayout.NORTH);
-		mainForm.add(timerPanel, BorderLayout.CENTER);
-		mainForm.pack();
-		mainForm.setLocationRelativeTo(null);
-		mainForm.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
-		mainForm.getRootPane().setDefaultButton(timerPanel.getNewButton());
+		mainForm = MainForm.getInstance(timerPanel, "mainForm");	
+		//TODO Add menu item for reseting the window recording and for disabling it.
 		
 //		// Dialog creation and settings
-		activityDialog = new ActivityDialog(mainForm, true);
-		activityDialog.setLocationRelativeTo(mainForm);
+		activityDialog = ActivityDialog.getInstance(mainForm, true, "activityDialog");
+		activityListDialog = ActivityListDialog.getInstance(mainForm, true, "activityListDialog");
+		timeDialog = TimeDialog.getInstance(mainForm, true, "timeDialog");
+		timeListDialog = TimeListDialog.getInstance(mainForm, true, "timeListDialog");
+		backupDialog = BackupDialog.getInstance(mainForm, true, "backupDialog");
+		backupConfigDialog = BackupConfigDialog.getInstance(mainForm, true, "backupConfigDialog");
+		aboutDialog = AboutDialog.getInstance(mainForm, true, "aboutDialog");
 		
-		activityListDialog = new ActivityListDialog(mainForm, true);
-		activityListDialog.setLocationRelativeTo(mainForm);
-		
-		timeDialog = new TimeDialog(mainForm, true);
-		timeDialog.setLocationRelativeTo(mainForm);
-		
-		timeListDialog = new TimeListDialog(mainForm, true);
-		timeListDialog.setLocationRelativeTo(mainForm);
-		
-		backupDialog = new BackupDialog(mainForm, true);
-		backupDialog.setLocationRelativeTo(mainForm);
-		addPropertiesObserver(backupDialog);
-		
-		backupConfigDialog = new BackupConfigDialog(mainForm, true);
-		backupConfigDialog.setLocationRelativeTo(mainForm);
-		
-		aboutDialog = new AboutDialog(mainForm, true);
-		aboutDialog.setLocationRelativeTo(mainForm);
 		log.debug("End of window creation");
 	}
 	
@@ -142,8 +119,8 @@ public class Controller {
 		return controller;
 	}
 
-	public static void registerLocatableWindow(Locatable window) {
-		controllerBo.registerLocatableWindow(window);
+	public static void registerLocatableWindow(final Locatable window, final String name) {
+		controllerBo.registerLocatableWindow(window, name);
 	}
 	
 	final void loadCmbActivities() {
@@ -151,8 +128,8 @@ public class Controller {
 		timeBo.loadCmbActivities();
 	}
 	
-	public static String getPropertie(ApplicationProperties key) {
-		return controllerBo.getPropertie(key);
+	public static String getProperty(ApplicationProperties key) {
+		return controllerBo.getProperty(key);
 	}
 	
 	/**
@@ -160,12 +137,12 @@ public class Controller {
 	 * @param key The property to change.
 	 * @param value The new value to the given property.
 	 */
-	public static void setPropertie(ApplicationProperties key, String value) {
-		controllerBo.setPropertie(key, value);
+	public static void setProperty(ApplicationProperties key, String value) {
+		controllerBo.setProperty(key, value);
 	}
 	
-	public static void removePropertie(ApplicationProperties key) {
-		controllerBo.removePropertie(key);
+	public static void removeProperty(ApplicationProperties key) {
+		controllerBo.removeProperty(key);
 	}
 	
 	public static void addPropertiesObserver(Observer o) {
@@ -221,7 +198,7 @@ public class Controller {
 		try {
 			timerBo.startTracking();
 		} catch (IndexOutOfBoundsException ex) {
-			AlertMessages.startTrackingIndexOutOfBounds(timerPanel, ex);
+			AlertMessages.startTrackingIndexOutOfBounds(getMainFrame(), ex);
 		}
 	}
 

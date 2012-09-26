@@ -1,17 +1,31 @@
 package com.hersis.activitytracker.view;
 
+import com.hersis.activitytracker.controller.Controller;
+import com.hersis.activitytracker.view.util.Locatable;
+import java.awt.Frame;
+
 /**
  *
  * @author Igor Rodriguez
  */
-public class AboutDialog extends javax.swing.JDialog {
+public class AboutDialog extends javax.swing.JDialog implements Locatable {
 
 	/**
 	 * Creates new form AboutDialog
 	 */
-	public AboutDialog(java.awt.Frame parent, boolean modal) {
+	private AboutDialog(java.awt.Frame parent, boolean modal) {
 		super(parent, modal);
 		initComponents();
+	}
+	
+	public static AboutDialog getInstance(
+			final Frame parent, final boolean modal, final String name) {
+		AboutDialog aboutDialog = new AboutDialog(parent, modal);
+		aboutDialog.setLocationRelativeTo(parent);
+		aboutDialog.getRootPane().setDefaultButton(btnClose);
+		Controller.registerLocatableWindow(aboutDialog, name);
+		
+		return aboutDialog;
 	}
 
 	/**
@@ -159,7 +173,7 @@ public class AboutDialog extends javax.swing.JDialog {
 
 	
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton btnClose;
+    private static javax.swing.JButton btnClose;
     private javax.swing.JPanel buttonPanel;
     private javax.swing.JLabel lblApplicationIcon;
     private javax.swing.JLabel lblApplicationName;

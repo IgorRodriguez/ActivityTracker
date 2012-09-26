@@ -1,12 +1,15 @@
 package com.hersis.activitytracker.view;
 
-import com.hersis.activitytracker.controler.Controller;
+import com.hersis.activitytracker.controller.Controller;
 import com.hersis.activitytracker.view.util.Locatable;
+import java.awt.BorderLayout;
 import java.awt.Toolkit;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.net.URL;
 import javax.swing.JFrame;
+import javax.swing.JPanel;
+import javax.swing.WindowConstants;
 
 /**
  *
@@ -21,10 +24,20 @@ public class MainForm extends JFrame implements Locatable {
 		init();
 	}
 	
-	public static MainForm getInstance(final String name) {
-		MainForm mainForm = new MainForm();
-		mainForm.setName(name);
-		Controller.registerLocatableWindow(mainForm);
+	public static MainForm getInstance(final JPanel contentPane, final String name) {
+		final MainForm mainForm = new MainForm();
+		final MainToolbar mainToolbar = new MainToolbar();
+		
+		mainForm.add(mainToolbar, BorderLayout.NORTH);
+		mainForm.add(contentPane, BorderLayout.CENTER);
+		mainForm.pack();
+		mainForm.setLocationRelativeTo(null);
+		mainForm.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
+		if (contentPane instanceof TimerPanel) {
+			mainForm.getRootPane().setDefaultButton(((TimerPanel) contentPane).getNewButton());
+		}
+		
+		Controller.registerLocatableWindow(mainForm, name);
 		
 		return mainForm;
 	}

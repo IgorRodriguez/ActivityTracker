@@ -1,7 +1,7 @@
 package com.hersis.activitytracker;
 
-import com.hersis.activitytracker.controler.BackupBO;
-import com.hersis.activitytracker.controler.ControllerBO;
+import com.hersis.activitytracker.controller.BackupBO;
+import com.hersis.activitytracker.controller.ControllerBO;
 
 /**
  *

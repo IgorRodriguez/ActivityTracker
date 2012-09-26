@@ -1,9 +1,11 @@
 package com.hersis.activitytracker.view;
 
 import com.hersis.activitytracker.Activity;
-import com.hersis.activitytracker.controler.Controller;
+import com.hersis.activitytracker.controller.Controller;
 import com.hersis.activitytracker.view.util.ActivityListTableModel;
 import com.hersis.activitytracker.view.util.CustomDefaultTableCellRenderer;
+import com.hersis.activitytracker.view.util.Locatable;
+import java.awt.Frame;
 import java.awt.Point;
 import java.util.ArrayList;
 import javax.swing.table.TableColumnModel;
@@ -12,17 +14,27 @@ import javax.swing.table.TableColumnModel;
  *
  * @author Igor Rodriguez <igorrodriguezelvira@gmail.com>
  */
-public class ActivityListDialog extends javax.swing.JDialog {
+public class ActivityListDialog extends javax.swing.JDialog implements Locatable {
 	private ActivityListTableModel activityListModel = new ActivityListTableModel();
 	int previousRow = -1;
 
 	/**
 	 * Creates new form ActivityListDialog
 	 */
-	public ActivityListDialog(java.awt.Frame parent, boolean modal) {
+	private ActivityListDialog(Frame parent, boolean modal) {
 		super(parent, modal);
 		initComponents();
 		this.getRootPane().setDefaultButton(btnClose);
+	}
+	
+	public static ActivityListDialog getInstance(
+			final Frame parent, final boolean modal, final String name) {
+		ActivityListDialog activityListDialog = new ActivityListDialog(parent, modal);
+		activityListDialog.getRootPane().setDefaultButton(btnClose);
+		activityListDialog.setLocationRelativeTo(parent);
+		Controller.registerLocatableWindow(activityListDialog, name);
+		
+		return activityListDialog;
 	}
 
 	public void updateActivityTable(ArrayList<Activity> activities) {
@@ -88,7 +100,7 @@ public class ActivityListDialog extends javax.swing.JDialog {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Activity list");
-        setName("ActivityListDialog");
+        setName("ActivityListDialog"); // NOI18N
 
         activityListPanel.setLayout(new java.awt.GridBagLayout());
 
@@ -316,7 +328,7 @@ public class ActivityListDialog extends javax.swing.JDialog {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel activityListPanel;
     private javax.swing.JPanel bottomButtonPanel;
-    private javax.swing.JButton btnClose;
+    private static javax.swing.JButton btnClose;
     private javax.swing.JButton btnDelete;
     private javax.swing.JButton btnEdit;
     private javax.swing.JButton btnNew;

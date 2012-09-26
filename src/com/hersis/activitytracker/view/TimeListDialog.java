@@ -1,12 +1,14 @@
 package com.hersis.activitytracker.view;
 
-import com.hersis.activitytracker.view.util.TimeListTableModel;
-import com.hersis.activitytracker.view.util.TimestampTableCellRenderer;
+import com.hersis.activitytracker.Time;
+import com.hersis.activitytracker.controller.Controller;
+import com.hersis.activitytracker.view.util.ActivityIdTableCellRenderer;
 import com.hersis.activitytracker.view.util.CustomDefaultTableCellRenderer;
 import com.hersis.activitytracker.view.util.DurationTableCellRenderer;
-import com.hersis.activitytracker.view.util.ActivityIdTableCellRenderer;
-import com.hersis.activitytracker.Time;
-import com.hersis.activitytracker.controler.Controller;
+import com.hersis.activitytracker.view.util.Locatable;
+import com.hersis.activitytracker.view.util.TimeListTableModel;
+import com.hersis.activitytracker.view.util.TimestampTableCellRenderer;
+import java.awt.Frame;
 import java.awt.Point;
 import java.sql.Timestamp;
 import java.util.ArrayList;
@@ -18,17 +20,26 @@ import javax.swing.table.TableColumnModel;
  *
  * @author Igor Rodriguez <igorrodriguezelvira@gmail.com>
  */
-public class TimeListDialog extends javax.swing.JDialog {
+public class TimeListDialog extends javax.swing.JDialog implements Locatable {
 	private TimeListTableModel timeListModel = new TimeListTableModel();
 	int previousRow = -1;
 
 	/**
 	 * Creates new form ActivityListDialog
 	 */
-	public TimeListDialog(java.awt.Frame parent, boolean modal) {
+	private TimeListDialog(java.awt.Frame parent, boolean modal) {
 		super(parent, modal);
 		initComponents();
-		this.getRootPane().setDefaultButton(btnClose);
+	}
+	
+	public static TimeListDialog getInstance(
+			final Frame parent, final boolean modal, final String name) {
+		TimeListDialog timeListDialog = new TimeListDialog(parent, modal);
+		timeListDialog.setLocationRelativeTo(parent);
+		timeListDialog.getRootPane().setDefaultButton(btnClose);
+		Controller.registerLocatableWindow(timeListDialog, name);
+		
+		return timeListDialog;
 	}
 
 	public void updateTimeTable(ArrayList<Time> times) {
@@ -91,7 +102,7 @@ public class TimeListDialog extends javax.swing.JDialog {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Time list");
-        setName("ActivityListDialog");
+        setName("ActivityListDialog"); // NOI18N
 
         timeListPanel.setPreferredSize(new java.awt.Dimension(600, 415));
         timeListPanel.setLayout(new java.awt.GridBagLayout());
@@ -247,7 +258,7 @@ public class TimeListDialog extends javax.swing.JDialog {
 	
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel bottomButtonPanel;
-    private javax.swing.JButton btnClose;
+    private static javax.swing.JButton btnClose;
     private javax.swing.JButton btnDelete;
     private javax.swing.JButton btnEdit;
     private javax.swing.JButton btnNew;

@@ -1,4 +1,4 @@
-package com.hersis.activitytracker.controler;
+package com.hersis.activitytracker.controller;
 
 import ch.qos.logback.classic.Logger;
 import java.io.IOException;

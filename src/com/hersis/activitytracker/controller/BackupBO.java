@@ -1,4 +1,4 @@
-package com.hersis.activitytracker.controler;
+package com.hersis.activitytracker.controller;
 
 import com.hersis.activitytracker.ApplicationProperties;
 import com.hersis.activitytracker.BackupPeriod;
@@ -35,7 +35,7 @@ public class BackupBO implements Observer {
 				
 		if (mustPerformBackup()) {
 			startBackup(Controller.getMainFrame(), 
-					Controller.getPropertie(ApplicationProperties.BACKUP_PATH));
+					Controller.getProperty(ApplicationProperties.BACKUP_PATH));
 		}
 	}
 	
@@ -92,7 +92,7 @@ public class BackupBO implements Observer {
 	public static Calendar getLastBackupDate() {
 		final Calendar backupDate = Calendar.getInstance();
 		backupDate.setTimeInMillis(0); // Default value
-		final String dateString = Controller.getPropertie(ApplicationProperties.LAST_BACKUP_DATE);
+		final String dateString = Controller.getProperty(ApplicationProperties.LAST_BACKUP_DATE);
 		
 		if (dateString == null || "".equals(dateString)) {	
 			return null;
@@ -121,7 +121,7 @@ public class BackupBO implements Observer {
 	 */
 	private BackupPeriod getBackupPeriod() {
 		BackupPeriod backupPeriod = BackupPeriod.DISABLED; // Set backupPeriod to default: DISABLED.
-		String backupPeriodString = Controller.getPropertie(ApplicationProperties.BACKUP_PERIOD);
+		String backupPeriodString = Controller.getProperty(ApplicationProperties.BACKUP_PERIOD);
 		boolean backupPeriodNull = false;
 		
 		if (backupPeriodString != null && !"".equals(backupPeriodString)) {
@@ -133,7 +133,7 @@ public class BackupBO implements Observer {
 			}
 		} 
 		if (backupPeriodNull) {	
-			Controller.setPropertie(ApplicationProperties.BACKUP_PERIOD, backupPeriod.toString());
+			Controller.setProperty(ApplicationProperties.BACKUP_PERIOD, backupPeriod.toString());
 			AlertMessages.backupPeriodIllegalArgumentException("BackupBO.getBackupPeriod()", 
 					backupPeriodString);
 		}

@@ -1,4 +1,4 @@
-package com.hersis.activitytracker.controler.util;
+package com.hersis.activitytracker.controller.util;
 
 import ch.qos.logback.classic.LoggerContext;
 import ch.qos.logback.classic.joran.JoranConfigurator;

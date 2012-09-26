@@ -7,7 +7,7 @@
 package com.hersis.activitytracker;
 
 import ch.qos.logback.classic.Logger;
-import com.hersis.activitytracker.controler.Controller;
+import com.hersis.activitytracker.controller.Controller;
 import java.io.File;
 import java.io.IOException;
 import org.slf4j.LoggerFactory;
@@ -21,7 +21,7 @@ public class ActivityTrackerMain {
     
     public static void main(String[] args) {
 		log.info("Log saved on {}", ApplicationProperties.LOG_FILE_PATH.getDefaultValue());
-        File lockFile = new File(Controller.getPropertie(ApplicationProperties.APPLICATION_PATH) + 
+        File lockFile = new File(Controller.getProperty(ApplicationProperties.APPLICATION_PATH) + 
 				File.separatorChar + "lock.lck");
 		log.debug("Lock file path: {}", lockFile.getPath());
         if (!lockFile.exists()) {

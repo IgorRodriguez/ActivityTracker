@@ -1,7 +1,7 @@
 package com.hersis.activitytracker.view.util;
 
 import com.hersis.activitytracker.Activity;
-import com.hersis.activitytracker.controler.Controller;
+import com.hersis.activitytracker.controller.Controller;
 import java.awt.Component;
 import java.util.ArrayList;
 import javax.swing.JLabel;
